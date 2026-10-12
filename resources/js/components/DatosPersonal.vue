@@ -7,7 +7,7 @@
           <div class="col-sm-12">            
             <h1>
               <i class="far fa-bookmark"></i>
-              LISTA DEL PERSONAL REGISTRADO
+              CURSANTES REGISTRADOS
               <!-- <small>Personal</small> -->
             </h1>
           </div>

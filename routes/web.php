@@ -73,8 +73,11 @@ Route::post('/listarPersonal','PersonalController@ListarPersonal');
 Route::post('/renovarPersonal','PersonalController@RenovarPersonal');
 Route::post('/eliminarPersonal','PersonalController@EliminarPersonal');
 Route::get('/verificarPersonal/{id_per_lic}','PersonalController@VerificarPersonal');
-
 Route::post('/datosPersonal','PersonalController@DatosPersonal');
+
+Route::post('/listarDiplomadoPromociones', 'DiplomadoPromocionController@ListarDiplomadoPromocion');
+Route::post('/listarDiplomado', 'DiplomadoController@ListarDiplomado');
+Route::post('/listarPeriodo', 'PeriodoController@ListarPeriodo');
 
 
 /****************************** FUNCIONES DE EXPORTACION DE EXCEL *******************************************/

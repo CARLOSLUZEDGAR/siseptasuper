@@ -65,6 +65,34 @@ export default new Router ({
             }
         },
 
+        {
+            path: '/Gestion',
+            name: 'Gestion',
+            component: require('./components/Gestion.vue').default,
+            beforeEnter: (to, from, next) => {
+                let per = window.user.permissions.map(permission=>permission.name);
+                if (per.includes('view-gestion')) {
+                    next();
+                } else {
+                    next(from.path);
+                }
+            }
+        },
+
+        {
+            path: '/RegistroDiplomadoPromocion',
+            name: 'RegistroDiplomadoPromocion',
+            component: require('./components/RegistroDiplomadoPromocion.vue').default,
+            beforeEnter: (to, from, next) => {
+                let per = window.user.permissions.map(permission=>permission.name);
+                if (per.includes('view-reg-diplopromo')) {
+                    next();
+                } else {
+                    next(from.path);
+                }
+            }
+        },
+
         // FIN RUTAS
 
         {

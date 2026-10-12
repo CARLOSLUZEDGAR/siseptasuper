@@ -7,7 +7,7 @@
             <div class="col-sm-6">            
               <h1>
                 <i class="far fa-registered"></i>&nbsp;
-                REGISTRAR
+                REGISTRAR CURSANTE
                 <!-- <small>Personal</small> -->
               </h1>
             </div>
@@ -49,12 +49,59 @@
                         <br>
                         <div class="form-group row">
                             <div class="col-md-3">
-                                <label class="form-control-label" for="text-input">Carnet de Identidad (Identificación Personal)</label>
-                                <input type="text" v-model="per_ci" class="form-control" style="text-transform:uppercase;" :class="{ 'is-invalid' : $v.per_ci.$error, 'is-valid':!$v.per_ci.$invalid }">
+                                <label class="form-control-label" for="text-input">Diplomado en</label>
+                                <select class="form-control" v-model="per_diplomado" :class="{ 'is-invalid' : $v.per_diplomado.$error, 'is-valid':!$v.per_diplomado.$invalid }">
+                                    <option value="" disabled>SELECCIONE</option>
+                                    <option value="1">TECNICO</option>
+                                    <option value="2">DEFENSA AÉREA</option>
+                                    <option value="3">APOYO OPERATIVO</option>
+                                    <option value="4">MÚSICA</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    <span v-if="!$v.per_diplomado.required">Este campo es Requerido</span>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-control-label" for="text-input">Fuerza</label>
+                                <select class="form-control" v-model="per_fuerza" :class="{ 'is-invalid' : $v.per_fuerza.$error, 'is-valid':!$v.per_fuerza.$invalid }">
+                                    <option value="" disabled>SELECCIONE</option>
+                                    <option value="1">EJERCITO</option>
+                                    <option value="2">FUERZA AÉREA</option>
+                                    <option value="3">ARMADA</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    <span v-if="!$v.per_fuerza.required">Este campo es Requerido</span>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-control-label" for="text-input">Carnet de Identidad</label>
+                                <input type="text" v-model="per_ci" class="form-control" :class="{ 'is-invalid' : $v.per_ci.$error, 'is-valid':!$v.per_ci.$invalid }">
                                 <div class="invalid-feedback">
                                     <span v-if="!$v.per_ci.required">Este campo es Requerido</span>
                                 </div>
-                            </div>               
+                            </div> 
+                            <div class="col-md-3">
+                                <label class="form-control-label" for="text-input">Carnet Militar</label>
+                                <input type="text" v-model="per_cm" class="form-control" :class="{ 'is-invalid' : $v.per_cm.$error, 'is-valid':!$v.per_cm.$invalid }">
+                                <div class="invalid-feedback">
+                                    <span v-if="!$v.per_cm.required">Este campo es Requerido</span>
+                                </div>
+                            </div>  
+                        </div>
+                        <div class="form-group row">  
+                            <div class="col-md-3">
+                                <label class="form-control-label" for="text-input">Grado</label>
+                                <select class="form-control" v-model="per_grado" :class="{ 'is-invalid' : $v.per_grado.$error, 'is-valid':!$v.per_grado.$invalid }">
+                                    <option value="" disabled>SELECCIONE</option>
+                                    <option value="1">SOF. MY.</option>
+                                    <option value="2">SOF. 1RO.</option>
+                                    <option value="3">SOF. 2DO.</option>
+                                    <option value="3">SOF. INC.</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    <span v-if="!$v.per_grado.required">Este campo es Requerido</span>
+                                </div>
+                            </div>          
                             <div class="col-md-3">
                                 <label class="form-control-label" for="text-input">Nombres</label>
                                 <input type="text" v-model.trim="per_nombre" class="form-control" style="text-transform:uppercase;" :class="{ 'is-invalid' : $v.per_nombre.$error, 'is-valid':!$v.per_nombre.$invalid }">
@@ -71,8 +118,6 @@
                                     <span v-else-if="!$v.per_appaterno.letrasSpanishVacio">Solo letras</span>
                                 </div>  
                             </div>
-                        </div>
-                        <div class="form-group row">
                             <div class="col-md-3">
                                 <label class="form-control-label" for="text-input">Ap. Materno</label>
                                 <input type="text" v-model.trim="per_apmaterno" class="form-control" style="text-transform:uppercase;" :class="{ 'is-invalid' : $v.per_apmaterno.$error, 'is-valid':!$v.per_apmaterno.$invalid }">
@@ -81,6 +126,9 @@
                                     <span v-else-if="!$v.per_apmaterno.letrasSpanishVacio">Solo letras</span>
                                 </div>                                
                             </div>
+                        </div>
+                        <div class="form-group row">
+                            
                             <div class="col-md-3">
                                 <label class="form-control-label" for="text-input">Fecha Nacimiento</label>
                                 <input type="date" v-model="per_fechnac" class="form-control" :class="{ 'is-invalid' : $v.per_fechnac.$error, 'is-valid':!$v.per_fechnac.$invalid }">
@@ -107,9 +155,7 @@
                                     <span v-else-if="!$v.per_celular.numeric">Solo digitos</span>
                                     <span v-else-if="!$v.per_celular.length">Debe contener 8 digitos</span>
                                 </div>
-                            </div>                            
-                        </div>
-                        <div class="form-group row">
+                            </div> 
                             <div class="col-md-3">
                                 <label class="form-control-label" for="text-input">E-mail </label>
                                 <input type="text" v-model.trim="per_email" class="form-control" :class="{ 'is-invalid' : $v.per_email.$error, 'is-valid':!$v.per_email.$invalid }">
@@ -117,7 +163,7 @@
                                     <span v-if="!$v.per_email.required">Este campo es Requerido</span>
                                     <span v-else-if="!$v.per_email.email">Email Incorrecto</span>
                                 </div>
-                            </div>
+                            </div>                           
                         </div>
                         <div class="form-group row">
                             <div class="col-md-6">
@@ -169,7 +215,11 @@
       return {
         // INICIO VARIABLES DGAE
         per_foto : '',
+        per_diplomado : '',
+        per_fuerza : '',
         per_ci : '',
+        per_cm : '',
+        per_grado : '',
         per_nombre : '',
         per_appaterno : '',
         per_apmaterno : '',
@@ -205,7 +255,11 @@
   
     validations: {
       per_foto: { required },
+      per_diplomado: { required },
+      per_fuerza: { required },
       per_ci: { required },
+      per_cm: { required },
+      per_grado: { required },
       per_nombre : { required, letrasSpanish: value => /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ]+$/.test(value) },
       per_appaterno : { letrasSpanishVacio: value => !value || /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ]+$/.test(value) },
       per_apmaterno : { letrasSpanishVacio: value => !value || /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ]+$/.test(value) },            

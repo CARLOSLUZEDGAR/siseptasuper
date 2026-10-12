@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <link rel="shortcut icon" href="img/dgae_logo.png"> 
+  <link rel="shortcut icon" href="img/supervision.png"> 
   <title>EPTA-SUPERVISION</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -123,11 +123,11 @@
         <App ruta="{{route('basepath')}}"></App>
     </div>
     <footer class="main-footer">
-        <strong>Copyright &copy; {{ date('Y') }} "Dirección General de Aeronaves de Estado"</strong> 
+        <strong>Copyright &copy; {{ date('Y') }} "Escuela de Perfeccionamiento Tecnico Aeronautico"</strong> 
         <br> 
         Todos los derechos reservados. 
         <div class="float-right d-none d-sm-inline-block">
-            Desarrollado por la Sección Archivos e Informatica - <a href="http://www.fab.bo/" target="_blank">DGAE-FAB.</a>&nbsp;&nbsp;&nbsp;&nbsp;<b>Versión</b> 2.0
+            Desarrollado por - <a href="http://www.fab.bo/" target="_blank">EPTA-FAB.</a>&nbsp;&nbsp;&nbsp;&nbsp;<b>Versión</b> 1.0
         </div>
     </footer>
 @else

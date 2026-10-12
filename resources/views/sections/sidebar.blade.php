@@ -3,7 +3,7 @@
     <!-- Brand Logo -->
     <a href="" class="brand-link">
         <img src="/img/fabprueba.png" class="brand-image">
-        <span class="brand-text font-weight-light">SISCAR - DGAE</span>
+        <span class="brand-text font-weight-light">SISEPTA - EPTA</span>
     </a>
 
     <!-- Sidebar -->
@@ -23,16 +23,67 @@
         <!-- Sidebar Menu -->
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-              {{-- PERMISO SIDEBAR 1 --}}
-                <!-- <li class="nav-header" style="padding-left: 1px;">DATOS</li> -->
-                  {{-- PERMISO SIDEBAR 2 --}}
+                
+                @can('side-carnetizacion', Model::class)
+                  <li class="nav-header" style="padding-left: 1px;">DIPLOMADO</li>
+                  <li class="nav-item">{{-- CARNETIZACION --}}
+                    <a href="#" class="nav-link">
+                      <i class="nav-icon fas fa-id-card"></i>
+                      <p>
+                        DIPLOMADOS
+                        <i class="fas fa-angle-left right"></i>
+                      </p>
+                    </a>
+                    <ul class="nav nav-treeview" style="display: none;">
+                      @can('view-gestion', Model::class)
+                      <li class="nav-item">
+                        <router-link class="nav-link" to='/Gestion'>
+                          <i class="fas fa-user nav-icon"></i>
+                          <p>Gestión</p>
+                        </router-link>
+                      </li>
+                      @endcan
+                    </ul>
+                    <ul class="nav nav-treeview" style="display: none;">
+                      @can('view-dat-carnet', Model::class)
+                      <li class="nav-item">
+                        <router-link class="nav-link" to='/DatosPersonal'>
+                          <i class="fas fa-user nav-icon"></i>
+                          <p>Diplomados</p>
+                        </router-link>
+                      </li>
+                      @endcan
+                    </ul>
+                    <ul class="nav nav-treeview" style="display: none;">
+                      @can('view-dat-carnet', Model::class)
+                      <li class="nav-item">
+                        <router-link class="nav-link" to='/DatosPersonal'>
+                          <i class="fas fa-user nav-icon"></i>
+                          <p>Módulos</p>
+                        </router-link>
+                      </li>
+                      @endcan
+                    </ul>
+                    <ul class="nav nav-treeview" style="display: none;">
+                      @can('view-dat-carnet', Model::class)
+                      <li class="nav-item">
+                        <router-link class="nav-link" to='/DatosPersonal'>
+                          <i class="fas fa-user nav-icon"></i>
+                          <p>Materias</p>
+                        </router-link>
+                      </li>
+                      @endcan
+                    </ul>
+                  </li>  
+                @endcan
+
                 @can('side-carnetizacion', Model::class)
                   <li class="nav-header" style="padding-left: 1px;">PERSONAL</li>
                   <li class="nav-item">{{-- CARNETIZACION --}}
                     <a href="#" class="nav-link">
                       <i class="nav-icon fas fa-id-card"></i>
                       <p>
-                        PERSONAL
+                        CURSANTES
                         <i class="fas fa-angle-left right"></i>
                       </p>
                     </a>
@@ -48,9 +99,7 @@
                     </ul>
                   </li>  
                 @endcan
-                  {{-- PERMISO SIDEBAR 2 --}}
                                                                                                                                                               
-              {{-- PERMISO SIDEBAR 1 --}}
                 @can('side-administracion', Model::class)
                 <li class="nav-header" style="padding-left: 1px;">ADMINISTRACIÓN</li>
                 <li class="nav-item">{{-- ACCESO DEL SISTEMA --}}
