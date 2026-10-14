@@ -38,60 +38,129 @@
                   </div>  
                 </div>
                 <div class="card-body">
-                  <form>
-                        <h3><i class="fas fa-inbox"></i>&nbsp;ASIGNAR GESTIÓN Y PROMOCIÓN</h3>
-                        <br>
-                        <div class="form-group row">
-                            <div class="col-md-4">
-                                <label class="form-control-label" for="text-input">Diplomado en</label>
-                                <select class="form-control" v-model="diplomado" :class="{ 'is-invalid' : $v.diplomado.$error, 'is-valid':!$v.diplomado.$invalid }">
-                                    <option value="" disabled>SELECCIONE</option>
-                                    <option v-for="diplomado in arrayDiplomado" :key="diplomado.id" :value="diplomado.id"  v-text="diplomado.diplomado"></option>
-                                </select>
-                                <div class="invalid-feedback">
-                                    <span v-if="!$v.diplomado.required">Este campo es Requerido</span>
+                    <form>
+                        <div class="step" v-if="currentStep === 1">
+                            <h3><i class="fas fa-inbox"></i>&nbsp;ASIGNAR GESTIÓN Y PROMOCIÓN</h3>
+                            <br>
+                            <div class="form-group row">
+                                <div class="col-md-4">
+                                    <label class="form-control-label" for="text-input">Diplomado en</label>
+                                    <select class="form-control" v-model="diplomado" :class="{ 'is-invalid' : $v.diplomado.$error, 'is-valid':!$v.diplomado.$invalid }">
+                                        <option value="" disabled>SELECCIONE</option>
+                                        <option v-for="diplomado in arrayDiplomado" :key="diplomado.id" :value="diplomado.id"  v-text="diplomado.diplomado"></option>
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        <span v-if="!$v.diplomado.required">Este campo es Requerido</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-control-label" for="text-input">Gestión</label>
+                                    <select class="form-control" v-model="gestion" :class="{ 'is-invalid' : $v.gestion.$error, 'is-valid':!$v.gestion.$invalid }">
+                                        <option value="" disabled>SELECCIONE</option>
+                                        <option v-for="a in anios" :key="a" :value="a">{{ a }}</option>
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        <span v-if="!$v.gestion.required">Este campo es Requerido</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-control-label" for="text-input">Periodo</label>
+                                    <select class="form-control" v-model="periodo" :class="{ 'is-invalid' : $v.periodo.$error, 'is-valid':!$v.periodo.$invalid }">
+                                        <option value="" disabled>SELECCIONE</option>
+                                        <option v-for="periodo in arrayPeriodo" :key="periodo.id" :value="periodo.id"  v-text="periodo.periodo"></option>
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        <span v-if="!$v.periodo.required">Este campo es Requerido</span>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-md-4">
-                                <label class="form-control-label" for="text-input">Gestión</label>
-                                <select class="form-control" v-model="gestion" :class="{ 'is-invalid' : $v.gestion.$error, 'is-valid':!$v.gestion.$invalid }">
-                                    <option value="" disabled>SELECCIONE</option>
-                                    <option v-for="a in anios" :key="a" :value="a">{{ a }}</option>
-                                </select>
-                                <div class="invalid-feedback">
-                                    <span v-if="!$v.gestion.required">Este campo es Requerido</span>
+                            <div class="form-group row">
+                                <div class="col-md-3">
+                                    <label class="form-control-label" for="text-input">Ultima Promoción</label>
+                                    <p style="font-weight: bold;" class="form-control-label">LXVI</p>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-control-label" for="text-input">Promoción</label>
+                                    <input type="text" v-model.trim="promocion" class="form-control" style="text-transform:uppercase;" :class="{ 'is-invalid' : $v.promocion.$error, 'is-valid':!$v.promocion.$invalid }">
+                                    <div class="invalid-feedback">
+                                        <span v-if="!$v.promocion.required">Este campo es Requerido</span>
+                                        <span v-else-if="!$v.promocion.letrasSpanish">Solo letras</span>
+                                    </div>
+                                </div> 
+                            </div>
+                            <div class="form-group row justify-content-end">
+                                <button type="button" class="btn btn-danger" @click="nextStep"><i class="fas fa-forward"></i>&nbsp; SIGUIENTE</button>
+                            </div>
+                        </div> 
+                        <div class="step" v-if="currentStep === 2">
+                            <h3><i class="fas fa-inbox"></i>&nbsp;MODULOS</h3>
+                            <br>
+                            <div class="form-group row">
+                                <div class="col-md-3">
+                                    <label class="form-control-label" for="text-input">Promoción: <span style="text-transform:uppercase;">{{ promocion }}</span></label>
                                 </div>
                             </div>
-                            <div class="col-md-4">
-                                <label class="form-control-label" for="text-input">Periodo</label>
-                                <select class="form-control" v-model="periodo" :class="{ 'is-invalid' : $v.periodo.$error, 'is-valid':!$v.periodo.$invalid }">
-                                    <option value="" disabled>SELECCIONE</option>
-                                    <option v-for="periodo in arrayPeriodo" :key="periodo.id" :value="periodo.id"  v-text="periodo.periodo"></option>
-                                </select>
-                                <div class="invalid-feedback">
-                                    <span v-if="!$v.periodo.required">Este campo es Requerido</span>
+                            <button type="button" class="btn btn-sm btn-outline-success" @click="crearModulos()">
+                                + Agregar Modulo
+                            </button>
+                            <div class="form-group row" v-for="(input, index) in inputs" :key="index">
+                                <label class="form-control-label" for="text-input">MODULO {{ index + 1 }}: </label><br>
+                                <div class="col-md-4">
+                                    <label class="form-control-label" :for="'ini_mod' + index">Inicio</label>
+                                    <input type="date" v-model="input.ini_mod" class="form-control" :id="'ini_mod' + index" />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-control-label" :for="'fin_mod' + index">Fin</label>
+                                    <input type="date" v-model="input.fin_mod" class="form-control" :id="'fin_mod' + index" />
+                                </div>
+                                <div class="col-md-1 text-right">
+                                    <label class="form-control-label">Eliminar</label>
+                                    <button type="button" class="btn btn-danger" @click="eliminarModulos(index)">
+                                    <i class="fa fa-trash"></i>
+                                    </button>
                                 </div>
                             </div>
-                        </div>
-                        <div class="form-group row">
-                            <div class="col-md-3">
-                                <label class="form-control-label" for="text-input">Ultima Promoción</label>
-                                <p style="font-weight: bold;" class="form-control-label">LXVI</p>
+                            <div class="form-group row justify-content-end">
+                                <button type="button" class="btn btn-primary" @click="previousStep"><i class="fas fa-backward"></i>&nbsp; ANTERIOR</button>
+                                &nbsp;
+                                <button type="button" class="btn btn-danger" @click="nextStep"><i class="fas fa-forward"></i>&nbsp; SIGUIENTE</button>
                             </div>
-                            <div class="col-md-3">
-                                <label class="form-control-label" for="text-input">Promoción</label>
-                                <input type="text" v-model.trim="promocion" class="form-control" style="text-transform:uppercase;" :class="{ 'is-invalid' : $v.promocion.$error, 'is-valid':!$v.promocion.$invalid }">
-                                <div class="invalid-feedback">
-                                    <span v-if="!$v.promocion.required">Este campo es Requerido</span>
-                                    <span v-else-if="!$v.promocion.letrasSpanish">Solo letras</span>
+                        </div> 
+                        <div class="step" v-if="currentStep === 3">
+                            <h3><i class="fas fa-inbox"></i>&nbsp;MATERIAS</h3>
+                            <br>
+                            <div class="form-group row">
+                                <div class="col-md-3">
+                                    <label class="form-control-label" for="text-input">Promoción: <span style="text-transform:uppercase;">{{ promocion }}</span></label>
                                 </div>
-                            </div> 
-                        </div>
-                        <div class="form-group row justify-content-end">
-                          <button type="button" class="btn btn-danger" @click="CrearPersonal()"><i class="fas fa-address-card"></i>&nbsp; REGISTRAR</button>
-                        </div>
-                                 
-                  </form>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-success" @click="crearModulos()">
+                                + Agregar Modulo
+                            </button>
+                            <div class="form-group row" v-for="(input, index) in inputs" :key="index">
+                                <label class="form-control-label" for="text-input">MODULO {{ index + 1 }}: </label><br>
+                                <div class="col-md-4">
+                                    <label class="form-control-label" :for="'ini_mod' + index">Inicio</label>
+                                    <input type="date" v-model="input.ini_mod" class="form-control" :id="'ini_mod' + index" />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-control-label" :for="'fin_mod' + index">Fin</label>
+                                    <input type="date" v-model="input.fin_mod" class="form-control" :id="'fin_mod' + index" />
+                                </div>
+                                <div class="col-md-1 text-right">
+                                    <label class="form-control-label">Eliminar</label>
+                                    <button type="button" class="btn btn-danger" @click="eliminarModulos(index)">
+                                    <i class="fa fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-group row justify-content-end">
+                                <button type="button" class="btn btn-primary" @click="previousStep"><i class="fas fa-backward"></i>&nbsp; ANTERIOR</button>
+                                &nbsp;
+                                <button type="button" class="btn btn-danger" @click="nextStep"><i class="fas fa-forward"></i>&nbsp; SIGUIENTE</button>
+                            </div>
+                        </div>          
+                    </form>
                 </div>
                 <!-- /.card -->
               </div>
@@ -116,6 +185,7 @@
         gestion : '',
         periodo : '',
         promocion : '',
+        currentStep : 1,
        
         v : 0,
         
@@ -123,6 +193,7 @@
         arrayDiplomado : [],
         arrayPeriodo : [],
         anios: [],
+        inputs : [],
         
         listaPersonal: [],
         criterio: "p.per_cm",
@@ -208,6 +279,52 @@
             this.$router.push({
                 name: "Gestion",  
             });
+        },
+
+        nextStep() { //DGAE
+            if (this.currentStep < 4) {
+                if(this.currentStep == 1){
+                    if(!this.$v.validationGroupReg.$invalid){
+                        this.currentStep++;
+                    }else{
+                        this.$v.validationGroupReg.$touch();
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Ingrese todos los datos requeridos',
+                            showConfirmButton: false,
+                            timer: 2000
+                        })   
+                    }
+                }
+                if(this.currentStep == 2){
+                        this.currentStep++;
+                    
+                }
+            }
+        },
+
+        previousStep() { //DGAE
+            if (this.currentStep > 1) {
+                this.currentStep--;
+            }
+            if (this.currentStep > 2) {
+                this.currentStep--;
+            }
+        },
+
+        crearModulos(){
+            this.inputs.push({
+                modulo : '',
+                ini_mod : '',
+                fin_mod : '',
+                // efec_instructores: '',
+                // efec_soldados: '',
+                // id_apoyo: ''
+            });
+        },
+
+        eliminarModulos(index) {
+            this.inputs.splice(index, 1);
         },
 
         ListarDiplomados(){
