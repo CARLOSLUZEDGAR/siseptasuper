@@ -113080,7 +113080,7 @@ var render = function() {
                                 _vm._v(" "),
                                 _c(
                                   "div",
-                                  { staticClass: "col-md-1 text-right" },
+                                  { staticClass: "col-md-4 text-right" },
                                   [
                                     _c(
                                       "label",

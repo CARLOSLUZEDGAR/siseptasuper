@@ -113,10 +113,10 @@
                                     <label class="form-control-label" :for="'fin_mod' + index">Fin</label>
                                     <input type="date" v-model="input.fin_mod" class="form-control" :id="'fin_mod' + index" />
                                 </div>
-                                <div class="col-md-1 text-right">
+                                <div class="col-md-4 text-right">
                                     <label class="form-control-label">Eliminar</label>
                                     <button type="button" class="btn btn-danger" @click="eliminarModulos(index)">
-                                    <i class="fa fa-trash"></i>
+                                        <i class="fa fa-trash"></i>
                                     </button>
                                 </div>
                             </div>
