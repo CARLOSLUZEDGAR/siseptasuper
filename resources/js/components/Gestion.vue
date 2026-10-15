@@ -70,9 +70,9 @@
                                 <tr v-for="(diplomado,index) in listaDiplomadosPromociones"> 
                                     <!-- <td v-text="personal.grado+' '+personal.complemento"></td> -->
                                     <td style="text-align:center; font-weight:bold;">{{ index + 1 }}</td>
-                                    <td v-text="diplomado.per_paterno"></td>
-                                    <td v-text="diplomado.per_materno"></td>
-                                    <td v-text="diplomado.per_nombre"></td>
+                                    <td v-text="diplomado.diplomado"></td>
+                                    <td v-text="diplomado.promo"></td>
+                                    <td v-text="diplomado.gestion"></td>
                                     <td style="text-align:center">
                                       <div class="d-flex justify-content-center align-items-center">
                                         <div v-if="$auth.can('view-renew-per')" class="mr-1">

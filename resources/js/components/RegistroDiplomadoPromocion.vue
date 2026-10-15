@@ -45,7 +45,7 @@
                             <div class="form-group row">
                                 <div class="col-md-4">
                                     <label class="form-control-label" for="text-input">Diplomado en</label>
-                                    <select class="form-control" v-model="diplomado" :class="{ 'is-invalid' : $v.diplomado.$error, 'is-valid':!$v.diplomado.$invalid }">
+                                    <select class="form-control" v-model="diplomado" @change="ultimaPromocion(diplomado)" :class="{ 'is-invalid' : $v.diplomado.$error, 'is-valid':!$v.diplomado.$invalid }">
                                         <option value="" disabled>SELECCIONE</option>
                                         <option v-for="diplomado in arrayDiplomado" :key="diplomado.id" :value="diplomado.id"  v-text="diplomado.diplomado"></option>
                                     </select>
@@ -77,7 +77,7 @@
                             <div class="form-group row">
                                 <div class="col-md-3">
                                     <label class="form-control-label" for="text-input">Ultima Promoción</label>
-                                    <p style="font-weight: bold;" class="form-control-label">LXVI</p>
+                                    <p style="font-weight: bold;" class="form-control-label">{{ ultimopromocion == null || ultimopromocion === '' ? 'S/R' : ultimopromocion }}</p>
                                 </div>
                                 <div class="col-md-3">
                                     <label class="form-control-label" for="text-input">Promoción</label>
@@ -93,7 +93,7 @@
                             </div>
                         </div> 
                         <div class="step" v-if="currentStep === 2">
-                            <h3><i class="fas fa-inbox"></i>&nbsp;MODULOS</h3>
+                            <h3><i class="fas fa-inbox"></i>&nbsp;MÓDULOS DEL DIPLOMADO</h3>
                             <br>
                             <div class="form-group row">
                                 <div class="col-md-3">
@@ -104,7 +104,7 @@
                                 + Agregar Modulo
                             </button>
                             <div class="form-group row" v-for="(input, index) in inputs" :key="index">
-                                <label class="form-control-label" for="text-input">MODULO {{ index + 1 }}: </label><br>
+                                <label class="form-control-label" for="text-input">MÓDULO {{ index + 1 }}: </label><br>
                                 <div class="col-md-4">
                                     <label class="form-control-label" :for="'ini_mod' + index">Inicio</label>
                                     <input type="date" v-model="input.ini_mod" class="form-control" :id="'ini_mod' + index" />
@@ -126,40 +126,59 @@
                                 <button type="button" class="btn btn-danger" @click="nextStep"><i class="fas fa-forward"></i>&nbsp; SIGUIENTE</button>
                             </div>
                         </div> 
+                        
                         <div class="step" v-if="currentStep === 3">
-                            <h3><i class="fas fa-inbox"></i>&nbsp;MATERIAS</h3>
-                            <br>
-                            <div class="form-group row">
-                                <div class="col-md-3">
-                                    <label class="form-control-label" for="text-input">Promoción: <span style="text-transform:uppercase;">{{ promocion }}</span></label>
+                            <h3><i class="fas fa-book"></i>&nbsp;MATERIAS POR MÓDULO</h3><br>
+
+                            <!-- Recorrer todos los módulos creados en el paso anterior -->
+                            <div class="card mb-3" v-for="(input, indexModulo) in inputs" :key="'modulo-' + indexModulo">
+                                <div class="card-header">
+                                    <strong>MÓDULO {{ input.modulo }}</strong>
+                                    <span class="ml-2">{{ input.ini_mod || 'Sin fecha de inicio' }} - {{ input.fin_mod || 'Sin fecha de fin' }}</span>
                                 </div>
-                            </div>
-                            <button type="button" class="btn btn-sm btn-outline-success" @click="crearModulos()">
-                                + Agregar Modulo
-                            </button>
-                            <div class="form-group row" v-for="(input, index) in inputs" :key="index">
-                                <label class="form-control-label" for="text-input">MODULO {{ index + 1 }}: </label><br>
-                                <div class="col-md-4">
-                                    <label class="form-control-label" :for="'ini_mod' + index">Inicio</label>
-                                    <input type="date" v-model="input.ini_mod" class="form-control" :id="'ini_mod' + index" />
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-control-label" :for="'fin_mod' + index">Fin</label>
-                                    <input type="date" v-model="input.fin_mod" class="form-control" :id="'fin_mod' + index" />
-                                </div>
-                                <div class="col-md-1 text-right">
-                                    <label class="form-control-label">Eliminar</label>
-                                    <button type="button" class="btn btn-danger" @click="eliminarModulos(index)">
-                                    <i class="fa fa-trash"></i>
+                                <div class="card-body">
+                                    <!-- Botón para agregar materias a este módulo -->
+                                    <button type="button" class="btn btn-sm btn-outline-success mb-3" @click="crearMateria(indexModulo)">
+                                        + Agregar Materia
                                     </button>
+
+                                    <!-- Recorrer las materias del módulo actual -->
+                                    <div class="form-group row" v-for="(materia, indexMateria) in input.materias" :key="'materia-' + indexModulo + '-' + indexMateria">
+                                        <div class="col-md-1">
+                                            <label class="form-control-label">N.º</label>
+                                            <input type="number" class="form-control" :value="materia.numero" readonly/>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <label class="form-control-label" :for="'nombre-' + indexModulo + '-' + indexMateria">Materia</label>
+                                            <input type="text" class="form-control" :id="'nombre-' + indexModulo + '-' + indexMateria" v-model="materia.nombre" placeholder="Ingrese el nombre de la materia"/>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-control-label" :for="'docente-' + indexModulo + '-' + indexMateria">Docente</label>
+                                            <input type="text" class="form-control" :id="'docente-' + indexModulo + '-' + indexMateria" v-model="materia.docente" placeholder="Ingrese el nombre del docente"/>
+                                        </div>
+                                        <div class="col-md-2 text-right">
+                                            <label class="form-control-label">Eliminar</label>
+                                            <button type="button" class="btn btn-danger" @click="eliminarMateria(indexModulo, indexMateria)">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <p v-if="input.materias.length === 0" class="text-muted">Este módulo todavía no tiene materias registradas.</p>
                                 </div>
                             </div>
+
+                            <!-- Navegación del carrusel -->
                             <div class="form-group row justify-content-end">
-                                <button type="button" class="btn btn-primary" @click="previousStep"><i class="fas fa-backward"></i>&nbsp; ANTERIOR</button>
-                                &nbsp;
-                                <button type="button" class="btn btn-danger" @click="nextStep"><i class="fas fa-forward"></i>&nbsp; SIGUIENTE</button>
+                                <!-- <button type="button" class="btn btn-primary" @click="previousStep">
+                                    <i class="fas fa-backward"></i>&nbsp; ANTERIOR
+                                </button>
+                                &nbsp; -->
+                                <button type="button" class="btn btn-danger" @click="guardarPromocion()">
+                                    <i class="fas fa-forward"></i>&nbsp; GUARDAR
+                                </button>
                             </div>
-                        </div>          
+                        </div>
+          
                     </form>
                 </div>
                 <!-- /.card -->
@@ -186,6 +205,8 @@
         periodo : '',
         promocion : '',
         currentStep : 1,
+        arrayUltimoPromo : [],
+        ultimopromocion : '',
        
         v : 0,
         
@@ -282,49 +303,61 @@
         },
 
         nextStep() { //DGAE
-            if (this.currentStep < 4) {
-                if(this.currentStep == 1){
-                    if(!this.$v.validationGroupReg.$invalid){
-                        this.currentStep++;
-                    }else{
-                        this.$v.validationGroupReg.$touch();
-                        Swal.fire({
-                            icon: 'warning',
-                            title: 'Ingrese todos los datos requeridos',
-                            showConfirmButton: false,
-                            timer: 2000
-                        })   
-                    }
-                }
-                if(this.currentStep == 2){
-                        this.currentStep++;
-                    
-                }
-            }
+            // if (this.currentStep < 4) {
+            //     if(this.currentStep == 1){
+            //         if(!this.$v.validationGroupReg.$invalid){
+            //             this.currentStep++;
+            //         }else{
+            //             this.$v.validationGroupReg.$touch();
+            //             Swal.fire({
+            //                 icon: 'warning',
+            //                 title: 'Ingrese todos los datos requeridos',
+            //                 showConfirmButton: false,
+            //                 timer: 2000
+            //             })   
+            //         }
+            //     }
+            //     if(this.currentStep == 2){
+            //             this.currentStep++;
+            //     }
+            // }
+            this.currentStep++;
         },
 
         previousStep() { //DGAE
-            if (this.currentStep > 1) {
-                this.currentStep--;
-            }
-            if (this.currentStep > 2) {
-                this.currentStep--;
-            }
+            this.currentStep--;
         },
 
         crearModulos(){
             this.inputs.push({
-                modulo : '',
+                modulo : this.inputs.length + 1,
                 ini_mod : '',
                 fin_mod : '',
-                // efec_instructores: '',
-                // efec_soldados: '',
-                // id_apoyo: ''
+                materias : []
             });
         },
 
         eliminarModulos(index) {
             this.inputs.splice(index, 1);
+            this.inputs.forEach((input, i) => {
+                input.modulo = i + 1;
+            });
+        },
+
+        crearMateria(indexModulo) {
+            this.inputs[indexModulo].materias.push({
+                numero: this.inputs[indexModulo].materias.length + 1,
+                nombre: '',
+                docente: ''
+            });
+        },
+
+        eliminarMateria(indexModulo, indexMateria) {
+            this.inputs[indexModulo].materias.splice(indexMateria, 1);
+
+            this.inputs[indexModulo].materias.forEach((materia, i) => {
+                materia.numero = i + 1;
+            });
         },
 
         ListarDiplomados(){
@@ -348,6 +381,23 @@
             })
             .then(function (response) {
             me.arrayPeriodo = response.data.periodo
+            })
+            .catch(function (error) {
+            // handle error
+            console.log(error);
+            })
+        },
+
+        ultimaPromocion(diplomado) {
+            this.ultimopromocion = '';
+            let me = this;
+            axios
+            .post("/ultimaPromocion", {
+                diplomado : diplomado
+            })
+            .then(function (response) {
+            me.arrayUltimoPromo = response.data.ultimopromo,
+            me.ultimopromocion = me.arrayUltimoPromo.promo
             })
             .catch(function (error) {
             // handle error
@@ -383,6 +433,61 @@
         this.per_direccion = '',
         this.v = 0
       },
+
+        guardarPromocion() {
+            swal.fire({
+                title: '¿Desea guardar la promoción?', // TITULO 
+                icon: 'question', //ICONO (success, warnning, error, info, question)
+                showCancelButton: true, //HABILITACION DEL BOTON CANCELAR
+                confirmButtonColor: 'info', // COLOR DEL BOTON PARA CONFIRMAR
+                cancelButtonColor: '#868077', // COLOR DEL BOTON CANCELAR
+                confirmButtonText: 'Confirmar', //TITULO DEL BOTON CONFIRMAR
+                cancelButtonText: 'Cancelar', //TIUTLO DEL BOTON CANCELAR
+                buttonsStyling: true,
+                reverseButtons: true
+                }).then((result) => {
+                if (result.value) {
+                    let me = this;
+                    axios
+                    .post("/guardarPromocion", {
+                        diplomado : me.diplomado,
+                        gestion : me.gestion,
+                        periodo : me.periodo,
+                        promocion : me.promocion,
+                        modulos: me.inputs
+                    })
+                    .then(function (response) {
+                        console.log(response);
+                        swal.fire({
+                            title: 'Se realizo el registro correctamente', //TITULO
+                            // response.data.mensaje, //TEXTO DE MENSAJE
+                            // response.data.tipo, // TIPO DE MODAL (success, warnning, error, info)
+                            // response.personal
+                        });
+                        if (!response.data.code) {
+                            // $('#NuevoUsuario').modal('hide');
+                            // $('#ModalNewPersonal').modal('hide');
+                            // me.nick = '';
+                            // me.password = '';
+                            // me.arrayDatPer = response.data.personal;
+                            // me.GenerarCarnet(me.arrayDatPer.id_personal);
+                            me.Atras();
+                            // this.$v.$reset();
+                        } 
+                    })
+                    .catch(function (error) {
+                        // handle error
+                        console.log(error);
+                    })
+                }else{
+                        swal.fire(
+                        "Informacion", //TITULO
+                        "Solicitud cancelada.", //TEXTO DE MENSAJE
+                        "info" // TIPO DE MODAL (success, warnning, error, info)
+                    );
+                }
+            })
+        },
   
       CrearPersonal(){ //DGAE
         if(!this.$v.validationGroupReg.$invalid){
