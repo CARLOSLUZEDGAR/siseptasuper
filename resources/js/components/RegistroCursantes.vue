@@ -44,9 +44,34 @@
                   </div>  
                 </div>
                 <div class="card-body">
+                    <h3><i class="fas fa-inbox"></i>&nbsp;REGISTRAR INFORMACIÓN</h3>
+                    <br>
+                    <div class="form-group row">
+                        <div class="col-md-4">
+                            <label class="form-control-label" for="text-input">Especialidad</label>
+                            <select class="form-control" v-model="diplomado" @change="ultimaPromocion(diplomado)" :class="{ 'is-invalid' : $v.diplomado.$error, 'is-valid':!$v.diplomado.$invalid }">
+                                <option value="" disabled>SELECCIONE</option>
+                                <option v-for="diplomado in arrayDiplomado" :key="diplomado.id" :value="diplomado.id"  v-text="diplomado.diplomado"></option>
+                            </select>
+                            <div class="invalid-feedback">
+                                <span v-if="!$v.diplomado.required">Este campo es Requerido</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-control-label" for="text-input">Gestión</label>
+                            <select class="form-control" v-model="gestion" :class="{ 'is-invalid' : $v.gestion.$error, 'is-valid':!$v.gestion.$invalid }">
+                                <option value="" disabled>SELECCIONE</option>
+                                <option v-for="a in anios" :key="a" :value="a">{{ a }}</option>
+                            </select>
+                            <div class="invalid-feedback">
+                                <span v-if="!$v.gestion.required">Este campo es Requerido</span>
+                            </div>
+                        </div>  
+                    </div>
+
+
                   <form>
-                        <h3><i class="fas fa-inbox"></i>&nbsp;REGISTRAR INFORMACIÓN</h3>
-                        <br>
+                        
                         <div class="form-group row">
                             <div class="col-md-3">
                                 <label class="form-control-label" for="text-input">Diplomado en</label>
@@ -189,11 +214,107 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group row justify-content-end">
-                          <button type="button" class="btn btn-danger" @click="CrearPersonal()"><i class="fas fa-address-card"></i>&nbsp; REGISTRAR</button>
-                        </div>
-                                 
+                        <button type="button" class="btn btn-primary" @click="agregarPersonal()">
+                            <i class="fas fa-plus"></i>&nbsp; AGREGAR
+                        </button>             
                   </form>
+
+
+
+
+
+
+
+                  <div class="card mt-4">
+    <div class="card-header">
+        <h4>
+            <i class="fas fa-users"></i>
+            Lista de personas
+        </h4>
+    </div>
+
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>N.º</th>
+                        <th>C.I.</th>
+                        <th>Carnet Militar</th>
+                        <th>Grado</th>
+                        <th>Nombres</th>
+                        <th>Ap. Paterno</th>
+                        <th>Ap. Materno</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr v-if="personasTemporales.length === 0">
+                        <td colspan="8" class="text-center">
+                            No hay personas agregadas.
+                        </td>
+                    </tr>
+
+                    <tr
+                        v-for="(persona, index) in personasTemporales"
+                        :key="persona.idTemporal"
+                    >
+                        <td>{{ index + 1 }}</td>
+                        <td>{{ persona.per_ci }}</td>
+                        <td>{{ persona.per_cm }}</td>
+                        <td>{{ persona.per_grado }}</td>
+                        <td>{{ persona.per_nombre }}</td>
+                        <td>{{ persona.per_appaterno }}</td>
+                        <td>{{ persona.per_apmaterno }}</td>
+
+                        <td>
+                            <button
+                                type="button"
+                                class="btn btn-warning btn-sm"
+                                @click="editarPersonal(index)"
+                                title="Editar"
+                            >
+                                <i class="fas fa-edit"></i>
+                            </button>
+
+                            <button
+                                type="button"
+                                class="btn btn-danger btn-sm"
+                                @click="eliminarPersonal(index)"
+                                title="Eliminar"
+                            >
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="text-right">
+            <strong>Total de personas: {{ personasTemporales.length }}</strong>
+        </div>
+
+        <button
+            type="button"
+            class="btn btn-success mt-3"
+            @click="registrarLista()"
+            :disabled="personasTemporales.length === 0"
+        >
+            <i class="fas fa-save"></i>
+            REGISTRAR LISTA
+        </button>
+    </div>
+</div>
+
+
+
+
+
+
+
+
                 </div>
                 <!-- /.card -->
               </div>
@@ -213,6 +334,16 @@
   export default {
     data() {
       return {
+
+
+        personasTemporales: [],
+        indiceEdicion: null,
+        contadorTemporal: 0,
+
+
+
+
+
         // INICIO VARIABLES DGAE
         per_foto : '',
         per_diplomado : '',
@@ -228,10 +359,14 @@
         per_email : '',
         per_fechnac : '',
         per_direccion : '',
+        diplomado : '',
+        gestion : '',
         v : 0,
         arraySexo : ['MASCULINO','FEMENINO'],
         // FIN VARIABLES DGAE
+        arrayDiplomado : [],
         arrayPersonal : [],
+        anios: [],
         
         listaPersonal: [],
         criterio: "p.per_cm",
@@ -268,6 +403,15 @@
       per_email : { required, email},
       per_fechnac : { required },
       per_direccion : { required },
+
+
+
+        diplomado : { required },
+        gestion: { required },
+
+
+
+
 
       validationGroupReg: [
       'per_foto',
@@ -318,6 +462,17 @@
           }
       },
     mounted() {
+        let actual = new Date().getFullYear();
+        for (let i = actual - 5; i <= actual + 5; i++) {
+            this.anios.push(i);
+        }
+
+        this.ListarDiplomados();
+
+
+
+
+
         this.NuevoPersonal();
     },
 
@@ -325,9 +480,200 @@
 
       Atras(){ //DGAE
           this.$router.push({
-              name: "DatosPersonal",  
+              name: "DatosCursantes",  
           });
       },
+
+        ListarDiplomados(){
+            let me = this;
+            axios
+            .post("/listarDiplomado", {
+            })
+            .then(function (response) {
+            me.arrayDiplomado = response.data.diplomado
+            })
+            .catch(function (error) {
+            // handle error
+            console.log(error);
+            })
+        },
+
+
+
+      agregarPersonal() {
+    // Ejecutar las validaciones de Vuelidate
+    this.$v.$touch();
+
+    if (this.$v.$invalid) {
+        return;
+    }
+
+    const persona = {
+        idTemporal: this.indiceEdicion !== null
+            ? this.personasTemporales[this.indiceEdicion].idTemporal
+            : ++this.contadorTemporal,
+
+        per_diplomado: this.per_diplomado,
+        per_fuerza: this.per_fuerza,
+        per_ci: this.per_ci,
+        per_cm: this.per_cm,
+        per_grado: this.per_grado,
+        per_nombre: this.per_nombre,
+        per_appaterno: this.per_appaterno,
+        per_apmaterno: this.per_apmaterno,
+        per_fechnac: this.per_fechnac,
+        per_sexo: this.per_sexo,
+        per_celular: this.per_celular,
+        per_email: this.per_email,
+        per_direccion: this.per_direccion,
+
+        // Conservar el archivo y su vista previa
+        per_foto: this.per_foto,
+        fotoVista: this.imagen
+    };
+
+    if (this.indiceEdicion !== null) {
+        // Actualizar la persona seleccionada
+        this.$set(
+            this.personasTemporales,
+            this.indiceEdicion,
+            persona
+        );
+
+        this.indiceEdicion = null;
+    } else {
+        // Agregar una nueva persona
+        this.personasTemporales.push(persona);
+    }
+
+    this.limpiarFormulario();
+},
+
+editarPersonal(index) {
+    const persona = this.personasTemporales[index];
+
+    this.per_diplomado = persona.per_diplomado;
+    this.per_fuerza = persona.per_fuerza;
+    this.per_ci = persona.per_ci;
+    this.per_cm = persona.per_cm;
+    this.per_grado = persona.per_grado;
+    this.per_nombre = persona.per_nombre;
+    this.per_appaterno = persona.per_appaterno;
+    this.per_apmaterno = persona.per_apmaterno;
+    this.per_fechnac = persona.per_fechnac;
+    this.per_sexo = persona.per_sexo;
+    this.per_celular = persona.per_celular;
+    this.per_email = persona.per_email;
+    this.per_direccion = persona.per_direccion;
+    this.per_foto = persona.per_foto;
+    this.imagen = persona.fotoVista;
+
+    this.indiceEdicion = index;
+
+    // Limpiar los errores anteriores de validación
+    this.$v.$reset();
+},
+
+eliminarPersonal(index) {
+    this.personasTemporales.splice(index, 1);
+
+    // Si se elimina el registro que se estaba editando,
+    // cancelar el modo de edición.
+    if (this.indiceEdicion === index) {
+        this.indiceEdicion = null;
+        this.limpiarFormulario();
+    } else if (
+        this.indiceEdicion !== null &&
+        this.indiceEdicion > index
+    ) {
+        this.indiceEdicion--;
+    }
+},
+
+limpiarFormulario() {
+    this.per_diplomado = '';
+    this.per_fuerza = '';
+    this.per_ci = '';
+    this.per_cm = '';
+    this.per_grado = '';
+    this.per_nombre = '';
+    this.per_appaterno = '';
+    this.per_apmaterno = '';
+    this.per_fechnac = '';
+    this.per_sexo = '';
+    this.per_celular = '';
+    this.per_email = '';
+    this.per_direccion = '';
+    this.per_foto = null;
+
+    // Ajusta esta ruta a la imagen predeterminada de tu proyecto.
+    this.imagen = '/img/avatar.jpg';
+
+    this.$nextTick(() => {
+        this.$v.$reset();
+    });
+},
+
+registrarLista() {
+    if (this.personasTemporales.length === 0) {
+        return;
+    }
+
+    const datos = this.personasTemporales.map(persona => ({
+        per_diplomado: persona.per_diplomado,
+        per_fuerza: persona.per_fuerza,
+        per_ci: persona.per_ci,
+        per_cm: persona.per_cm,
+        per_grado: persona.per_grado,
+        per_nombre: persona.per_nombre,
+        per_appaterno: persona.per_appaterno,
+        per_apmaterno: persona.per_apmaterno,
+        per_fechnac: persona.per_fechnac,
+        per_sexo: persona.per_sexo,
+        per_celular: persona.per_celular,
+        per_email: persona.per_email,
+        per_direccion: persona.per_direccion
+    }));
+
+    axios.post('/guardarListaPersonal', {
+        personas: datos
+    })
+    .then(response => {
+        // Vaciar la lista solo cuando el servidor confirme el registro.
+        this.personasTemporales = [];
+        this.indiceEdicion = null;
+        this.limpiarFormulario();
+
+        this.$swal(
+            'Correcto',
+            response.data.message || 'Personas registradas correctamente',
+            'success'
+        );
+    })
+    .catch(error => {
+        console.error(error);
+
+        this.$swal(
+            'Error',
+            'No se pudo registrar la lista de personas.',
+            'error'
+        );
+    });
+},
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
       obtenerImagen(e){
           try {

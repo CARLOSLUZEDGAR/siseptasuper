@@ -45,9 +45,9 @@
                       @endcan
                     </ul>
                     <ul class="nav nav-treeview" style="display: none;">
-                      @can('view-dat-carnet', Model::class)
+                      @can('view-diplomados', Model::class)
                       <li class="nav-item">
-                        <router-link class="nav-link" to='/DatosPersonal'>
+                        <router-link class="nav-link" to='/Diplomados'>
                           <i class="fas fa-user nav-icon"></i>
                           <p>Diplomados</p>
                         </router-link>
@@ -55,9 +55,9 @@
                       @endcan
                     </ul>
                     <ul class="nav nav-treeview" style="display: none;">
-                      @can('view-dat-carnet', Model::class)
+                      @can('view-modulos', Model::class)
                       <li class="nav-item">
-                        <router-link class="nav-link" to='/DatosPersonal'>
+                        <router-link class="nav-link" to='/Modulos'>
                           <i class="fas fa-user nav-icon"></i>
                           <p>Módulos</p>
                         </router-link>
@@ -65,9 +65,9 @@
                       @endcan
                     </ul>
                     <ul class="nav nav-treeview" style="display: none;">
-                      @can('view-dat-carnet', Model::class)
+                      @can('view-materias', Model::class)
                       <li class="nav-item">
-                        <router-link class="nav-link" to='/DatosPersonal'>
+                        <router-link class="nav-link" to='/Materias'>
                           <i class="fas fa-user nav-icon"></i>
                           <p>Materias</p>
                         </router-link>
@@ -90,7 +90,7 @@
                     <ul class="nav nav-treeview" style="display: none;">
                       @can('view-dat-carnet', Model::class)
                       <li class="nav-item">
-                        <router-link class="nav-link" to='/DatosPersonal'>
+                        <router-link class="nav-link" to='/DatosCursantes'>
                           <i class="fas fa-user nav-icon"></i>
                           <p>Registro</p>
                         </router-link>

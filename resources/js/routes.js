@@ -24,12 +24,12 @@ export default new Router ({
         },
 
         {
-            path: '/DatosPersonal',
-            name: 'DatosPersonal',
-            component: require('./components/DatosPersonal.vue').default,
+            path: '/DatosCursantes',
+            name: 'DatosCursantes',
+            component: require('./components/DatosCursantes.vue').default,
             beforeEnter: (to, from, next) => {
                 let per = window.user.permissions.map(permission=>permission.name);
-                if (per.includes('view-dat-carnet')) {
+                if (per.includes('view-cursantes')) {
                     next();
                 } else {
                     next(from.path);
@@ -38,12 +38,12 @@ export default new Router ({
         },
         
         {
-            path: '/RegistroPersonal',
-            name: 'RegistroPersonal',
-            component: require('./components/RegistroPersonal.vue').default,
+            path: '/RegistroCursantes',
+            name: 'RegistroCursantes',
+            component: require('./components/RegistroCursantes.vue').default,
             beforeEnter: (to, from, next) => {
                 let per = window.user.permissions.map(permission=>permission.name);
-                if (per.includes('view-insert-per')) {
+                if (per.includes('view-insert-cursante')) {
                     next();
                 } else {
                     next(from.path);
@@ -72,6 +72,48 @@ export default new Router ({
             beforeEnter: (to, from, next) => {
                 let per = window.user.permissions.map(permission=>permission.name);
                 if (per.includes('view-gestion')) {
+                    next();
+                } else {
+                    next(from.path);
+                }
+            }
+        },
+
+        {
+            path: '/Diplomados',
+            name: 'Diplomados',
+            component: require('./components/Diplomado.vue').default,
+            beforeEnter: (to, from, next) => {
+                let per = window.user.permissions.map(permission=>permission.name);
+                if (per.includes('view-diplomados')) {
+                    next();
+                } else {
+                    next(from.path);
+                }
+            }
+        },
+
+        {
+            path: '/Modulos',
+            name: 'Modulos',
+            component: require('./components/Modulo.vue').default,
+            beforeEnter: (to, from, next) => {
+                let per = window.user.permissions.map(permission=>permission.name);
+                if (per.includes('view-modulos')) {
+                    next();
+                } else {
+                    next(from.path);
+                }
+            }
+        },
+
+        {
+            path: '/Materias',
+            name: 'Materias',
+            component: require('./components/Materia.vue').default,
+            beforeEnter: (to, from, next) => {
+                let per = window.user.permissions.map(permission=>permission.name);
+                if (per.includes('view-materias')) {
                     next();
                 } else {
                     next(from.path);

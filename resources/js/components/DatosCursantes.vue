@@ -37,7 +37,7 @@
                       <!-- Buscar Personal -->
                     </h3>  
                   </div>                  
-                  <div class="col-sm-4" v-if="$auth.can('view-insert-per')">
+                  <div class="col-sm-4" v-if="$auth.can('view-insert-cursante')">
                     <button class="btn btn-primary btn-sm float-right" type="submit" @click="Registro()">
                       <i class="fas fa-user-plus"></i>&nbsp; REGISTRAR NUEVO
                     </button>
@@ -190,7 +190,7 @@ export default {
 
     Registro(){
       this.$router.push({
-                    name: "RegistroPersonal",  
+                    name: "RegistroCursantes",  
                 });
     },
     

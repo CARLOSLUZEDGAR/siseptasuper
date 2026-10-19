@@ -169,10 +169,10 @@
 
                             <!-- Navegación del carrusel -->
                             <div class="form-group row justify-content-end">
-                                <!-- <button type="button" class="btn btn-primary" @click="previousStep">
+                                <button type="button" class="btn btn-primary" @click="previousStep">
                                     <i class="fas fa-backward"></i>&nbsp; ANTERIOR
                                 </button>
-                                &nbsp; -->
+                                &nbsp;
                                 <button type="button" class="btn btn-danger" @click="guardarPromocion()">
                                     <i class="fas fa-forward"></i>&nbsp; GUARDAR
                                 </button>
