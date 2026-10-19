@@ -44,12 +44,12 @@
                   </div>  
                 </div>
                 <div class="card-body">
-                    <h3><i class="fas fa-inbox"></i>&nbsp;REGISTRAR INFORMACIÓN</h3>
+                    <h3><i class="fas fa-inbox"></i>&nbsp;SELECCIONAR PROMOCIÓN</h3>
                     <br>
                     <div class="form-group row">
                         <div class="col-md-4">
                             <label class="form-control-label" for="text-input">Especialidad</label>
-                            <select class="form-control" v-model="diplomado" @change="ultimaPromocion(diplomado)" :class="{ 'is-invalid' : $v.diplomado.$error, 'is-valid':!$v.diplomado.$invalid }">
+                            <select class="form-control" v-model="diplomado" @change="ListarPromociones(diplomado, gestion)" :class="{ 'is-invalid' : $v.diplomado.$error, 'is-valid':!$v.diplomado.$invalid }">
                                 <option value="" disabled>SELECCIONE</option>
                                 <option v-for="diplomado in arrayDiplomado" :key="diplomado.id" :value="diplomado.id"  v-text="diplomado.diplomado"></option>
                             </select>
@@ -59,45 +59,29 @@
                         </div>
                         <div class="col-md-4">
                             <label class="form-control-label" for="text-input">Gestión</label>
-                            <select class="form-control" v-model="gestion" :class="{ 'is-invalid' : $v.gestion.$error, 'is-valid':!$v.gestion.$invalid }">
+                            <select class="form-control" v-model="gestion" @change="ListarPromociones(diplomado, gestion)" :class="{ 'is-invalid' : $v.gestion.$error, 'is-valid':!$v.gestion.$invalid }">
                                 <option value="" disabled>SELECCIONE</option>
                                 <option v-for="a in anios" :key="a" :value="a">{{ a }}</option>
                             </select>
                             <div class="invalid-feedback">
                                 <span v-if="!$v.gestion.required">Este campo es Requerido</span>
                             </div>
-                        </div>  
+                        </div> 
+                        <div class="col-md-4">
+                            <label class="form-control-label" for="text-input">Promoción</label>
+                            <select class="form-control" v-model="promocion" :class="{ 'is-invalid' : $v.promocion.$error, 'is-valid':!$v.promocion.$invalid }">
+                                <option value="" disabled>SELECCIONE</option>
+                                <option v-for="promocion in arrayPromocion" :key="promocion.id" :value="promocion.id"  v-text="promocion.promo"></option>
+                            </select>
+                            <div class="invalid-feedback">
+                                <span v-if="!$v.promocion.required">Este campo es Requerido</span>
+                            </div>
+                        </div> 
                     </div>
-
-
                   <form>
-                        
+                        <h3><i class="fas fa-inbox"></i>&nbsp;CURSANTE</h3>
+                        <br>
                         <div class="form-group row">
-                            <div class="col-md-3">
-                                <label class="form-control-label" for="text-input">Diplomado en</label>
-                                <select class="form-control" v-model="per_diplomado" :class="{ 'is-invalid' : $v.per_diplomado.$error, 'is-valid':!$v.per_diplomado.$invalid }">
-                                    <option value="" disabled>SELECCIONE</option>
-                                    <option value="1">TECNICO</option>
-                                    <option value="2">DEFENSA AÉREA</option>
-                                    <option value="3">APOYO OPERATIVO</option>
-                                    <option value="4">MÚSICA</option>
-                                </select>
-                                <div class="invalid-feedback">
-                                    <span v-if="!$v.per_diplomado.required">Este campo es Requerido</span>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-control-label" for="text-input">Fuerza</label>
-                                <select class="form-control" v-model="per_fuerza" :class="{ 'is-invalid' : $v.per_fuerza.$error, 'is-valid':!$v.per_fuerza.$invalid }">
-                                    <option value="" disabled>SELECCIONE</option>
-                                    <option value="1">EJERCITO</option>
-                                    <option value="2">FUERZA AÉREA</option>
-                                    <option value="3">ARMADA</option>
-                                </select>
-                                <div class="invalid-feedback">
-                                    <span v-if="!$v.per_fuerza.required">Este campo es Requerido</span>
-                                </div>
-                            </div>
                             <div class="col-md-3">
                                 <label class="form-control-label" for="text-input">Carnet de Identidad</label>
                                 <input type="text" v-model="per_ci" class="form-control" :class="{ 'is-invalid' : $v.per_ci.$error, 'is-valid':!$v.per_ci.$invalid }">
@@ -111,22 +95,29 @@
                                 <div class="invalid-feedback">
                                     <span v-if="!$v.per_cm.required">Este campo es Requerido</span>
                                 </div>
-                            </div>  
-                        </div>
-                        <div class="form-group row">  
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-control-label" for="text-input">Fuerza</label>
+                                <select class="form-control" v-model="per_fuerza" @change="ListarGrado(per_fuerza)" :class="{ 'is-invalid' : $v.per_fuerza.$error, 'is-valid':!$v.per_fuerza.$invalid }">
+                                    <option value="" disabled>SELECCIONE</option>
+                                    <option v-for="fuerza in arrayFuerza" :key="fuerza.id" :value="fuerza.id"  v-text="fuerza.fuerza"></option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    <span v-if="!$v.per_fuerza.required">Este campo es Requerido</span>
+                                </div>
+                            </div>
                             <div class="col-md-3">
                                 <label class="form-control-label" for="text-input">Grado</label>
                                 <select class="form-control" v-model="per_grado" :class="{ 'is-invalid' : $v.per_grado.$error, 'is-valid':!$v.per_grado.$invalid }">
                                     <option value="" disabled>SELECCIONE</option>
-                                    <option value="1">SOF. MY.</option>
-                                    <option value="2">SOF. 1RO.</option>
-                                    <option value="3">SOF. 2DO.</option>
-                                    <option value="3">SOF. INC.</option>
+                                    <option v-for="grado in arrayGrado" :key="grado.id" :value="grado.id"  v-text="grado.abreviatura"></option>
                                 </select>
                                 <div class="invalid-feedback">
                                     <span v-if="!$v.per_grado.required">Este campo es Requerido</span>
                                 </div>
-                            </div>          
+                            </div>      
+                        </div>
+                        <div class="form-group row">          
                             <div class="col-md-3">
                                 <label class="form-control-label" for="text-input">Nombres</label>
                                 <input type="text" v-model.trim="per_nombre" class="form-control" style="text-transform:uppercase;" :class="{ 'is-invalid' : $v.per_nombre.$error, 'is-valid':!$v.per_nombre.$invalid }">
@@ -151,9 +142,6 @@
                                     <span v-else-if="!$v.per_apmaterno.letrasSpanishVacio">Solo letras</span>
                                 </div>                                
                             </div>
-                        </div>
-                        <div class="form-group row">
-                            
                             <div class="col-md-3">
                                 <label class="form-control-label" for="text-input">Fecha Nacimiento</label>
                                 <input type="date" v-model="per_fechnac" class="form-control" :class="{ 'is-invalid' : $v.per_fechnac.$error, 'is-valid':!$v.per_fechnac.$invalid }">
@@ -161,7 +149,9 @@
                                     <span v-if="!$v.per_fechnac.required">Este campo es Requerido</span>
                                 </div>
                             </div> 
-                            <div class="col-md-3">
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-2">
                                 <label class="form-control-label" for="text-input">Sexo</label>
                                 <select class="form-control" v-model="per_sexo" :class="{ 'is-invalid' : $v.per_sexo.$error, 'is-valid':!$v.per_sexo.$invalid }">
                                     <option value="" disabled>SELECCIONE</option>
@@ -172,7 +162,7 @@
                                     <span v-if="!$v.per_sexo.required">Este campo es Requerido</span>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <label class="form-control-label" for="text-input">Celular </label>
                                 <input type="text" v-model.number="per_celular" class="form-control" style="text-transform:uppercase;" :class="{ 'is-invalid' : $v.per_celular.$error, 'is-valid':!$v.per_celular.$invalid }">
                                 <div class="invalid-feedback">
@@ -181,29 +171,27 @@
                                     <span v-else-if="!$v.per_celular.length">Debe contener 8 digitos</span>
                                 </div>
                             </div> 
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <label class="form-control-label" for="text-input">E-mail </label>
                                 <input type="text" v-model.trim="per_email" class="form-control" :class="{ 'is-invalid' : $v.per_email.$error, 'is-valid':!$v.per_email.$invalid }">
                                 <div class="invalid-feedback">
                                     <span v-if="!$v.per_email.required">Este campo es Requerido</span>
                                     <span v-else-if="!$v.per_email.email">Email Incorrecto</span>
                                 </div>
-                            </div>                           
-                        </div>
-                        <div class="form-group row">
-                            <div class="col-md-6">
+                            </div> 
+                            <div class="col-md-4">
                                 <label class="form-control-label" for="text-input">Dirección</label>
                                 <input type="text" v-model.trim="per_direccion" class="form-control" style="text-transform:uppercase;" :class="{ 'is-invalid' : $v.per_direccion.$error, 'is-valid':!$v.per_direccion.$invalid }">
                                 <div class="invalid-feedback">
                                     <span v-if="!$v.per_direccion.required">Este campo es Requerido</span>
                                 </div>
-                            </div>                             
+                            </div>                          
                         </div>
-                        <div class="form-group row">
+                        <!-- <div class="form-group row">
                             <div class="col-md-3" style="text-align: center;">
-                              <template>
+                              <template> -->
                                 <!-- <img :src="v === 0 ? '/img/avatar.jpg' : imagen" width="150" height="150" style="border: 1.5px solid black;"> -->
-                                <img :src="v === 0 ? 'URL_AVATAR_SUPABASE' : imagen" width="150" height="150" style="border: 1.5px solid black;">
+                                <!-- <img :src="v === 0 ? 'URL_AVATAR_SUPABASE' : imagen" width="150" height="150" style="border: 1.5px solid black;">
                               </template> 
                             </div>
                             <div class="col-md-3">
@@ -213,100 +201,75 @@
                                     <div v-if="!$v.per_foto.required">Por favor, carga tu fotografia.</div>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
                         <button type="button" class="btn btn-primary" @click="agregarPersonal()">
                             <i class="fas fa-plus"></i>&nbsp; AGREGAR
                         </button>             
                   </form>
 
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h4>
+                            <i class="fas fa-users"></i>
+                            Lista de Cursantes
+                        </h4>
+                    </div>
 
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Nº</th>
+                                        <th>C.I.</th>
+                                        <th>C.M.</th>
+                                        <th>Fuerza</th>
+                                        <th>Grado</th>
+                                        <th>Nombres</th>
+                                        <th>Ap. Paterno</th>
+                                        <th>Ap. Materno</th>
+                                        <th>Opciones</th>
+                                    </tr>
+                                </thead>
 
+                                <tbody>
+                                    <tr v-if="personasTemporales.length === 0">
+                                        <td colspan="9" class="text-center">
+                                            No hay personas agregadas.
+                                        </td>
+                                    </tr>
 
+                                    <tr v-for="(persona, index) in personasTemporales" :key="persona.idTemporal">
+                                        <td>{{ index + 1 }}</td>
+                                        <td>{{ persona.per_ci }}</td>
+                                        <td>{{ persona.per_cm }}</td>
+                                        <td>{{ persona.per_fuerza }}</td>
+                                        <td>{{ persona.per_grado }}</td>
+                                        <td>{{ persona.per_nombre }}</td>
+                                        <td>{{ persona.per_appaterno }}</td>
+                                        <td>{{ persona.per_apmaterno }}</td>
+                                        <td>
+                                            <button type="button" class="btn btn-warning btn-sm" @click="editarPersonal(index)" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-danger btn-sm" @click="eliminarPersonal(index)" title="Eliminar">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
 
+                        <div class="text-right">
+                            <strong>Total de Cursantes a ser registrados: {{ personasTemporales.length }}</strong>
+                        </div>
 
-
-                  <div class="card mt-4">
-    <div class="card-header">
-        <h4>
-            <i class="fas fa-users"></i>
-            Lista de personas
-        </h4>
-    </div>
-
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-bordered table-striped">
-                <thead>
-                    <tr>
-                        <th>N.º</th>
-                        <th>C.I.</th>
-                        <th>Carnet Militar</th>
-                        <th>Grado</th>
-                        <th>Nombres</th>
-                        <th>Ap. Paterno</th>
-                        <th>Ap. Materno</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    <tr v-if="personasTemporales.length === 0">
-                        <td colspan="8" class="text-center">
-                            No hay personas agregadas.
-                        </td>
-                    </tr>
-
-                    <tr
-                        v-for="(persona, index) in personasTemporales"
-                        :key="persona.idTemporal"
-                    >
-                        <td>{{ index + 1 }}</td>
-                        <td>{{ persona.per_ci }}</td>
-                        <td>{{ persona.per_cm }}</td>
-                        <td>{{ persona.per_grado }}</td>
-                        <td>{{ persona.per_nombre }}</td>
-                        <td>{{ persona.per_appaterno }}</td>
-                        <td>{{ persona.per_apmaterno }}</td>
-
-                        <td>
-                            <button
-                                type="button"
-                                class="btn btn-warning btn-sm"
-                                @click="editarPersonal(index)"
-                                title="Editar"
-                            >
-                                <i class="fas fa-edit"></i>
-                            </button>
-
-                            <button
-                                type="button"
-                                class="btn btn-danger btn-sm"
-                                @click="eliminarPersonal(index)"
-                                title="Eliminar"
-                            >
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="text-right">
-            <strong>Total de personas: {{ personasTemporales.length }}</strong>
-        </div>
-
-        <button
-            type="button"
-            class="btn btn-success mt-3"
-            @click="registrarLista()"
-            :disabled="personasTemporales.length === 0"
-        >
-            <i class="fas fa-save"></i>
-            REGISTRAR LISTA
-        </button>
-    </div>
-</div>
+                        <button type="button" class="btn btn-success mt-3" @click="registrarLista()" :disabled="personasTemporales.length === 0">
+                            <i class="fas fa-save"></i>REGISTRAR LISTA
+                        </button>
+                    </div>
+                </div>
 
 
 
@@ -345,11 +308,11 @@
 
 
         // INICIO VARIABLES DGAE
-        per_foto : '',
-        per_diplomado : '',
-        per_fuerza : '',
+        // per_foto : '',
+        
         per_ci : '',
         per_cm : '',
+        per_fuerza : '',
         per_grado : '',
         per_nombre : '',
         per_appaterno : '',
@@ -361,11 +324,15 @@
         per_direccion : '',
         diplomado : '',
         gestion : '',
+        promocion : '',
         v : 0,
         arraySexo : ['MASCULINO','FEMENINO'],
         // FIN VARIABLES DGAE
         arrayDiplomado : [],
         arrayPersonal : [],
+        arrayPromocion : [],
+        arrayFuerza : [],
+        arrayGrado : [],
         anios: [],
         
         listaPersonal: [],
@@ -384,83 +351,82 @@
               'from'          :   0,
               'to'            :   0,
           },
-      offset : 3,
-      }
+        offset : 3,
+        }
     },
   
     validations: {
-      per_foto: { required },
-      per_diplomado: { required },
-      per_fuerza: { required },
-      per_ci: { required },
-      per_cm: { required },
-      per_grado: { required },
-      per_nombre : { required, letrasSpanish: value => /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ]+$/.test(value) },
-      per_appaterno : { letrasSpanishVacio: value => !value || /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ]+$/.test(value) },
-      per_apmaterno : { letrasSpanishVacio: value => !value || /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ]+$/.test(value) },            
-      per_sexo : { required },
-      per_celular : { required, numeric, hasSpecificLength: value => value && value.toString().length === 8 },
-      per_email : { required, email},
-      per_fechnac : { required },
-      per_direccion : { required },
-
-
-
+        // per_foto: { required },
+        per_fuerza: { required },
+        per_ci: { required },
+        per_cm: { required },
+        per_fuerza: { required },
+        per_grado: { required },
+        per_nombre : { required, letrasSpanish: value => /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ]+$/.test(value) },
+        per_appaterno : { letrasSpanishVacio: value => !value || /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ]+$/.test(value) },
+        per_apmaterno : { letrasSpanishVacio: value => !value || /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ]+$/.test(value) },            
+        per_sexo : { required },
+        per_celular : { required, numeric, hasSpecificLength: value => value && value.toString().length === 8 },
+        per_email : { required, email},
+        per_fechnac : { required },
+        per_direccion : { required },
         diplomado : { required },
-        gestion: { required },
+        gestion : { required },
+        promocion : { required },
 
 
-
-
-
-      validationGroupReg: [
-      'per_foto',
-      'per_ci',
-      'per_nombre',
-      'per_appaterno',
-      'per_apmaterno',
-      'per_sexo',
-      'per_celular',
-      'per_email',
-      'per_fechnac',
-      'per_direccion'],
+        validationGroupRegTemp: [
+        // 'per_foto',
+        'per_ci',
+        'per_cm',
+        'per_fuerza',
+        'per_grado',
+        'per_nombre',
+        'per_appaterno',
+        'per_apmaterno',
+        'per_sexo',
+        'per_celular',
+        'per_email',
+        'per_fechnac',
+        'per_direccion'],
     },
   
    computed: {
-          isActived   : function(){
-              return this.pagination.current_page;
-          },
-          //creando funcion para calcular los elementos de la paginacion
-          pagesNumber : function(){
-              //si la pagina llega hasta la ultima pagina esta me va retornar un arrary vacio
-              if(!this.pagination.to){
-                  return [];
-              }
-  
-              var from =  this.pagination.current_page - this.offset;
-              if(from < 1){
-                  from = 1;
-              }
-  
-              var to = from + (this.offset * 2);
-              if(to >= this.pagination.last_page){
-                  to = this.pagination.last_page;
-              }
-  
-              var pagesArray = [];
-              while(from <= to){
-                  pagesArray.push(from);
-                  from++;
-              }
-              return pagesArray;
-          },
-          imagen(){
-              return this.per_foto;
-          },
-          imagenA(){
-              return this.per_fotoA;
-          }
-      },
+        isActived   : function(){
+            return this.pagination.current_page;
+        },
+        //creando funcion para calcular los elementos de la paginacion
+        pagesNumber : function(){
+            //si la pagina llega hasta la ultima pagina esta me va retornar un arrary vacio
+            if(!this.pagination.to){
+                return [];
+            }
+
+            var from =  this.pagination.current_page - this.offset;
+            if(from < 1){
+                from = 1;
+            }
+
+            var to = from + (this.offset * 2);
+            if(to >= this.pagination.last_page){
+                to = this.pagination.last_page;
+            }
+
+            var pagesArray = [];
+            while(from <= to){
+                pagesArray.push(from);
+                from++;
+            }
+            return pagesArray;
+        },
+        // imagen(){
+        //     return this.per_foto;
+        // },
+        // imagenA(){
+        //     return this.per_fotoA;
+        // }
+    },
+
     mounted() {
         let actual = new Date().getFullYear();
         for (let i = actual - 5; i <= actual + 5; i++) {
@@ -468,21 +434,18 @@
         }
 
         this.ListarDiplomados();
+        this.ListarFuerzas();
 
 
-
-
-
-        this.NuevoPersonal();
+        // this.NuevoPersonal();
     },
 
     methods: {
-
-      Atras(){ //DGAE
-          this.$router.push({
-              name: "DatosCursantes",  
-          });
-      },
+        Atras(){ //DGAE
+            this.$router.push({
+                name: "DatosCursantes",  
+            });
+        },
 
         ListarDiplomados(){
             let me = this;
@@ -498,168 +461,216 @@
             })
         },
 
+        ListarPromociones(especialidad, gestion){
+            this.promocion = '';
+            this.arrayPromocion = [];
+            let me = this;
+            axios
+            .post("/listarPromocion", {
+                especialidad : especialidad,
+                gestion : gestion
+            })
+            .then(function (response) {
+            me.arrayPromocion = response.data.promocion
+            })
+            .catch(function (error) {
+            // handle error
+            console.log(error);
+            })
+        },
 
+        ListarFuerzas(){
+            let me = this;
+            axios
+            .post("/listarFuerza", {
+            })
+            .then(function (response) {
+            me.arrayFuerza = response.data.fuerza
+            })
+            .catch(function (error) {
+            // handle error
+            console.log(error);
+            })
+        },
 
-      agregarPersonal() {
-    // Ejecutar las validaciones de Vuelidate
-    this.$v.$touch();
+        ListarGrado(fuerza){
+            this.per_grado = '';
+            this.arrayGrado = [];
+            let me = this;
+            axios
+            .post("/listarGrado", {
+                fuerza : fuerza,
+            })
+            .then(function (response) {
+            me.arrayGrado = response.data.grado
+            })
+            .catch(function (error) {
+            // handle error
+            console.log(error);
+            })
+        },
 
-    if (this.$v.$invalid) {
-        return;
-    }
+        agregarPersonal() {
+            // Ejecutar las validaciones de Vuelidate
+            this.$v.$touch();
 
-    const persona = {
-        idTemporal: this.indiceEdicion !== null
-            ? this.personasTemporales[this.indiceEdicion].idTemporal
-            : ++this.contadorTemporal,
+            if (this.$v.$invalid) {
+                return;
+            }
 
-        per_diplomado: this.per_diplomado,
-        per_fuerza: this.per_fuerza,
-        per_ci: this.per_ci,
-        per_cm: this.per_cm,
-        per_grado: this.per_grado,
-        per_nombre: this.per_nombre,
-        per_appaterno: this.per_appaterno,
-        per_apmaterno: this.per_apmaterno,
-        per_fechnac: this.per_fechnac,
-        per_sexo: this.per_sexo,
-        per_celular: this.per_celular,
-        per_email: this.per_email,
-        per_direccion: this.per_direccion,
+            const persona = {
+                idTemporal: this.indiceEdicion !== null
+                    ? this.personasTemporales[this.indiceEdicion].idTemporal
+                    : ++this.contadorTemporal,
 
-        // Conservar el archivo y su vista previa
-        per_foto: this.per_foto,
-        fotoVista: this.imagen
-    };
+                // per_diplomado: this.per_diplomado,
+                per_fuerza: this.per_fuerza,
+                per_grado: this.per_grado,
+                per_ci: this.per_ci,
+                per_cm: this.per_cm,
+                per_nombre: this.per_nombre,
+                per_appaterno: this.per_appaterno,
+                per_apmaterno: this.per_apmaterno,
+                per_fechnac: this.per_fechnac,
+                per_sexo: this.per_sexo,
+                per_celular: this.per_celular,
+                per_email: this.per_email,
+                per_direccion: this.per_direccion,
 
-    if (this.indiceEdicion !== null) {
-        // Actualizar la persona seleccionada
-        this.$set(
-            this.personasTemporales,
-            this.indiceEdicion,
-            persona
-        );
+                // Conservar el archivo y su vista previa
+                // per_foto: this.per_foto,
+                // fotoVista: this.imagen
+            };
 
-        this.indiceEdicion = null;
-    } else {
-        // Agregar una nueva persona
-        this.personasTemporales.push(persona);
-    }
+            if (this.indiceEdicion !== null) {
+                // Actualizar la persona seleccionada
+                this.$set(
+                    this.personasTemporales,
+                    this.indiceEdicion,
+                    persona
+                );
 
-    this.limpiarFormulario();
-},
+                this.indiceEdicion = null;
+            } else {
+                // Agregar una nueva persona
+                this.personasTemporales.push(persona);
+            }
 
-editarPersonal(index) {
-    const persona = this.personasTemporales[index];
+            this.limpiarFormulario();
+        },
 
-    this.per_diplomado = persona.per_diplomado;
-    this.per_fuerza = persona.per_fuerza;
-    this.per_ci = persona.per_ci;
-    this.per_cm = persona.per_cm;
-    this.per_grado = persona.per_grado;
-    this.per_nombre = persona.per_nombre;
-    this.per_appaterno = persona.per_appaterno;
-    this.per_apmaterno = persona.per_apmaterno;
-    this.per_fechnac = persona.per_fechnac;
-    this.per_sexo = persona.per_sexo;
-    this.per_celular = persona.per_celular;
-    this.per_email = persona.per_email;
-    this.per_direccion = persona.per_direccion;
-    this.per_foto = persona.per_foto;
-    this.imagen = persona.fotoVista;
+        editarPersonal(index) {
+            const persona = this.personasTemporales[index];
 
-    this.indiceEdicion = index;
+            // this.per_diplomado = persona.per_diplomado;
+            this.per_fuerza = persona.per_fuerza;
+            this.per_ci = persona.per_ci;
+            this.per_cm = persona.per_cm;
+            this.per_grado = persona.per_grado;
+            this.per_nombre = persona.per_nombre;
+            this.per_appaterno = persona.per_appaterno;
+            this.per_apmaterno = persona.per_apmaterno;
+            this.per_fechnac = persona.per_fechnac;
+            this.per_sexo = persona.per_sexo;
+            this.per_celular = persona.per_celular;
+            this.per_email = persona.per_email;
+            this.per_direccion = persona.per_direccion;
+            // this.per_foto = persona.per_foto;
+            // this.imagen = persona.fotoVista;
 
-    // Limpiar los errores anteriores de validación
-    this.$v.$reset();
-},
+            this.indiceEdicion = index;
 
-eliminarPersonal(index) {
-    this.personasTemporales.splice(index, 1);
+            // Limpiar los errores anteriores de validación
+            this.$v.$reset();
+        },
 
-    // Si se elimina el registro que se estaba editando,
-    // cancelar el modo de edición.
-    if (this.indiceEdicion === index) {
-        this.indiceEdicion = null;
-        this.limpiarFormulario();
-    } else if (
-        this.indiceEdicion !== null &&
-        this.indiceEdicion > index
-    ) {
-        this.indiceEdicion--;
-    }
-},
+        eliminarPersonal(index) {
+            this.personasTemporales.splice(index, 1);
 
-limpiarFormulario() {
-    this.per_diplomado = '';
-    this.per_fuerza = '';
-    this.per_ci = '';
-    this.per_cm = '';
-    this.per_grado = '';
-    this.per_nombre = '';
-    this.per_appaterno = '';
-    this.per_apmaterno = '';
-    this.per_fechnac = '';
-    this.per_sexo = '';
-    this.per_celular = '';
-    this.per_email = '';
-    this.per_direccion = '';
-    this.per_foto = null;
+            // Si se elimina el registro que se estaba editando,
+            // cancelar el modo de edición.
+            if (this.indiceEdicion === index) {
+                this.indiceEdicion = null;
+                this.limpiarFormulario();
+            } else if (
+                this.indiceEdicion !== null &&
+                this.indiceEdicion > index
+            ) {
+                this.indiceEdicion--;
+            }
+        },
 
-    // Ajusta esta ruta a la imagen predeterminada de tu proyecto.
-    this.imagen = '/img/avatar.jpg';
+        limpiarFormulario() {
+            // this.per_diplomado = '';
+            this.per_fuerza = '';
+            this.per_ci = '';
+            this.per_cm = '';
+            this.per_grado = '';
+            this.per_nombre = '';
+            this.per_appaterno = '';
+            this.per_apmaterno = '';
+            this.per_fechnac = '';
+            this.per_sexo = '';
+            this.per_celular = '';
+            this.per_email = '';
+            this.per_direccion = '';
+            // this.per_foto = null;
 
-    this.$nextTick(() => {
-        this.$v.$reset();
-    });
-},
+            // Ajusta esta ruta a la imagen predeterminada de tu proyecto.
+            // this.imagen = '/img/avatar.jpg';
 
-registrarLista() {
-    if (this.personasTemporales.length === 0) {
-        return;
-    }
+            this.$nextTick(() => {
+                this.$v.$reset();
+            });
+        },
 
-    const datos = this.personasTemporales.map(persona => ({
-        per_diplomado: persona.per_diplomado,
-        per_fuerza: persona.per_fuerza,
-        per_ci: persona.per_ci,
-        per_cm: persona.per_cm,
-        per_grado: persona.per_grado,
-        per_nombre: persona.per_nombre,
-        per_appaterno: persona.per_appaterno,
-        per_apmaterno: persona.per_apmaterno,
-        per_fechnac: persona.per_fechnac,
-        per_sexo: persona.per_sexo,
-        per_celular: persona.per_celular,
-        per_email: persona.per_email,
-        per_direccion: persona.per_direccion
-    }));
+        registrarLista() {
+            if (this.personasTemporales.length === 0) {
+                return;
+            }
 
-    axios.post('/guardarListaPersonal', {
-        personas: datos
-    })
-    .then(response => {
-        // Vaciar la lista solo cuando el servidor confirme el registro.
-        this.personasTemporales = [];
-        this.indiceEdicion = null;
-        this.limpiarFormulario();
+            const datos = this.personasTemporales.map(persona => ({
+                // per_diplomado: persona.per_diplomado,
+                per_fuerza: persona.per_fuerza,
+                per_ci: persona.per_ci,
+                per_cm: persona.per_cm,
+                per_grado: persona.per_grado,
+                per_nombre: persona.per_nombre,
+                per_appaterno: persona.per_appaterno,
+                per_apmaterno: persona.per_apmaterno,
+                per_fechnac: persona.per_fechnac,
+                per_sexo: persona.per_sexo,
+                per_celular: persona.per_celular,
+                per_email: persona.per_email,
+                per_direccion: persona.per_direccion
+            }));
+            let me = this;
+            axios.post('/guardarListaCursantes', {
+                cursantes : datos,
+                diplopromo_id : me.promocion
+            })
+            .then(response => {
+                // Vaciar la lista solo cuando el servidor confirme el registro.
+                this.personasTemporales = [];
+                this.indiceEdicion = null;
+                this.limpiarFormulario();
 
-        this.$swal(
-            'Correcto',
-            response.data.message || 'Personas registradas correctamente',
-            'success'
-        );
-    })
-    .catch(error => {
-        console.error(error);
+                this.$swal(
+                    'Correcto',
+                    response.data.message || 'Personas registradas correctamente',
+                    'success'
+                );
+            })
+            .catch(error => {
+                console.error(error);
 
-        this.$swal(
-            'Error',
-            'No se pudo registrar la lista de personas.',
-            'error'
-        );
-    });
-},
+                this.$swal(
+                    'Error',
+                    'No se pudo registrar la lista de personas.',
+                    'error'
+                );
+            });
+        },
 
 
 
@@ -689,20 +700,20 @@ registrarLista() {
           }
       },
 
-      NuevoPersonal(){ //DGAE
-        this.$v.validationGroupReg.$reset(),
-        this.per_foto = '',
-        this.per_ci = '',
-        this.per_nombre = '',
-        this.per_appaterno = '',
-        this.per_apmaterno = '',
-        this.per_sexo = '',
-        this.per_celular = '',
-        this.per_email = '',
-        this.per_fechnac = '',
-        this.per_direccion = '',
-        this.v = 0
-      },
+    //   NuevoPersonal(){ //DGAE
+    //     this.$v.validationGroupReg.$reset(),
+    //     this.per_foto = '',
+    //     this.per_ci = '',
+    //     this.per_nombre = '',
+    //     this.per_appaterno = '',
+    //     this.per_apmaterno = '',
+    //     this.per_sexo = '',
+    //     this.per_celular = '',
+    //     this.per_email = '',
+    //     this.per_fechnac = '',
+    //     this.per_direccion = '',
+    //     this.v = 0
+    //   },
   
       CrearPersonal(){ //DGAE
         if(!this.$v.validationGroupReg.$invalid){

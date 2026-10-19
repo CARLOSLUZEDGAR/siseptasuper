@@ -135,4 +135,16 @@ class DiplomadoPromocionController extends Controller
 
         return response()->json(['ultimopromo' => $ultimo_promocion]); 
     }
+
+    public function SelectDiplomadoPromocion (Request $request) {
+        $diplomado_promocion = DB::table('diplomado_promociones as dp')
+                    ->select('dp.*',)
+                    ->where('dp.estado', 1)
+                    ->where('dp.diplomado_id', $request->especialidad)
+                    ->where('dp.gestion', $request->gestion)
+                    ->orderBy('dp.promocion', 'desc')
+                    ->get();
+
+        return response()->json(['promocion' => $diplomado_promocion]); 
+    }
 }

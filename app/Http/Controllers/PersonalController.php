@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\DiplomadoPromocionCursante;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Personal;
@@ -23,112 +24,135 @@ class PersonalController extends Controller
 
     public function CrearPersonal(Request $request)
     {
-        DB::beginTransaction();
-
         try {
 
-            $storage = new \App\Services\SupabaseStorageService();
+            // $storage = new \App\Services\SupabaseStorageService();
 
             // =========================
             // 📸 FOTO
             // =========================
-            $urlFoto = null;
+            // $urlFoto = null;
 
-            if ($request->filled('foto') || $request->hasFile('foto')) {
+            // if ($request->filled('foto') || $request->hasFile('foto')) {
 
-                try {
+            //     try {
 
-                    $ci = preg_replace('/[^A-Za-z0-9]/', '', $request->ci);
+            //         $ci = preg_replace('/[^A-Za-z0-9]/', '', $request->ci);
 
-                    $customName = $ci . '_' . \Illuminate\Support\Str::uuid();
+            //         $customName = $ci . '_' . \Illuminate\Support\Str::uuid();
 
-                    // =====================================
-                    // 📌 CASO 1: BASE64
-                    // =====================================
-                    if (
-                        is_string($request->foto) &&
-                        str_contains($request->foto, 'base64')
-                    ) {
+            //         // =====================================
+            //         // 📌 CASO 1: BASE64
+            //         // =====================================
+            //         if (
+            //             is_string($request->foto) &&
+            //             str_contains($request->foto, 'base64')
+            //         ) {
 
-                        // 🔥 subida directa del base64
-                        $urlFoto = $storage->upload(
-                            $request->foto,
-                            'img/personas',
-                            $customName
-                        );
-                    }
+            //             // 🔥 subida directa del base64
+            //             $urlFoto = $storage->upload(
+            //                 $request->foto,
+            //                 'img/personas',
+            //                 $customName
+            //             );
+            //         }
 
-                    // =====================================
-                    // 📌 CASO 2: ARCHIVO NORMAL
-                    // =====================================
-                    elseif ($request->hasFile('foto')) {
+            //         // =====================================
+            //         // 📌 CASO 2: ARCHIVO NORMAL
+            //         // =====================================
+            //         elseif ($request->hasFile('foto')) {
 
-                        $file = $request->file('foto');
+            //             $file = $request->file('foto');
 
-                        $urlFoto = $storage->upload(
-                            $file,
-                            'img/personas',
-                            $customName
-                        );
-                    }
+            //             $urlFoto = $storage->upload(
+            //                 $file,
+            //                 'img/personas',
+            //                 $customName
+            //             );
+            //         }
 
-                    // =====================================
-                    // 📌 FORMATO INVÁLIDO
-                    // =====================================
-                    else {
-                        throw new \Exception('Formato de foto no reconocido');
-                    }
+            //         // =====================================
+            //         // 📌 FORMATO INVÁLIDO
+            //         // =====================================
+            //         else {
+            //             throw new \Exception('Formato de foto no reconocido');
+            //         }
 
-                } catch (\Exception $e) {
+            //     } catch (\Exception $e) {
 
-                    logger()->error('ERROR FOTO', [
-            'mensaje' => $e->getMessage()
-        ]);
+            //         logger()->error('ERROR FOTO', [
+            //             'mensaje' => $e->getMessage()
+            //         ]);
 
-        throw new \Exception($e->getMessage());
-                }
-            }
+            //         throw new \Exception($e->getMessage());
+            //     }
+            // }
 
             // =========================
             // 👤 REGISTRO PERSONAL
             // =========================
-            $personal = Personal::create([
-                'per_foto' => $urlFoto,
-                'per_ci' => $request->ci,
-                'per_nombre' => mb_strtoupper($request->nombre),
-                'per_paterno' => mb_strtoupper($request->ap_paterno),
-                'per_materno' => mb_strtoupper($request->ap_materno),
-                'per_sexo' => $request->sexo,
-                'per_celular' => $request->celular,
-                'per_mail' => $request->email,
-                'per_fecha_nacimiento' => $request->fech_nac,
-                'per_direccion' => mb_strtoupper($request->direccion),
-                'estado' => '1',
-                'sysuser' => auth()->id()
-            ]);
+
+            DB::beginTransaction();
+
+            foreach ($request->cursantes as $curs) {
+                $cursante = Personal::create([
+                    'per_paterno' => $curs['per_appaterno'],
+                    'per_materno' => $curs['per_apmaterno'],
+                    'per_nombre' => $curs['per_nombre'],
+                    'per_fecha_nacimiento' => $curs['per_fechnac'],
+                    'per_sexo' => $curs['per_sexo'],
+                    'per_ci' => $curs['per_ci'],
+                    'per_cm' => $curs['per_cm'],
+                    'per_celular' => $curs['per_celular'],
+                    'per_mail' => $curs['per_email'],
+                    'per_foto' => 'FOTO NUEVA',
+                    'per_direccion' => $curs['per_direccion'],
+                    'estado' => 1,
+                    'sysuser' => Auth::user()->id
+                ]);
+
+                $diplopromo_cursante = DiplomadoPromocionCursante::create([
+                    'diplopromo_id' => $request->diplopromo_id,
+                    'personals_id' => $cursante->id,
+                    'observacion' => 'registro sin novedad',
+                    'estado' => 1,
+                    'sysuser' => Auth::user()->id
+                ]);
+            }
+
+            // $personal = Personal::create([
+            //     'per_foto' => 'FOTO NUEVA',
+            //     'per_ci' => $request->ci,
+            //     'per_nombre' => mb_strtoupper($request->nombre),
+            //     'per_paterno' => mb_strtoupper($request->ap_paterno),
+            //     'per_materno' => mb_strtoupper($request->ap_materno),
+            //     'per_sexo' => $request->sexo,
+            //     'per_celular' => $request->celular,
+            //     'per_mail' => $request->email,
+            //     'per_fecha_nacimiento' => $request->fech_nac,
+            //     'per_direccion' => mb_strtoupper($request->direccion),
+            //     'estado' => '1',
+            //     'sysuser' => auth()->id()
+            // ]);
      
             // =========================
             // 📂 DOCUMENTOS
             // =========================
            
             DB::commit();
-
             return response()->json([
                 'success' => true,
-                'personal' => $personal
-            ]);
+                'mensaje' => 'Cursantes registrados correctamente',
+                'cursante' => $request->cursantes
+                // 'situacion_evento' => $situacion_evento
+            ], 200);
 
         } catch (\Exception $e) {
-
             DB::rollBack();
-
-            logger()->error('Error en CrearPersonal', [
-                'error' => $e->getMessage()
-            ]);
-
             return response()->json([
-                'error' => 'Error al registrar personal',
-                'detalle' => $e->getMessage()
+                'success' => false,
+                'mensaje' => 'Ocurrió un error al registrar a los cursantes',
+                'error'   => $e->getMessage()
             ], 500);
         }
     }
