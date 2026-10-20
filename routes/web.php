@@ -84,6 +84,13 @@ Route::post('/listarPromocion', 'DiplomadoPromocionController@SelectDiplomadoPro
 Route::post('/listarFuerza', 'FuerzaController@ListarFuerza');
 Route::post('/listarGrado', 'GradoController@ListarGrado');
 Route::post('/guardarListaCursantes','PersonalController@CrearPersonal');
+Route::post('/listarModulo', 'DiplomadoModuloController@SelectDiplomadoModulo');
+Route::post('/listarMateria', 'ModuloMateriaController@SelectModuloMateria');
+Route::post('/listarCursantesPromocion', 'DiplomadoPromocionCursanteController@ListarDiplomadoPromocionCursante');
+Route::post('/listarEvaluacion', 'EvaluacionController@ListarEvaluacion');
+Route::post('/guardarNotasCursantes','CursanteNotaController@CrearCursanteNota');
+
+
 
 
 

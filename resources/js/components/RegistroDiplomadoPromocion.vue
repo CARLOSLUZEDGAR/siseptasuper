@@ -41,10 +41,9 @@
                     <form>
                         <div class="step" v-if="currentStep === 1">
                             <h3><i class="fas fa-inbox"></i>&nbsp;ASIGNAR GESTIÓN Y PROMOCIÓN</h3>
-                            <br>
                             <div class="form-group row">
-                                <div class="col-md-4">
-                                    <label class="form-control-label" for="text-input">Diplomado en</label>
+                                <div class="col-md-3">
+                                    <label class="form-control-label" for="text-input">Especialidad</label>
                                     <select class="form-control" v-model="diplomado" @change="ultimaPromocion(diplomado)" :class="{ 'is-invalid' : $v.diplomado.$error, 'is-valid':!$v.diplomado.$invalid }">
                                         <option value="" disabled>SELECCIONE</option>
                                         <option v-for="diplomado in arrayDiplomado" :key="diplomado.id" :value="diplomado.id"  v-text="diplomado.diplomado"></option>
@@ -53,7 +52,7 @@
                                         <span v-if="!$v.diplomado.required">Este campo es Requerido</span>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-2">
                                     <label class="form-control-label" for="text-input">Gestión</label>
                                     <select class="form-control" v-model="gestion" :class="{ 'is-invalid' : $v.gestion.$error, 'is-valid':!$v.gestion.$invalid }">
                                         <option value="" disabled>SELECCIONE</option>
@@ -63,7 +62,7 @@
                                         <span v-if="!$v.gestion.required">Este campo es Requerido</span>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label class="form-control-label" for="text-input">Periodo</label>
                                     <select class="form-control" v-model="periodo" :class="{ 'is-invalid' : $v.periodo.$error, 'is-valid':!$v.periodo.$invalid }">
                                         <option value="" disabled>SELECCIONE</option>
@@ -73,68 +72,102 @@
                                         <span v-if="!$v.periodo.required">Este campo es Requerido</span>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="form-group row">
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <label class="form-control-label" for="text-input">Ultima Promoción</label>
-                                    <p style="font-weight: bold;" class="form-control-label">{{ ultimopromocion == null || ultimopromocion === '' ? 'S/R' : ultimopromocion }}</p>
+                                    <p style="font-weight: bold;" class="form-control-label">{{ ultimopromocion == null || ultimopromocion === '' ? 'S/R' : ultimopromocion }} ({{ ultimopromo == null || ultimopromo === '' ? 'S/R' : ultimopromo }})</p>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <label class="form-control-label" for="text-input">Promoción</label>
-                                    <input type="text" v-model.trim="promocion" class="form-control" style="text-transform:uppercase;" :class="{ 'is-invalid' : $v.promocion.$error, 'is-valid':!$v.promocion.$invalid }">
+                                    <input type="number" v-model="promocion" min="0" class="form-control" :class="{ 'is-invalid' : $v.promocion.$error, 'is-valid':!$v.promocion.$invalid }">
                                     <div class="invalid-feedback">
                                         <span v-if="!$v.promocion.required">Este campo es Requerido</span>
-                                        <span v-else-if="!$v.promocion.letrasSpanish">Solo letras</span>
                                     </div>
-                                </div> 
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                 
                             </div>
                             <div class="form-group row justify-content-end">
                                 <button type="button" class="btn btn-danger" @click="nextStep"><i class="fas fa-forward"></i>&nbsp; SIGUIENTE</button>
                             </div>
                         </div> 
+
                         <div class="step" v-if="currentStep === 2">
-                            <h3><i class="fas fa-inbox"></i>&nbsp;MÓDULOS DEL DIPLOMADO</h3>
-                            <br>
+                            <h3>
+                                <i class="fas fa-inbox"></i>&nbsp;MÓDULOS DEL DIPLOMADO
+                            </h3>
+
+                            <!-- Promoción -->
+                            <div class="form-group row">
+                                <div class="col-md-3">
+                                    <label class="form-control-label">
+                                        Promoción:
+                                        <span style="text-transform: uppercase;">
+                                            {{ promocion }}
+                                        </span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Botón para agregar módulos -->
+                            <button type="button" class="btn btn-sm btn-outline-success mb-3" @click="crearModulos()">
+                                + Agregar Módulo
+                            </button>
+
+                            <!-- Tarjetas de módulos -->
+                            <div class="card mb-3" v-for="(input, index) in inputs" :key="'modulo-' + index">
+                                <!-- Encabezado de la tarjeta -->
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <strong>MÓDULO {{ input.modulo || index + 1 }}</strong>
+                                    <button type="button" class="btn btn-sm btn-danger" @click="eliminarModulos(index)" title="Eliminar módulo">
+                                        <i class="fa fa-trash"></i>&nbsp; Eliminar
+                                    </button>
+                                </div>
+
+                                <!-- Contenido de la tarjeta -->
+                                <div class="card-body">
+                                    <div class="form-group row">
+                                        <!-- Fecha de inicio -->
+                                        <div class="col-md-6">
+                                            <label class="form-control-label" :for="'ini_mod' + index">Fecha de inicio</label>
+                                            <input type="date" v-model="input.ini_mod" class="form-control" :id="'ini_mod' + index"/>
+                                        </div>
+                                        <!-- Fecha de finalización -->
+                                        <div class="col-md-6">
+                                            <label class="form-control-label" :for="'fin_mod' + index">Fecha de finalización</label>
+                                            <input type="date" v-model="input.fin_mod" class="form-control" :id="'fin_mod' + index"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Mensaje cuando no existen módulos -->
+                            <p v-if="inputs.length === 0" class="text-muted">Aun no hay módulos registrados. Presione "+ Agregar Módulo" para comenzar.</p>
+
+                            <!-- Navegación -->
+                            <div class="form-group row justify-content-end">
+                                <button type="button" class="btn btn-primary" @click="previousStep">
+                                    <i class="fas fa-backward"></i>&nbsp; ANTERIOR
+                                </button>
+                                &nbsp;
+                                <button type="button" class="btn btn-danger" @click="nextStep">
+                                    <i class="fas fa-forward"></i>&nbsp; SIGUIENTE
+                                </button>
+                            </div>
+                        </div>
+ 
+                        <div class="step" v-if="currentStep === 3">
+                            <h3><i class="fas fa-book"></i>&nbsp;MATERIAS POR MÓDULO</h3>
                             <div class="form-group row">
                                 <div class="col-md-3">
                                     <label class="form-control-label" for="text-input">Promoción: <span style="text-transform:uppercase;">{{ promocion }}</span></label>
                                 </div>
                             </div>
-                            <button type="button" class="btn btn-sm btn-outline-success" @click="crearModulos()">
-                                + Agregar Modulo
-                            </button>
-                            <div class="form-group row" v-for="(input, index) in inputs" :key="index">
-                                <label class="form-control-label" for="text-input">MÓDULO {{ index + 1 }}: </label><br>
-                                <div class="col-md-4">
-                                    <label class="form-control-label" :for="'ini_mod' + index">Inicio</label>
-                                    <input type="date" v-model="input.ini_mod" class="form-control" :id="'ini_mod' + index" />
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-control-label" :for="'fin_mod' + index">Fin</label>
-                                    <input type="date" v-model="input.fin_mod" class="form-control" :id="'fin_mod' + index" />
-                                </div>
-                                <div class="col-md-4 text-right">
-                                    <label class="form-control-label">Eliminar</label>
-                                    <button type="button" class="btn btn-danger" @click="eliminarModulos(index)">
-                                        <i class="fa fa-trash"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="form-group row justify-content-end">
-                                <button type="button" class="btn btn-primary" @click="previousStep"><i class="fas fa-backward"></i>&nbsp; ANTERIOR</button>
-                                &nbsp;
-                                <button type="button" class="btn btn-danger" @click="nextStep"><i class="fas fa-forward"></i>&nbsp; SIGUIENTE</button>
-                            </div>
-                        </div> 
-                        
-                        <div class="step" v-if="currentStep === 3">
-                            <h3><i class="fas fa-book"></i>&nbsp;MATERIAS POR MÓDULO</h3><br>
-
                             <!-- Recorrer todos los módulos creados en el paso anterior -->
                             <div class="card mb-3" v-for="(input, indexModulo) in inputs" :key="'modulo-' + indexModulo">
                                 <div class="card-header">
                                     <strong>MÓDULO {{ input.modulo }}</strong>
-                                    <span class="ml-2">{{ input.ini_mod || 'Sin fecha de inicio' }} - {{ input.fin_mod || 'Sin fecha de fin' }}</span>
+                                    <span class="ml-2">{{ input.ini_mod || 'Sin fecha de inicio' }} al {{ input.fin_mod || 'Sin fecha de fin' }}</span>
                                 </div>
                                 <div class="card-body">
                                     <!-- Botón para agregar materias a este módulo -->
@@ -145,7 +178,7 @@
                                     <!-- Recorrer las materias del módulo actual -->
                                     <div class="form-group row" v-for="(materia, indexMateria) in input.materias" :key="'materia-' + indexModulo + '-' + indexMateria">
                                         <div class="col-md-1">
-                                            <label class="form-control-label">N.º</label>
+                                            <label class="form-control-label">Nº</label>
                                             <input type="number" class="form-control" :value="materia.numero" readonly/>
                                         </div>
                                         <div class="col-md-5">
@@ -156,8 +189,8 @@
                                             <label class="form-control-label" :for="'docente-' + indexModulo + '-' + indexMateria">Docente</label>
                                             <input type="text" class="form-control" :id="'docente-' + indexModulo + '-' + indexMateria" v-model="materia.docente" placeholder="Ingrese el nombre del docente"/>
                                         </div>
-                                        <div class="col-md-2 text-right">
-                                            <label class="form-control-label">Eliminar</label>
+                                        <div class="col-md-2">
+                                            <label class="form-control-label d-block">Eliminar</label>
                                             <button type="button" class="btn btn-danger" @click="eliminarMateria(indexModulo, indexMateria)">
                                                 <i class="fa fa-trash"></i>
                                             </button>
@@ -207,6 +240,7 @@
         currentStep : 1,
         arrayUltimoPromo : [],
         ultimopromocion : '',
+        ultimopromo : '',
        
         v : 0,
         
@@ -239,14 +273,15 @@
     validations: {
         diplomado : { required },
         gestion: { required },
-        promocion : { required, letrasSpanish: value => /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ]+$/.test(value) },
         periodo : { required },
+        promocion : { required },
 
-        validationGroupReg: [
+        validationGroup1: [
         'diplomado',
         'gestion',
-        'promocion',
-        'periodo'],
+        'periodo',
+        'promocion'
+        ],
     },
   
    computed: {
@@ -302,7 +337,33 @@
             });
         },
 
-        nextStep() { //DGAE
+        nextStep() { 
+            switch (this.currentStep) {
+                case 1:
+                    if(!this.$v.validationGroup1.$invalid){
+                        this.currentStep++;
+                    }else{
+                        this.$v.validationGroup1.$touch();
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Ingrese todos los datos requeridos',
+                            showConfirmButton: false,
+                            timer: 2000
+                        })   
+                    }
+                    break;
+                case 2:
+                    this.currentStep++;
+                    break;
+                case 3:
+                    break;    
+            
+                default:
+                    break;
+            }
+
+            
+            //DGAE
             // if (this.currentStep < 4) {
             //     if(this.currentStep == 1){
             //         if(!this.$v.validationGroupReg.$invalid){
@@ -321,7 +382,7 @@
             //             this.currentStep++;
             //     }
             // }
-            this.currentStep++;
+            // this.currentStep++;
         },
 
         previousStep() { //DGAE
@@ -397,7 +458,8 @@
             })
             .then(function (response) {
             me.arrayUltimoPromo = response.data.ultimopromo,
-            me.ultimopromocion = me.arrayUltimoPromo.promo
+            me.ultimopromo = me.arrayUltimoPromo.promo
+            me.ultimopromocion = me.arrayUltimoPromo.promocion
             })
             .catch(function (error) {
             // handle error

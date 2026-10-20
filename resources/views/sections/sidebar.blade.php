@@ -99,6 +99,29 @@
                     </ul>
                   </li>  
                 @endcan
+
+                @can('side-notas', Model::class)
+                  <li class="nav-header" style="padding-left: 1px;">ACADEMICO</li>
+                  <li class="nav-item">{{-- ACADEMICO --}}
+                    <a href="#" class="nav-link">
+                      <i class="nav-icon fas fa-id-card"></i>
+                      <p>
+                        NOTAS
+                        <i class="fas fa-angle-left right"></i>
+                      </p>
+                    </a>
+                    <ul class="nav nav-treeview" style="display: none;">
+                      @can('view-notas', Model::class)
+                      <li class="nav-item">
+                        <router-link class="nav-link" to='/Notas'>
+                          <i class="fas fa-user nav-icon"></i>
+                          <p>Registro</p>
+                        </router-link>
+                      </li>
+                      @endcan
+                    </ul>
+                  </li> 
+                @endcan
                                                                                                                                                               
                 @can('side-administracion', Model::class)
                 <li class="nav-header" style="padding-left: 1px;">ADMINISTRACIÓN</li>

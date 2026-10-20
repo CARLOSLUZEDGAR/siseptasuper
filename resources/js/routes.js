@@ -135,6 +135,20 @@ export default new Router ({
             }
         },
 
+        {
+            path: '/Notas',
+            name: 'Notas',
+            component: require('./components/Notas.vue').default,
+            beforeEnter: (to, from, next) => {
+                let per = window.user.permissions.map(permission=>permission.name);
+                if (per.includes('view-notas')) {
+                    next();
+                } else {
+                    next(from.path);
+                }
+            }
+        },
+
         // FIN RUTAS
 
         {

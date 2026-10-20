@@ -17,8 +17,7 @@ class DiplomadoPromocionController extends Controller
                 'diplomado' => 'required',
                 'gestion'   => 'required',
                 'periodo'   => 'required',
-                'promocion' => 'required',
-                'modulos'   => 'required'
+                'promocion' => 'required'
             ]);
 
             DB::beginTransaction();
@@ -33,27 +32,29 @@ class DiplomadoPromocionController extends Controller
                     'sysuser'      => Auth::user()->id
                 ]);
 
-                foreach ($request->modulos as $mod) {
-                    $diplomado_modulo = DiplomadoModulo::create([
-                        'diplopromo_id' => $diplomado_promocion->id,
-                        'modulo'        => $mod['modulo'],
-                        'inicio_mod'    => $mod['ini_mod'],
-                        'fin_mod'       => $mod['fin_mod'],
-                        'observacion'   => 'SIN NOVEDAD '.$mod['modulo'],
-                        'estado'        => 1,
-                        'sysuser'       => Auth::user()->id
-                    ]);
-
-                    foreach ($mod['materias'] as $mat) {
-                        $modulo_materia = ModuloMateria::create([
-                            'diplomod_id'   => $diplomado_modulo->id,
-                            'orden'         => $mat['numero'],
-                            'materia'       => $mat['nombre'],
-                            'docente'       => $mat['docente'],
-                            'observacion'   => 'SIN NOVEDAD '.$mat['numero'],
+                if (is_array($request->modulos) && count($request->modulos) > 0) {
+                    foreach ($request->modulos as $mod) {
+                        $diplomado_modulo = DiplomadoModulo::create([
+                            'diplopromo_id' => $diplomado_promocion->id,
+                            'modulo'        => $mod['modulo'],
+                            'inicio_mod'    => $mod['ini_mod'],
+                            'fin_mod'       => $mod['fin_mod'],
+                            'observacion'   => 'SIN NOVEDAD '.$mod['modulo'],
                             'estado'        => 1,
                             'sysuser'       => Auth::user()->id
                         ]);
+
+                        foreach ($mod['materias'] as $mat) {
+                            $modulo_materia = ModuloMateria::create([
+                                'diplomod_id'   => $diplomado_modulo->id,
+                                'orden'         => $mat['numero'],
+                                'materia'       => $mat['nombre'],
+                                'docente'       => $mat['docente'],
+                                'observacion'   => 'SIN NOVEDAD '.$mat['numero'],
+                                'estado'        => 1,
+                                'sysuser'       => Auth::user()->id
+                            ]);
+                        }
                     }
                 }
             DB::commit();
@@ -124,6 +125,7 @@ class DiplomadoPromocionController extends Controller
                     ->select('dp.id',
                             'd.diplomado',
                             'dp.promo',
+                            'dp.promocion',
                             'dp.gestion')
                     ->where('d.estado', 1)
                     ->where('dp.estado', 1)

@@ -46,4 +46,16 @@ class ModuloMateriaController extends Controller
             'diplomado_promocion' => $diplomado_promocion
         ]); 
     }
+
+    public function SelectModuloMateria (Request $request) {
+        $modulo_materia = DB::table('modulo_materias as mm')
+                    ->select('mm.*',)
+                    ->where('mm.estado', 1)
+                    ->where('mm.diplomod_id', $request->modulo)
+                    // ->where('dp.gestion', $request->gestion)
+                    ->orderBy('mm.orden', 'asc')
+                    ->get();
+
+        return response()->json(['materia' => $modulo_materia]); 
+    }
 }

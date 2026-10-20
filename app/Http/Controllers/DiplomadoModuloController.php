@@ -46,4 +46,16 @@ class DiplomadoModuloController extends Controller
             'diplomado_promocion' => $diplomado_promocion
         ]); 
     }
+
+    public function SelectDiplomadoModulo (Request $request) {
+        $diplomado_modulo = DB::table('diplomado_modulos as dm')
+                    ->select('dm.*',)
+                    ->where('dm.estado', 1)
+                    ->where('dm.diplopromo_id', $request->promocion)
+                    // ->where('dp.gestion', $request->gestion)
+                    ->orderBy('dm.modulo', 'asc')
+                    ->get();
+
+        return response()->json(['modulo' => $diplomado_modulo]); 
+    }
 }
