@@ -357,7 +357,6 @@
   
     validations: {
         // per_foto: { required },
-        per_fuerza: { required },
         per_ci: { required },
         per_cm: { required },
         per_fuerza: { required },

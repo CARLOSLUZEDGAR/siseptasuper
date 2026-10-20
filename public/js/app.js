@@ -3833,6 +3833,16 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -5076,10 +5086,6 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuelidate/lib/validators */ "./node_modules/vuelidate/lib/validators/index.js");
 /* harmony import */ var vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__);
-var _validations;
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 //
 //
 //
@@ -5424,57 +5430,68 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       offset: 3
     };
   },
-  validations: (_validations = {
+  validations: {
     // per_foto: { required },
-    per_fuerza: {
-      required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"]
-    },
     per_ci: {
       required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"]
     },
     per_cm: {
       required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"]
-    }
-  }, _defineProperty(_validations, "per_fuerza", {
-    required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"]
-  }), _defineProperty(_validations, "per_grado", {
-    required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"]
-  }), _defineProperty(_validations, "per_nombre", {
-    required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"],
-    letrasSpanish: function letrasSpanish(value) {
-      return /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ]+$/.test(value);
-    }
-  }), _defineProperty(_validations, "per_appaterno", {
-    letrasSpanishVacio: function letrasSpanishVacio(value) {
-      return !value || /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ]+$/.test(value);
-    }
-  }), _defineProperty(_validations, "per_apmaterno", {
-    letrasSpanishVacio: function letrasSpanishVacio(value) {
-      return !value || /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ]+$/.test(value);
-    }
-  }), _defineProperty(_validations, "per_sexo", {
-    required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"]
-  }), _defineProperty(_validations, "per_celular", {
-    required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"],
-    numeric: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["numeric"],
-    hasSpecificLength: function hasSpecificLength(value) {
-      return value && value.toString().length === 8;
-    }
-  }), _defineProperty(_validations, "per_email", {
-    required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"],
-    email: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["email"]
-  }), _defineProperty(_validations, "per_fechnac", {
-    required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"]
-  }), _defineProperty(_validations, "per_direccion", {
-    required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"]
-  }), _defineProperty(_validations, "diplomado", {
-    required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"]
-  }), _defineProperty(_validations, "gestion", {
-    required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"]
-  }), _defineProperty(_validations, "promocion", {
-    required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"]
-  }), _defineProperty(_validations, "validationGroupRegTemp", [// 'per_foto',
-  'per_ci', 'per_cm', 'per_fuerza', 'per_grado', 'per_nombre', 'per_appaterno', 'per_apmaterno', 'per_sexo', 'per_celular', 'per_email', 'per_fechnac', 'per_direccion']), _validations),
+    },
+    per_fuerza: {
+      required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"]
+    },
+    per_grado: {
+      required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"]
+    },
+    per_nombre: {
+      required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"],
+      letrasSpanish: function letrasSpanish(value) {
+        return /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ]+$/.test(value);
+      }
+    },
+    per_appaterno: {
+      letrasSpanishVacio: function letrasSpanishVacio(value) {
+        return !value || /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ]+$/.test(value);
+      }
+    },
+    per_apmaterno: {
+      letrasSpanishVacio: function letrasSpanishVacio(value) {
+        return !value || /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ]+$/.test(value);
+      }
+    },
+    per_sexo: {
+      required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"]
+    },
+    per_celular: {
+      required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"],
+      numeric: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["numeric"],
+      hasSpecificLength: function hasSpecificLength(value) {
+        return value && value.toString().length === 8;
+      }
+    },
+    per_email: {
+      required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"],
+      email: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["email"]
+    },
+    per_fechnac: {
+      required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"]
+    },
+    per_direccion: {
+      required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"]
+    },
+    diplomado: {
+      required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"]
+    },
+    gestion: {
+      required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"]
+    },
+    promocion: {
+      required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"]
+    },
+    validationGroupRegTemp: [// 'per_foto',
+    'per_ci', 'per_cm', 'per_fuerza', 'per_grado', 'per_nombre', 'per_appaterno', 'per_apmaterno', 'per_sexo', 'per_celular', 'per_email', 'per_fechnac', 'per_direccion']
+  },
   computed: {
     isActived: function isActived() {
       return this.pagination.current_page;
@@ -5694,9 +5711,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           per_direccion: persona.per_direccion
         };
       });
+      var me = this;
       axios.post('/guardarListaCursantes', {
         cursantes: datos,
-        diplopromo_id: this.promocion
+        diplopromo_id: me.promocion
       }).then(function (response) {
         // Vaciar la lista solo cuando el servidor confirme el registro.
         _this2.personasTemporales = [];
@@ -111309,6 +111327,30 @@ var render = function() {
                               _vm._v(" "),
                               _c("td", {
                                 domProps: {
+                                  textContent: _vm._s(personal.promo)
+                                }
+                              }),
+                              _vm._v(" "),
+                              _c("td", {
+                                domProps: {
+                                  textContent: _vm._s(personal.diplomado)
+                                }
+                              }),
+                              _vm._v(" "),
+                              _c("td", {
+                                domProps: {
+                                  textContent: _vm._s(personal.fuerza)
+                                }
+                              }),
+                              _vm._v(" "),
+                              _c("td", {
+                                domProps: {
+                                  textContent: _vm._s(personal.abreviatura)
+                                }
+                              }),
+                              _vm._v(" "),
+                              _c("td", {
+                                domProps: {
                                   textContent: _vm._s(personal.per_paterno)
                                 }
                               }),
@@ -111328,6 +111370,12 @@ var render = function() {
                               _c("td", {
                                 domProps: {
                                   textContent: _vm._s(personal.per_ci)
+                                }
+                              }),
+                              _vm._v(" "),
+                              _c("td", {
+                                domProps: {
+                                  textContent: _vm._s(personal.per_cm)
                                 }
                               }),
                               _vm._v(" "),
@@ -111540,13 +111588,23 @@ var staticRenderFns = [
       _c("tr", [
         _c("th", { staticClass: "text-center" }, [_vm._v("#")]),
         _vm._v(" "),
+        _c("th", { staticClass: "text-center" }, [_vm._v("PROMOCIÓN")]),
+        _vm._v(" "),
+        _c("th", { staticClass: "text-center" }, [_vm._v("ESPECIALIDAD")]),
+        _vm._v(" "),
+        _c("th", { staticClass: "text-center" }, [_vm._v("FUERZA")]),
+        _vm._v(" "),
+        _c("th", { staticClass: "text-center" }, [_vm._v("GRADO")]),
+        _vm._v(" "),
         _c("th", { staticClass: "text-center" }, [_vm._v("AP. PATERNO")]),
         _vm._v(" "),
         _c("th", { staticClass: "text-center" }, [_vm._v("AP. MATERNO")]),
         _vm._v(" "),
         _c("th", { staticClass: "text-center" }, [_vm._v("NOMBRES")]),
         _vm._v(" "),
-        _c("th", { staticClass: "text-center" }, [_vm._v("C. IDENTIDAD")]),
+        _c("th", { staticClass: "text-center" }, [_vm._v("C.I.")]),
+        _vm._v(" "),
+        _c("th", { staticClass: "text-center" }, [_vm._v("C.M.")]),
         _vm._v(" "),
         _c("th", { staticClass: "text-center" }, [_vm._v("OPCIONES")])
       ])

@@ -10,6 +10,8 @@ class Personal extends Model
     protected $primaryKey = 'id';
     protected $fillable = [
         'id', 
+        'per_fuerza_id',
+        'per_grado_id',
         'per_paterno', 
         'per_materno', 
         'per_nombre', 

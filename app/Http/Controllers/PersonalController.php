@@ -96,6 +96,8 @@ class PersonalController extends Controller
 
             foreach ($request->cursantes as $curs) {
                 $cursante = Personal::create([
+                    'per_fuerza_id' => $curs['per_fuerza'],
+                    'per_grado_id' => $curs['per_grado'],
                     'per_paterno' => $curs['per_appaterno'],
                     'per_materno' => $curs['per_apmaterno'],
                     'per_nombre' => $curs['per_nombre'],
@@ -165,9 +167,19 @@ class PersonalController extends Controller
         $buscar = $request->buscar;
         if ($request->buscar == '') {
             $personal = DB::table('personals as p')
-                   ->select('p.id',
+                    ->join('diplopromo_cursantes as dpc', 'dpc.personals_id', 'p.id')
+                    ->join('diplomado_promociones as dp', 'dp.id', 'dpc.diplopromo_id')
+                    ->join('diplomados as d', 'd.id', 'dp.diplomado_id')
+                    ->join('fuerzas as f', 'f.id', 'p.per_fuerza_id')
+                    ->join('grados as g', 'g.id', 'p.per_grado_id')
+                    ->select('p.id',
+                            'dp.promo',
+                            'd.diplomado',
+                            'f.fuerza',
+                            'g.abreviatura',
                             'p.per_foto',
                             'p.per_ci',
+                            'p.per_cm',
                             'p.per_nombre',
                             'p.per_paterno',
                             'p.per_materno',
@@ -177,13 +189,24 @@ class PersonalController extends Controller
                             'p.per_fecha_nacimiento',
                             'p.per_direccion')
                     ->where('p.estado',1)
+                    ->where('f.estado', 1)
+                    ->where('g.estado', 1)
                     ->orderBy('p.id', 'desc')
                     ->paginate(10);
         } else {
             $personal = DB::table('personals as p')
-                    ->select('p.id',   
+                    ->join('diplopromo_cursantes as dpc', 'dpc.personals_id', 'p.id')
+                    ->join('diplomado_promociones as dp', 'dp.id', 'dpc.diplopromo_id')
+                    ->join('diplomados as d', 'd.id', 'dp.diplomado_id')
+                    ->join('fuerzas as f', 'f.id', 'p.per_fuerza_id')
+                    ->join('grados as g', 'g.id', 'p.per_grado_id')
+                    ->select('p.id',
+                            'd.diplomado',
+                            'f.fuerza',
+                            'g.abreviatura',
                             'p.per_foto',
                             'p.per_ci',
+                            'p.per_cm',
                             'p.per_nombre',
                             'p.per_paterno',
                             'p.per_materno',
@@ -194,11 +217,14 @@ class PersonalController extends Controller
                             'p.per_direccion')
                     ->where(function($q) use ($buscar){
                         $q->where('p.per_ci','LIKE','%'.$buscar.'%')
+                        ->orWhere('p.per_cm','LIKE','%'.$buscar.'%')
                         ->orWhere('p.per_paterno','LIKE','%'.$buscar.'%')
                         ->orWhere('p.per_materno','LIKE','%'.$buscar.'%')
                         ->orWhere('p.per_nombre','LIKE','%'.$buscar.'%');
                     }) 
                     ->where('p.estado',1)
+                    ->where('f.estado', 1)
+                    ->where('g.estado', 1)
                     ->orderBy('p.id', 'desc')
                     ->paginate(10);
         }
