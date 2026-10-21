@@ -66,15 +66,15 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="(especialidad,index) in listaEspecialidad"> 
+                                <tr v-for="(especialidad,index) in arrayEspecialidad"> 
                                     <!-- <td v-text="personal.grado+' '+personal.complemento"></td> -->
                                     <td style="text-align:center; font-weight:bold;">{{ index + 1 }}</td>
                                     <td v-text="especialidad.diplomado"></td>
-                                    <td v-text="especialidad.per_cm"></td>
+                                    <td v-text="especialidad.descripcion"></td>
                                     <td style="text-align:center">
                                       <div class="d-flex justify-content-center align-items-center">
                                         <div v-if="$auth.can('view-renew-per')" class="mr-1">
-                                          <button type="button" @click="Renovar(especialidad.id)" class="btn btn-success btn-sm">
+                                          <button type="button" @click="Editar(especialidad.id)" class="btn btn-success btn-sm">
                                               <i class="fa fa-retweet" aria-hidden="true"></i>
                                           </button>
                                         </div>
@@ -128,8 +128,8 @@ export default {
 
       // FIN VARIABLES DGAE
       
-      listaEspecialidad: [],
-      criterio: "p.per_cm",
+      arrayEspecialidad: [],
+      // criterio: "p.per_cm",
       buscar:"",
       setTiemoutBuscador: '',
       pagination: {
@@ -186,19 +186,19 @@ export default {
 
     Registro(){
       this.$router.push({
-                    name: "RegistroCursantes",  
-                });
+          name: "RegistroEspecialidad",  
+      });
     },
     
-    Renovar(personalid){
+    Editar(especialidadid){
       this.$router.push({
-                    name: "RenovarPersonal",
-                    //ENVIO DE DATOS
-                    params:{
-                        personalid: personalid
-                    }
-                    
-                });
+          name: "EditarEspecialidad",
+          //ENVIO DE DATOS
+          params:{
+              especialidadid: especialidadid
+          }
+          
+      });
     },
 
     cambiarPagina(page,buscar,criterio){
@@ -216,8 +216,8 @@ export default {
             buscar: me.buscar.toUpperCase(),
         })
         .then(function (response) {
-            me.listaEspecialidad = response.data.especialidad.data;
-            me.pagination =response.data.pagination
+            me.arrayEspecialidad = response.data.diplomado;
+            // me.pagination =response.data.pagination
         })
         .catch(function (error) {
             // handle error

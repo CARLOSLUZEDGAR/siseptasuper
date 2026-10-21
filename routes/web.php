@@ -89,6 +89,9 @@ Route::post('/listarMateria', 'ModuloMateriaController@SelectModuloMateria');
 Route::post('/listarCursantesPromocion', 'DiplomadoPromocionCursanteController@ListarDiplomadoPromocionCursante');
 Route::post('/listarEvaluacion', 'EvaluacionController@ListarEvaluacion');
 Route::post('/guardarNotasCursantes','CursanteNotaController@CrearCursanteNota');
+Route::post('/listarEspecialidad', 'DiplomadoController@ListarDiplomado');
+Route::post('/listarCursantesPromocionNotas', 'CursanteNotaController@ListarDiplomadoPromocionCursante');
+
 
 
 

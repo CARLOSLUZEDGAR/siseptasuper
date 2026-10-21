@@ -52,6 +52,20 @@ export default new Router ({
         },
 
         {
+            path: '/Antiguedad',
+            name: 'Antiguedad',
+            component: require('./components/Antiguedad.vue').default,
+            beforeEnter: (to, from, next) => {
+                let per = window.user.permissions.map(permission=>permission.name);
+                if (per.includes('view-antiguedad')) {
+                    next();
+                } else {
+                    next(from.path);
+                }
+            }
+        },
+
+        {
             path: '/RenovarPersonal/:personalid',
             name: 'RenovarPersonal',
             component: require('./components/RenovarPersonal.vue').default,

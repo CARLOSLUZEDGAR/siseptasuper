@@ -3527,6 +3527,678 @@ function mergeFn (a, b) {
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Antiguedad.vue?vue&type=script&lang=js&":
+/*!*********************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Antiguedad.vue?vue&type=script&lang=js& ***!
+  \*********************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuelidate/lib/validators */ "./node_modules/vuelidate/lib/validators/index.js");
+/* harmony import */ var vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    return {
+      // INICIO VARIABLES
+      diplomado: '',
+      gestion: '',
+      promocion: '',
+      modulo: '',
+      // materia : '',
+      // evaluacion : '',
+      v: 0,
+      // FIN VARIABLES DGAE
+      arrayDiplomado: [],
+      arrayPromocion: [],
+      anios: [],
+      arrayModulo: [],
+      // arrayMateria : [],
+      arrayCursantesPromocion: [],
+      arrayMateriasModulo: [],
+      mostrarTabla: false,
+      // arrayEvaluacion : [],
+      buscar: "",
+      setTiemoutBuscador: '',
+      isHidden: true,
+      datfis2: 1,
+      pagination: {
+        'total': 0,
+        'current_page': 0,
+        'per_page': 0,
+        'last_page': 0,
+        'from': 0,
+        'to': 0
+      },
+      offset: 3
+    };
+  },
+  validations: {
+    diplomado: {
+      required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"]
+    },
+    gestion: {
+      required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"]
+    },
+    promocion: {
+      required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"]
+    },
+    modulo: {
+      required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"]
+    },
+    // materia : { required },
+    // evaluacion : { required },
+    validationGroupReg: ['diplomado', 'gestion', 'promocion', 'modulo' // 'materia',
+    // 'evaluacion'
+    ]
+  },
+  computed: {
+    isActived: function isActived() {
+      return this.pagination.current_page;
+    },
+    //creando funcion para calcular los elementos de la paginacion
+    pagesNumber: function pagesNumber() {
+      //si la pagina llega hasta la ultima pagina esta me va retornar un arrary vacio
+      if (!this.pagination.to) {
+        return [];
+      }
+
+      var from = this.pagination.current_page - this.offset;
+
+      if (from < 1) {
+        from = 1;
+      }
+
+      var to = from + this.offset * 2;
+
+      if (to >= this.pagination.last_page) {
+        to = this.pagination.last_page;
+      }
+
+      var pagesArray = [];
+
+      while (from <= to) {
+        pagesArray.push(from);
+        from++;
+      }
+
+      return pagesArray;
+    },
+    imagen: function imagen() {
+      return this.per_foto;
+    },
+    imagenA: function imagenA() {
+      return this.per_fotoA;
+    }
+  },
+  mounted: function mounted() {
+    var actual = new Date().getFullYear();
+
+    for (var i = actual - 5; i <= actual + 5; i++) {
+      this.anios.push(i);
+    }
+
+    this.ListarDiplomados(); // this.ListarPeriodos();
+  },
+  methods: {
+    VerAntiguedad: function VerAntiguedad() {
+      this.$router.push({
+        name: "Antiguedad"
+      });
+    },
+    // crearModulos(){
+    //     this.inputs.push({
+    //         modulo : this.inputs.length + 1,
+    //         ini_mod : '',
+    //         fin_mod : '',
+    //         materias : []
+    //     });
+    // },
+    // eliminarModulos(index) {
+    //     this.inputs.splice(index, 1);
+    //     this.inputs.forEach((input, i) => {
+    //         input.modulo = i + 1;
+    //     });
+    // },
+    // crearMateria(indexModulo) {
+    //     this.inputs[indexModulo].materias.push({
+    //         numero: this.inputs[indexModulo].materias.length + 1,
+    //         nombre: '',
+    //         docente: ''
+    //     });
+    // },
+    // eliminarMateria(indexModulo, indexMateria) {
+    //     this.inputs[indexModulo].materias.splice(indexMateria, 1);
+    //     this.inputs[indexModulo].materias.forEach((materia, i) => {
+    //         materia.numero = i + 1;
+    //     });
+    // },
+    ListarDiplomados: function ListarDiplomados() {
+      var me = this;
+      axios.post("/listarDiplomado", {}).then(function (response) {
+        me.arrayDiplomado = response.data.diplomado;
+      })["catch"](function (error) {
+        // handle error
+        console.log(error);
+      });
+    },
+    // ListarPeriodos(){
+    //     let me = this;
+    //     axios
+    //     .post("/listarPeriodo", {
+    //     })
+    //     .then(function (response) {
+    //     me.arrayPeriodo = response.data.periodo
+    //     })
+    //     .catch(function (error) {
+    //     // handle error
+    //     console.log(error);
+    //     })
+    // },
+    ListarPromociones: function ListarPromociones(especialidad, gestion) {
+      this.promocion = '';
+      this.arrayPromocion = [];
+      var me = this;
+      axios.post("/listarPromocion", {
+        especialidad: especialidad,
+        gestion: gestion
+      }).then(function (response) {
+        me.arrayPromocion = response.data.promocion;
+      })["catch"](function (error) {
+        // handle error
+        console.log(error);
+      });
+    },
+    ListarModulos: function ListarModulos(promocion) {
+      this.modulo = '';
+      this.arrayModulo = [];
+      var me = this;
+      axios.post("/listarModulo", {
+        promocion: promocion
+      }).then(function (response) {
+        me.arrayModulo = response.data.modulo;
+      })["catch"](function (error) {
+        // handle error
+        console.log(error);
+      });
+    },
+    // ListarMaterias(modulo){
+    //     this.materia = '';
+    //     this.arrayMateria = [];
+    //     let me = this;
+    //     axios
+    //     .post("/listarMateria", {
+    //         modulo : modulo,
+    //     })
+    //     .then(function (response) {
+    //     me.arrayMateria = response.data.materia
+    //     })
+    //     .catch(function (error) {
+    //     // handle error
+    //     console.log(error);
+    //     })
+    // },
+    // ListarEvaluaciones(){
+    //     this.evaluacion = '';
+    //     this.arrayEvaluacion = [];
+    //     let me = this;
+    //     axios
+    //     .post("/listarEvaluacion", {
+    //     })
+    //     .then(function (response) {
+    //     me.arrayEvaluacion = response.data.evaluacion
+    //     })
+    //     .catch(function (error) {
+    //     // handle error
+    //     console.log(error);
+    //     })
+    // },
+    BuscarCursantes: function BuscarCursantes(promocion, modulo) {
+      // Ocultar la tabla mientras se realiza la búsqueda
+      this.mostrarTabla = false; // Limpiar los resultados anteriores
+
+      this.arrayCursantesPromocion = [];
+      this.arrayMateriasModulo = [];
+      var me = this;
+
+      try {
+        axios.post("/listarCursantesPromocionNotas", {
+          promocion: promocion,
+          modulo: modulo
+        }).then(function (response) {
+          me.arrayCursantesPromocion = response.data.cursante;
+        })["catch"](function (error) {
+          // handle error
+          console.log(error);
+        });
+        axios.post("/listarMateria", {
+          modulo: modulo
+        }).then(function (response) {
+          me.arrayMateriaModulo = response.data.materia;
+        })["catch"](function (error) {
+          // handle error
+          console.log(error);
+        }); // Cuando ambas consultas hayan terminado correctamente:
+
+        this.mostrarTabla = true;
+      } catch (error) {
+        console.error('Error al buscar los cursantes:', error);
+        this.mostrarTabla = false;
+      }
+    },
+    limpiarFormulario: function limpiarFormulario() {
+      var _this = this;
+
+      // this.per_diplomado = '';
+      this.diplomado = '';
+      this.gestion = '';
+      this.promocion = '';
+      this.modulo = '';
+      this.materia = '';
+      this.evaluacion = ''; // this.per_foto = null;
+      // Ajusta esta ruta a la imagen predeterminada de tu proyecto.
+      // this.imagen = '/img/avatar.jpg';
+
+      this.$nextTick(function () {
+        _this.$v.$reset();
+      });
+    },
+    RegistrarNotas: function RegistrarNotas() {
+      var _this2 = this;
+
+      if (this.arrayCursantesPromocion.length === 0) {
+        return;
+      }
+
+      var datos = this.arrayCursantesPromocion.map(function (cursante) {
+        return {
+          // per_diplomado: cursante.per_diplomado,
+          diplopromocursante_id: cursante.diplopromocursante_id,
+          personals_id: cursante.personals_id,
+          nota: cursante.nota
+        };
+      });
+      var me = this;
+      axios.post('/guardarNotasCursantes', {
+        cursantes: datos,
+        materia: me.materia,
+        evaluacion: me.evaluacion
+      }).then(function (response) {
+        // Vaciar la lista solo cuando el servidor confirme el registro.
+        _this2.arrayCursantesPromocion = []; // this.indiceEdicion = null;
+
+        _this2.limpiarFormulario();
+
+        _this2.$swal('Correcto', response.data.message || 'Notas de cursantes registradas correctamente', 'success');
+      })["catch"](function (error) {
+        console.error(error);
+
+        _this2.$swal('Error', 'No se pudo registrar las notas de los cursantes.', 'error');
+      });
+    },
+    obtenerImagen: function obtenerImagen(e) {
+      var _this3 = this;
+
+      try {
+        var fileReader = new FileReader();
+
+        fileReader.onload = function (e) {
+          _this3.per_foto = e.target.result;
+        };
+
+        fileReader.readAsDataURL(e.target.files[0]);
+        this.v = 1;
+      } catch (error) {}
+    },
+    //   NuevoPersonal(){ //DGAE
+    //     this.$v.validationGroupReg.$reset(),
+    //     this.per_foto = '',
+    //     this.per_ci = '',
+    //     this.per_nombre = '',
+    //     this.per_appaterno = '',
+    //     this.per_apmaterno = '',
+    //     this.per_sexo = '',
+    //     this.per_celular = '',
+    //     this.per_email = '',
+    //     this.per_fechnac = '',
+    //     this.per_direccion = '',
+    //     this.v = 0
+    //   },
+    guardarPromocion: function guardarPromocion() {
+      var _this4 = this;
+
+      swal.fire({
+        title: '¿Desea guardar la promoción?',
+        // TITULO 
+        icon: 'question',
+        //ICONO (success, warnning, error, info, question)
+        showCancelButton: true,
+        //HABILITACION DEL BOTON CANCELAR
+        confirmButtonColor: 'info',
+        // COLOR DEL BOTON PARA CONFIRMAR
+        cancelButtonColor: '#868077',
+        // COLOR DEL BOTON CANCELAR
+        confirmButtonText: 'Confirmar',
+        //TITULO DEL BOTON CONFIRMAR
+        cancelButtonText: 'Cancelar',
+        //TIUTLO DEL BOTON CANCELAR
+        buttonsStyling: true,
+        reverseButtons: true
+      }).then(function (result) {
+        if (result.value) {
+          var me = _this4;
+          axios.post("/guardarPromocion", {
+            diplomado: me.diplomado,
+            gestion: me.gestion,
+            periodo: me.periodo,
+            promocion: me.promocion,
+            modulos: me.inputs
+          }).then(function (response) {
+            console.log(response);
+            swal.fire({
+              title: 'Se realizo el registro correctamente' //TITULO
+              // response.data.mensaje, //TEXTO DE MENSAJE
+              // response.data.tipo, // TIPO DE MODAL (success, warnning, error, info)
+              // response.personal
+
+            });
+
+            if (!response.data.code) {
+              // $('#NuevoUsuario').modal('hide');
+              // $('#ModalNewPersonal').modal('hide');
+              // me.nick = '';
+              // me.password = '';
+              // me.arrayDatPer = response.data.personal;
+              // me.GenerarCarnet(me.arrayDatPer.id_personal);
+              me.Atras(); // this.$v.$reset();
+            }
+          })["catch"](function (error) {
+            // handle error
+            console.log(error);
+          });
+        } else {
+          swal.fire("Informacion", //TITULO
+          "Solicitud cancelada.", //TEXTO DE MENSAJE
+          "info" // TIPO DE MODAL (success, warnning, error, info)
+          );
+        }
+      });
+    },
+    CrearPersonal: function CrearPersonal() {
+      var _this5 = this;
+
+      //DGAE
+      if (!this.$v.validationGroupReg.$invalid) {
+        swal.fire({
+          title: '¿Desea registrar?',
+          // TITULO 
+          icon: 'question',
+          //ICONO (success, warnning, error, info, question)
+          showCancelButton: true,
+          //HABILITACION DEL BOTON CANCELAR
+          confirmButtonColor: 'info',
+          // COLOR DEL BOTON PARA CONFIRMAR
+          cancelButtonColor: '#868077',
+          // COLOR DEL BOTON CANCELAR
+          confirmButtonText: 'Confirmar',
+          //TITULO DEL BOTON CONFIRMAR
+          cancelButtonText: 'Cancelar',
+          //TIUTLO DEL BOTON CANCELAR
+          buttonsStyling: true,
+          reverseButtons: true
+        }).then(function (result) {
+          if (result.value) {
+            var me = _this5;
+            axios.post("/crearPersonal", {
+              foto: me.per_foto,
+              ci: me.per_ci,
+              nombre: me.per_nombre,
+              ap_paterno: me.per_appaterno,
+              ap_materno: me.per_apmaterno,
+              sexo: me.per_sexo,
+              celular: me.per_celular,
+              email: me.per_email,
+              fech_nac: me.per_fechnac,
+              direccion: me.per_direccion
+            }).then(function (response) {
+              console.log(response);
+              swal.fire({
+                title: 'Se realizo el registro correctamente' //TITULO
+                // response.data.mensaje, //TEXTO DE MENSAJE
+                // response.data.tipo, // TIPO DE MODAL (success, warnning, error, info)
+                // response.personal
+
+              });
+
+              if (!response.data.code) {
+                // $('#NuevoUsuario').modal('hide');
+                // $('#ModalNewPersonal').modal('hide');
+                // me.nick = '';
+                // me.password = '';
+                me.arrayDatPer = response.data.personal; // me.GenerarCarnet(me.arrayDatPer.id_personal);
+
+                me.Atras();
+                this.$v.$reset();
+              }
+            })["catch"](function (error) {
+              // handle error
+              console.log(error);
+            });
+          } else {
+            swal.fire("Informacion", //TITULO
+            "Solicitud cancelada.", //TEXTO DE MENSAJE
+            "info" // TIPO DE MODAL (success, warnning, error, info)
+            );
+          }
+        });
+      } else {
+        this.$v.validationGroupReg.$touch();
+        Swal.fire({
+          icon: 'warning',
+          title: 'Ingrese todos los datos requeridos',
+          showConfirmButton: false,
+          timer: 2000
+        });
+      }
+    },
+    GenerarCarnet: function GenerarCarnet(id_personal) {
+      //DGAE
+      // this.$v.$reset();
+      // if(!this.$v.$invalid){
+      window.open('/carnet?id_p=' + id_personal); // window.open('http://127.0.0.1:8000/carnet?id_p='+id_personal);
+      // }else{
+      //     this.$v.$touch();
+      //     Swal.fire({
+      //         icon: 'warning',
+      //         title: 'Ingrese todos los datos requeridos',
+      //         showConfirmButton: false,
+      //         timer: 2000
+      //     })
+      // }
+    }
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/App.vue?vue&type=script&lang=js&":
 /*!**************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/App.vue?vue&type=script&lang=js& ***!
@@ -4134,8 +4806,8 @@ __webpack_require__.r(__webpack_exports__);
     return {
       // INICIO VARIABLES DGAE
       // FIN VARIABLES DGAE
-      listaEspecialidad: [],
-      criterio: "p.per_cm",
+      arrayEspecialidad: [],
+      // criterio: "p.per_cm",
       buscar: "",
       setTiemoutBuscador: '',
       pagination: {
@@ -4189,15 +4861,15 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     Registro: function Registro() {
       this.$router.push({
-        name: "RegistroCursantes"
+        name: "RegistroEspecialidad"
       });
     },
-    Renovar: function Renovar(personalid) {
+    Editar: function Editar(especialidadid) {
       this.$router.push({
-        name: "RenovarPersonal",
+        name: "EditarEspecialidad",
         //ENVIO DE DATOS
         params: {
-          personalid: personalid
+          especialidadid: especialidadid
         }
       });
     },
@@ -4213,8 +4885,7 @@ __webpack_require__.r(__webpack_exports__);
         page: page,
         buscar: me.buscar.toUpperCase()
       }).then(function (response) {
-        me.listaEspecialidad = response.data.especialidad.data;
-        me.pagination = response.data.pagination;
+        me.arrayEspecialidad = response.data.diplomado; // me.pagination =response.data.pagination
       })["catch"](function (error) {
         // handle error
         console.log(error);
@@ -4859,9 +5530,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     this.ListarPeriodos();
   },
   methods: {
-    Atras: function Atras() {
+    VerAntiguedad: function VerAntiguedad() {
       this.$router.push({
-        name: "Gestion"
+        name: "Antiguedad"
       });
     },
     nextStep: function nextStep() {
@@ -111821,6 +112492,611 @@ render._withStripped = true
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Antiguedad.vue?vue&type=template&id=ede70f06&":
+/*!*************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Antiguedad.vue?vue&type=template&id=ede70f06& ***!
+  \*************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", [
+    _vm._m(0),
+    _vm._v(" "),
+    _c("section", { staticClass: "content" }, [
+      _c("div", { staticClass: "container-fluid" }, [
+        _c("div", { staticClass: "row" }, [
+          _c("div", { staticClass: "col-md-12" }, [
+            _c("div", { staticClass: "card card-primary card-outline" }, [
+              _vm._m(1),
+              _vm._v(" "),
+              _c("div", { staticClass: "card-body" }, [
+                _c("form", [
+                  _vm._m(2),
+                  _vm._v(" "),
+                  _c("br"),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "form-group row" }, [
+                    _c("div", { staticClass: "col-md-3" }, [
+                      _c(
+                        "label",
+                        {
+                          staticClass: "form-control-label",
+                          attrs: { for: "text-input" }
+                        },
+                        [_vm._v("Especialidad")]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "select",
+                        {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.diplomado,
+                              expression: "diplomado"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          class: {
+                            "is-invalid": _vm.$v.diplomado.$error,
+                            "is-valid": !_vm.$v.diplomado.$invalid
+                          },
+                          on: {
+                            change: [
+                              function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.diplomado = $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              },
+                              function($event) {
+                                return _vm.ListarPromociones(
+                                  _vm.diplomado,
+                                  _vm.gestion
+                                )
+                              }
+                            ]
+                          }
+                        },
+                        [
+                          _c("option", { attrs: { value: "", disabled: "" } }, [
+                            _vm._v("SELECCIONE")
+                          ]),
+                          _vm._v(" "),
+                          _vm._l(_vm.arrayDiplomado, function(diplomado) {
+                            return _c("option", {
+                              key: diplomado.id,
+                              domProps: {
+                                value: diplomado.id,
+                                textContent: _vm._s(diplomado.diplomado)
+                              }
+                            })
+                          })
+                        ],
+                        2
+                      ),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "invalid-feedback" }, [
+                        !_vm.$v.diplomado.required
+                          ? _c("span", [_vm._v("Este campo es Requerido")])
+                          : _vm._e()
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-md-3" }, [
+                      _c(
+                        "label",
+                        {
+                          staticClass: "form-control-label",
+                          attrs: { for: "text-input" }
+                        },
+                        [_vm._v("Gestión")]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "select",
+                        {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.gestion,
+                              expression: "gestion"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          class: {
+                            "is-invalid": _vm.$v.gestion.$error,
+                            "is-valid": !_vm.$v.gestion.$invalid
+                          },
+                          on: {
+                            change: [
+                              function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.gestion = $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              },
+                              function($event) {
+                                return _vm.ListarPromociones(
+                                  _vm.diplomado,
+                                  _vm.gestion
+                                )
+                              }
+                            ]
+                          }
+                        },
+                        [
+                          _c("option", { attrs: { value: "", disabled: "" } }, [
+                            _vm._v("SELECCIONE")
+                          ]),
+                          _vm._v(" "),
+                          _vm._l(_vm.anios, function(a) {
+                            return _c(
+                              "option",
+                              { key: a, domProps: { value: a } },
+                              [_vm._v(_vm._s(a))]
+                            )
+                          })
+                        ],
+                        2
+                      ),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "invalid-feedback" }, [
+                        !_vm.$v.gestion.required
+                          ? _c("span", [_vm._v("Este campo es Requerido")])
+                          : _vm._e()
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-md-3" }, [
+                      _c(
+                        "label",
+                        {
+                          staticClass: "form-control-label",
+                          attrs: { for: "text-input" }
+                        },
+                        [_vm._v("Promoción")]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "select",
+                        {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.promocion,
+                              expression: "promocion"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          class: {
+                            "is-invalid": _vm.$v.promocion.$error,
+                            "is-valid": !_vm.$v.promocion.$invalid
+                          },
+                          on: {
+                            change: [
+                              function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.promocion = $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              },
+                              function($event) {
+                                return _vm.ListarModulos(_vm.promocion)
+                              }
+                            ]
+                          }
+                        },
+                        [
+                          _c("option", { attrs: { value: "", disabled: "" } }, [
+                            _vm._v("SELECCIONE")
+                          ]),
+                          _vm._v(" "),
+                          _vm._l(_vm.arrayPromocion, function(promocion) {
+                            return _c("option", {
+                              key: promocion.id,
+                              domProps: {
+                                value: promocion.id,
+                                textContent: _vm._s(promocion.promo)
+                              }
+                            })
+                          })
+                        ],
+                        2
+                      ),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "invalid-feedback" }, [
+                        !_vm.$v.promocion.required
+                          ? _c("span", [_vm._v("Este campo es Requerido")])
+                          : _vm._e()
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-md-3" }, [
+                      _c(
+                        "label",
+                        {
+                          staticClass: "form-control-label",
+                          attrs: { for: "text-input" }
+                        },
+                        [_vm._v("Módulo")]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "select",
+                        {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.modulo,
+                              expression: "modulo"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          class: {
+                            "is-invalid": _vm.$v.modulo.$error,
+                            "is-valid": !_vm.$v.modulo.$invalid
+                          },
+                          on: {
+                            change: function($event) {
+                              var $$selectedVal = Array.prototype.filter
+                                .call($event.target.options, function(o) {
+                                  return o.selected
+                                })
+                                .map(function(o) {
+                                  var val = "_value" in o ? o._value : o.value
+                                  return val
+                                })
+                              _vm.modulo = $event.target.multiple
+                                ? $$selectedVal
+                                : $$selectedVal[0]
+                            }
+                          }
+                        },
+                        [
+                          _c("option", { attrs: { value: "", disabled: "" } }, [
+                            _vm._v("SELECCIONE")
+                          ]),
+                          _vm._v(" "),
+                          _vm._l(_vm.arrayModulo, function(modulo) {
+                            return _c("option", {
+                              key: modulo.id,
+                              domProps: {
+                                value: modulo.id,
+                                textContent: _vm._s(modulo.modulo)
+                              }
+                            })
+                          })
+                        ],
+                        2
+                      ),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "invalid-feedback" }, [
+                        !_vm.$v.modulo.required
+                          ? _c("span", [_vm._v("Este campo es Requerido")])
+                          : _vm._e()
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-primary",
+                        attrs: { type: "button" },
+                        on: {
+                          click: function($event) {
+                            return _vm.BuscarCursantes(
+                              _vm.promocion,
+                              _vm.modulo
+                            )
+                          }
+                        }
+                      },
+                      [
+                        _c("i", { staticClass: "fas fa-plus" }),
+                        _vm._v("  BUSCAR\n                        ")
+                      ]
+                    )
+                  ])
+                ]),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  {
+                    staticClass: "table-wrapper-scroll-y my-custom-scrollbar",
+                    staticStyle: { "font-size": "12pt" },
+                    attrs: { id: "myTable" }
+                  },
+                  [
+                    _vm.mostrarTabla
+                      ? _c(
+                          "table",
+                          {
+                            staticClass:
+                              "table table-bordered table-striped table-sm"
+                          },
+                          [
+                            _c("thead", [
+                              _c(
+                                "tr",
+                                [
+                                  _c("th", { staticClass: "text-center" }, [
+                                    _vm._v("#")
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("th", { staticClass: "text-center" }, [
+                                    _vm._v("GRADO")
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("th", { staticClass: "text-center" }, [
+                                    _vm._v("AP. PATERNO")
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("th", { staticClass: "text-center" }, [
+                                    _vm._v("AP. MATERNO")
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("th", { staticClass: "text-center" }, [
+                                    _vm._v("NOMBRES")
+                                  ]),
+                                  _vm._v(" "),
+                                  _vm._l(_vm.arrayMateriasModulo, function(
+                                    materia
+                                  ) {
+                                    return _c(
+                                      "th",
+                                      {
+                                        key: materia.id,
+                                        staticClass: "text-center"
+                                      },
+                                      [
+                                        _vm._v(
+                                          "\n                                    " +
+                                            _vm._s(materia.materia) +
+                                            "\n                                "
+                                        )
+                                      ]
+                                    )
+                                  })
+                                ],
+                                2
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c(
+                              "tbody",
+                              [
+                                _vm._l(_vm.arrayCursantesPromocion, function(
+                                  personal,
+                                  index
+                                ) {
+                                  return _c(
+                                    "tr",
+                                    [
+                                      _c(
+                                        "td",
+                                        {
+                                          staticStyle: {
+                                            "text-align": "center",
+                                            "font-weight": "bold"
+                                          }
+                                        },
+                                        [_vm._v(_vm._s(index + 1))]
+                                      ),
+                                      _vm._v(" "),
+                                      _c("td", {
+                                        domProps: {
+                                          textContent: _vm._s(
+                                            personal.abreviatura
+                                          )
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c("td", {
+                                        domProps: {
+                                          textContent: _vm._s(
+                                            personal.per_paterno
+                                          )
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c("td", {
+                                        domProps: {
+                                          textContent: _vm._s(
+                                            personal.per_materno
+                                          )
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c("td", {
+                                        domProps: {
+                                          textContent: _vm._s(
+                                            personal.per_nombre
+                                          )
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _vm._l(_vm.arrayMateriasModulo, function(
+                                        materia
+                                      ) {
+                                        return _c(
+                                          "td",
+                                          {
+                                            key: materia.id,
+                                            staticClass: "text-center"
+                                          },
+                                          [
+                                            _vm._v(
+                                              "\n                                    " +
+                                                _vm._s(
+                                                  personal.notas &&
+                                                    personal.notas[
+                                                      materia.id
+                                                    ] != null
+                                                    ? personal.notas[materia.id]
+                                                    : "Sin nota"
+                                                ) +
+                                                "\n                                "
+                                            )
+                                          ]
+                                        )
+                                      })
+                                    ],
+                                    2
+                                  )
+                                }),
+                                _vm._v(" "),
+                                _vm.arrayCursantesPromocion.length === 0
+                                  ? _c("tr", [
+                                      _c(
+                                        "td",
+                                        {
+                                          staticClass: "text-center",
+                                          attrs: { colspan: "6" }
+                                        },
+                                        [
+                                          _vm._v(
+                                            "\n                                    No hay cursantes para mostrar.\n                                "
+                                          )
+                                        ]
+                                      )
+                                    ])
+                                  : _vm._e()
+                              ],
+                              2
+                            )
+                          ]
+                        )
+                      : _vm._e(),
+                    _vm._v(" "),
+                    _vm.mostrarTabla
+                      ? _c("div", [
+                          _c("div", { staticClass: "text-right mt-3 mb-4" }, [
+                            _c("strong", [
+                              _vm._v(
+                                "\n                                Total de cursantes: " +
+                                  _vm._s(_vm.arrayCursantesPromocion.length) +
+                                  "\n                            "
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c(
+                              "button",
+                              {
+                                staticClass: "btn btn-success ml-3",
+                                attrs: {
+                                  type: "button",
+                                  disabled:
+                                    _vm.arrayCursantesPromocion.length === 0 ||
+                                    _vm.arrayMateriasModulo.length === 0
+                                },
+                                on: {
+                                  click: function($event) {
+                                    return _vm.GenerarReporte()
+                                  }
+                                }
+                              },
+                              [
+                                _c("i", { staticClass: "fas fa-save" }),
+                                _vm._v(
+                                  " GENERAR REPORTE\n                            "
+                                )
+                              ]
+                            )
+                          ])
+                        ])
+                      : _vm._e(),
+                    _vm._v(" "),
+                    _c("br")
+                  ]
+                )
+              ])
+            ])
+          ])
+        ])
+      ])
+    ])
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("section", { staticClass: "content-header" }, [
+      _c("div", { staticClass: "container-fluid" }, [
+        _c("div", { staticClass: "row mb-2" }, [
+          _c("div", { staticClass: "col-sm-12" }, [
+            _c("h1", [
+              _c("i", { staticClass: "far fa-registered" }),
+              _vm._v(" \n            ANTIGUEDAD\n            ")
+            ])
+          ])
+        ])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-header" }, [
+      _c("div", { staticClass: "row" }, [
+        _c("div", { staticClass: "col-sm-8" }, [
+          _c("h3", { staticClass: "card-title" })
+        ])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("h3", [
+      _c("i", { staticClass: "fas fa-inbox" }),
+      _vm._v(" ELEGIR PROMOCION Y MATERIA")
+    ])
+  }
+]
+render._withStripped = true
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/App.vue?vue&type=template&id=332fccf4&":
 /*!******************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/App.vue?vue&type=template&id=332fccf4& ***!
@@ -112736,7 +114012,7 @@ var render = function() {
                         _vm._v(" "),
                         _c(
                           "tbody",
-                          _vm._l(_vm.listaEspecialidad, function(
+                          _vm._l(_vm.arrayEspecialidad, function(
                             especialidad,
                             index
                           ) {
@@ -112760,7 +114036,7 @@ var render = function() {
                               _vm._v(" "),
                               _c("td", {
                                 domProps: {
-                                  textContent: _vm._s(especialidad.per_cm)
+                                  textContent: _vm._s(especialidad.descripcion)
                                 }
                               }),
                               _vm._v(" "),
@@ -112785,7 +114061,7 @@ var render = function() {
                                                 attrs: { type: "button" },
                                                 on: {
                                                   click: function($event) {
-                                                    return _vm.Renovar(
+                                                    return _vm.Editar(
                                                       especialidad.id
                                                     )
                                                   }
@@ -113383,24 +114659,26 @@ var render = function() {
                 _c("div", { staticClass: "row" }, [
                   _vm._m(1),
                   _vm._v(" "),
-                  _c("div", { staticClass: "col-sm-4" }, [
-                    _c(
-                      "button",
-                      {
-                        staticClass: "btn btn-danger btn-sm float-right",
-                        attrs: { type: "submit" },
-                        on: {
-                          click: function($event) {
-                            return _vm.Atras()
-                          }
-                        }
-                      },
-                      [
-                        _c("i", { staticClass: "fas fa-arrow-left" }),
-                        _vm._v("  VOLVER\n                  ")
-                      ]
-                    )
-                  ])
+                  _vm.$auth.can("view-antiguedad")
+                    ? _c("div", { staticClass: "col-sm-4" }, [
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-primary btn-sm float-right",
+                            attrs: { type: "submit" },
+                            on: {
+                              click: function($event) {
+                                return _vm.VerAntiguedad()
+                              }
+                            }
+                          },
+                          [
+                            _c("i", { staticClass: "fas fa-user-plus" }),
+                            _vm._v("  VER ANTIGUEDAD\n                    ")
+                          ]
+                        )
+                      ])
+                    : _vm._e()
                 ])
               ]),
               _vm._v(" "),
@@ -149684,6 +150962,75 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/Antiguedad.vue":
+/*!************************************************!*\
+  !*** ./resources/js/components/Antiguedad.vue ***!
+  \************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Antiguedad_vue_vue_type_template_id_ede70f06___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Antiguedad.vue?vue&type=template&id=ede70f06& */ "./resources/js/components/Antiguedad.vue?vue&type=template&id=ede70f06&");
+/* harmony import */ var _Antiguedad_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Antiguedad.vue?vue&type=script&lang=js& */ "./resources/js/components/Antiguedad.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _Antiguedad_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _Antiguedad_vue_vue_type_template_id_ede70f06___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Antiguedad_vue_vue_type_template_id_ede70f06___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/Antiguedad.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/Antiguedad.vue?vue&type=script&lang=js&":
+/*!*************************************************************************!*\
+  !*** ./resources/js/components/Antiguedad.vue?vue&type=script&lang=js& ***!
+  \*************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Antiguedad_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./Antiguedad.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Antiguedad.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Antiguedad_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/Antiguedad.vue?vue&type=template&id=ede70f06&":
+/*!*******************************************************************************!*\
+  !*** ./resources/js/components/Antiguedad.vue?vue&type=template&id=ede70f06& ***!
+  \*******************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Antiguedad_vue_vue_type_template_id_ede70f06___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./Antiguedad.vue?vue&type=template&id=ede70f06& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Antiguedad.vue?vue&type=template&id=ede70f06&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Antiguedad_vue_vue_type_template_id_ede70f06___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Antiguedad_vue_vue_type_template_id_ede70f06___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
 /***/ "./resources/js/components/App.vue":
 /*!*****************************************!*\
   !*** ./resources/js/components/App.vue ***!
@@ -151160,6 +152507,21 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_router__WEBPACK_IMPORTED_MODU
       });
 
       if (per.includes('view-insert-cursante')) {
+        next();
+      } else {
+        next(from.path);
+      }
+    }
+  }, {
+    path: '/Antiguedad',
+    name: 'Antiguedad',
+    component: __webpack_require__(/*! ./components/Antiguedad.vue */ "./resources/js/components/Antiguedad.vue")["default"],
+    beforeEnter: function beforeEnter(to, from, next) {
+      var per = window.user.permissions.map(function (permission) {
+        return permission.name;
+      });
+
+      if (per.includes('view-antiguedad')) {
         next();
       } else {
         next(from.path);

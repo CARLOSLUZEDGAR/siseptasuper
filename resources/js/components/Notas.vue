@@ -30,10 +30,10 @@
                         <!-- Buscar Personal -->
                       </h3>  
                     </div>                  
-                    <div class="col-sm-4">
-                      <button class="btn btn-danger btn-sm float-right" type="submit" @click="Atras()">
-                        <i class="fas fa-arrow-left"></i>&nbsp; VOLVER
-                      </button>
+                    <div class="col-sm-4" v-if="$auth.can('view-antiguedad')">
+                        <button class="btn btn-primary btn-sm float-right" type="submit" @click="VerAntiguedad()">
+                        <i class="fas fa-user-plus"></i>&nbsp; VER ANTIGUEDAD
+                        </button>
                     </div>
                   </div>  
                 </div>
@@ -271,9 +271,9 @@
 
     methods: {
 
-        Atras(){
+        VerAntiguedad(){
             this.$router.push({
-                name: "Gestion",  
+                name: "Antiguedad",  
             });
         },
 
