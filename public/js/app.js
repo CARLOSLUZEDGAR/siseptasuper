@@ -3714,6 +3714,34 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -3733,8 +3761,8 @@ __webpack_require__.r(__webpack_exports__);
       arrayModulo: [],
       // arrayMateria : [],
       arrayCursantesPromocion: [],
+      arrayMaterias: [],
       arrayMateriasModulo: [],
-      mostrarTabla: false,
       // arrayEvaluacion : [],
       buscar: "",
       setTiemoutBuscador: '',
@@ -3819,38 +3847,12 @@ __webpack_require__.r(__webpack_exports__);
     this.ListarDiplomados(); // this.ListarPeriodos();
   },
   methods: {
-    VerAntiguedad: function VerAntiguedad() {
+    Atras: function Atras() {
+      //DGAE
       this.$router.push({
-        name: "Antiguedad"
+        name: "Notas"
       });
     },
-    // crearModulos(){
-    //     this.inputs.push({
-    //         modulo : this.inputs.length + 1,
-    //         ini_mod : '',
-    //         fin_mod : '',
-    //         materias : []
-    //     });
-    // },
-    // eliminarModulos(index) {
-    //     this.inputs.splice(index, 1);
-    //     this.inputs.forEach((input, i) => {
-    //         input.modulo = i + 1;
-    //     });
-    // },
-    // crearMateria(indexModulo) {
-    //     this.inputs[indexModulo].materias.push({
-    //         numero: this.inputs[indexModulo].materias.length + 1,
-    //         nombre: '',
-    //         docente: ''
-    //     });
-    // },
-    // eliminarMateria(indexModulo, indexMateria) {
-    //     this.inputs[indexModulo].materias.splice(indexMateria, 1);
-    //     this.inputs[indexModulo].materias.forEach((materia, i) => {
-    //         materia.numero = i + 1;
-    //     });
-    // },
     ListarDiplomados: function ListarDiplomados() {
       var me = this;
       axios.post("/listarDiplomado", {}).then(function (response) {
@@ -3860,19 +3862,6 @@ __webpack_require__.r(__webpack_exports__);
         console.log(error);
       });
     },
-    // ListarPeriodos(){
-    //     let me = this;
-    //     axios
-    //     .post("/listarPeriodo", {
-    //     })
-    //     .then(function (response) {
-    //     me.arrayPeriodo = response.data.periodo
-    //     })
-    //     .catch(function (error) {
-    //     // handle error
-    //     console.log(error);
-    //     })
-    // },
     ListarPromociones: function ListarPromociones(especialidad, gestion) {
       this.promocion = '';
       this.arrayPromocion = [];
@@ -3900,89 +3889,38 @@ __webpack_require__.r(__webpack_exports__);
         console.log(error);
       });
     },
-    // ListarMaterias(modulo){
-    //     this.materia = '';
-    //     this.arrayMateria = [];
-    //     let me = this;
-    //     axios
-    //     .post("/listarMateria", {
-    //         modulo : modulo,
-    //     })
-    //     .then(function (response) {
-    //     me.arrayMateria = response.data.materia
-    //     })
-    //     .catch(function (error) {
-    //     // handle error
-    //     console.log(error);
-    //     })
-    // },
-    // ListarEvaluaciones(){
-    //     this.evaluacion = '';
-    //     this.arrayEvaluacion = [];
-    //     let me = this;
-    //     axios
-    //     .post("/listarEvaluacion", {
-    //     })
-    //     .then(function (response) {
-    //     me.arrayEvaluacion = response.data.evaluacion
-    //     })
-    //     .catch(function (error) {
-    //     // handle error
-    //     console.log(error);
-    //     })
-    // },
-    BuscarCursantes: function BuscarCursantes(promocion, modulo) {
-      // Ocultar la tabla mientras se realiza la búsqueda
-      this.mostrarTabla = false; // Limpiar los resultados anteriores
+    BuscarPromediosModulo: function BuscarPromediosModulo() {
+      var _this = this;
 
-      this.arrayCursantesPromocion = [];
-      this.arrayMateriasModulo = [];
-      var me = this;
+      axios.post('/listarPromediosModulo', {
+        promocion: this.promocion,
+        modulo: this.modulo
+      }).then(function (response) {
+        _this.arrayMaterias = response.data.materias;
+        _this.arrayCursantesPromocion = response.data.cursantes;
+      })["catch"](function (error) {
+        console.error(error);
 
-      try {
-        axios.post("/listarCursantesPromocionNotas", {
-          promocion: promocion,
-          modulo: modulo
-        }).then(function (response) {
-          me.arrayCursantesPromocion = response.data.cursante;
-        })["catch"](function (error) {
-          // handle error
-          console.log(error);
-        });
-        axios.post("/listarMateria", {
-          modulo: modulo
-        }).then(function (response) {
-          me.arrayMateriaModulo = response.data.materia;
-        })["catch"](function (error) {
-          // handle error
-          console.log(error);
-        }); // Cuando ambas consultas hayan terminado correctamente:
-
-        this.mostrarTabla = true;
-      } catch (error) {
-        console.error('Error al buscar los cursantes:', error);
-        this.mostrarTabla = false;
-      }
+        _this.$swal('Error', 'No se pudieron consultar los promedios.', 'error');
+      });
     },
     limpiarFormulario: function limpiarFormulario() {
-      var _this = this;
+      var _this2 = this;
 
       // this.per_diplomado = '';
       this.diplomado = '';
       this.gestion = '';
       this.promocion = '';
-      this.modulo = '';
-      this.materia = '';
-      this.evaluacion = ''; // this.per_foto = null;
+      this.modulo = ''; // this.per_foto = null;
       // Ajusta esta ruta a la imagen predeterminada de tu proyecto.
       // this.imagen = '/img/avatar.jpg';
 
       this.$nextTick(function () {
-        _this.$v.$reset();
+        _this2.$v.$reset();
       });
     },
     RegistrarNotas: function RegistrarNotas() {
-      var _this2 = this;
+      var _this3 = this;
 
       if (this.arrayCursantesPromocion.length === 0) {
         return;
@@ -4003,187 +3941,40 @@ __webpack_require__.r(__webpack_exports__);
         evaluacion: me.evaluacion
       }).then(function (response) {
         // Vaciar la lista solo cuando el servidor confirme el registro.
-        _this2.arrayCursantesPromocion = []; // this.indiceEdicion = null;
+        _this3.arrayCursantesPromocion = []; // this.indiceEdicion = null;
 
-        _this2.limpiarFormulario();
+        _this3.limpiarFormulario();
 
-        _this2.$swal('Correcto', response.data.message || 'Notas de cursantes registradas correctamente', 'success');
+        _this3.$swal('Correcto', response.data.message || 'Notas de cursantes registradas correctamente', 'success');
       })["catch"](function (error) {
         console.error(error);
 
-        _this2.$swal('Error', 'No se pudo registrar las notas de los cursantes.', 'error');
+        _this3.$swal('Error', 'No se pudo registrar las notas de los cursantes.', 'error');
       });
     },
     obtenerImagen: function obtenerImagen(e) {
-      var _this3 = this;
+      var _this4 = this;
 
       try {
         var fileReader = new FileReader();
 
         fileReader.onload = function (e) {
-          _this3.per_foto = e.target.result;
+          _this4.per_foto = e.target.result;
         };
 
         fileReader.readAsDataURL(e.target.files[0]);
         this.v = 1;
       } catch (error) {}
     },
-    //   NuevoPersonal(){ //DGAE
-    //     this.$v.validationGroupReg.$reset(),
-    //     this.per_foto = '',
-    //     this.per_ci = '',
-    //     this.per_nombre = '',
-    //     this.per_appaterno = '',
-    //     this.per_apmaterno = '',
-    //     this.per_sexo = '',
-    //     this.per_celular = '',
-    //     this.per_email = '',
-    //     this.per_fechnac = '',
-    //     this.per_direccion = '',
-    //     this.v = 0
-    //   },
-    guardarPromocion: function guardarPromocion() {
-      var _this4 = this;
-
-      swal.fire({
-        title: '¿Desea guardar la promoción?',
-        // TITULO 
-        icon: 'question',
-        //ICONO (success, warnning, error, info, question)
-        showCancelButton: true,
-        //HABILITACION DEL BOTON CANCELAR
-        confirmButtonColor: 'info',
-        // COLOR DEL BOTON PARA CONFIRMAR
-        cancelButtonColor: '#868077',
-        // COLOR DEL BOTON CANCELAR
-        confirmButtonText: 'Confirmar',
-        //TITULO DEL BOTON CONFIRMAR
-        cancelButtonText: 'Cancelar',
-        //TIUTLO DEL BOTON CANCELAR
-        buttonsStyling: true,
-        reverseButtons: true
-      }).then(function (result) {
-        if (result.value) {
-          var me = _this4;
-          axios.post("/guardarPromocion", {
-            diplomado: me.diplomado,
-            gestion: me.gestion,
-            periodo: me.periodo,
-            promocion: me.promocion,
-            modulos: me.inputs
-          }).then(function (response) {
-            console.log(response);
-            swal.fire({
-              title: 'Se realizo el registro correctamente' //TITULO
-              // response.data.mensaje, //TEXTO DE MENSAJE
-              // response.data.tipo, // TIPO DE MODAL (success, warnning, error, info)
-              // response.personal
-
-            });
-
-            if (!response.data.code) {
-              // $('#NuevoUsuario').modal('hide');
-              // $('#ModalNewPersonal').modal('hide');
-              // me.nick = '';
-              // me.password = '';
-              // me.arrayDatPer = response.data.personal;
-              // me.GenerarCarnet(me.arrayDatPer.id_personal);
-              me.Atras(); // this.$v.$reset();
-            }
-          })["catch"](function (error) {
-            // handle error
-            console.log(error);
-          });
-        } else {
-          swal.fire("Informacion", //TITULO
-          "Solicitud cancelada.", //TEXTO DE MENSAJE
-          "info" // TIPO DE MODAL (success, warnning, error, info)
-          );
-        }
-      });
-    },
-    CrearPersonal: function CrearPersonal() {
-      var _this5 = this;
-
-      //DGAE
-      if (!this.$v.validationGroupReg.$invalid) {
-        swal.fire({
-          title: '¿Desea registrar?',
-          // TITULO 
-          icon: 'question',
-          //ICONO (success, warnning, error, info, question)
-          showCancelButton: true,
-          //HABILITACION DEL BOTON CANCELAR
-          confirmButtonColor: 'info',
-          // COLOR DEL BOTON PARA CONFIRMAR
-          cancelButtonColor: '#868077',
-          // COLOR DEL BOTON CANCELAR
-          confirmButtonText: 'Confirmar',
-          //TITULO DEL BOTON CONFIRMAR
-          cancelButtonText: 'Cancelar',
-          //TIUTLO DEL BOTON CANCELAR
-          buttonsStyling: true,
-          reverseButtons: true
-        }).then(function (result) {
-          if (result.value) {
-            var me = _this5;
-            axios.post("/crearPersonal", {
-              foto: me.per_foto,
-              ci: me.per_ci,
-              nombre: me.per_nombre,
-              ap_paterno: me.per_appaterno,
-              ap_materno: me.per_apmaterno,
-              sexo: me.per_sexo,
-              celular: me.per_celular,
-              email: me.per_email,
-              fech_nac: me.per_fechnac,
-              direccion: me.per_direccion
-            }).then(function (response) {
-              console.log(response);
-              swal.fire({
-                title: 'Se realizo el registro correctamente' //TITULO
-                // response.data.mensaje, //TEXTO DE MENSAJE
-                // response.data.tipo, // TIPO DE MODAL (success, warnning, error, info)
-                // response.personal
-
-              });
-
-              if (!response.data.code) {
-                // $('#NuevoUsuario').modal('hide');
-                // $('#ModalNewPersonal').modal('hide');
-                // me.nick = '';
-                // me.password = '';
-                me.arrayDatPer = response.data.personal; // me.GenerarCarnet(me.arrayDatPer.id_personal);
-
-                me.Atras();
-                this.$v.$reset();
-              }
-            })["catch"](function (error) {
-              // handle error
-              console.log(error);
-            });
-          } else {
-            swal.fire("Informacion", //TITULO
-            "Solicitud cancelada.", //TEXTO DE MENSAJE
-            "info" // TIPO DE MODAL (success, warnning, error, info)
-            );
-          }
-        });
-      } else {
-        this.$v.validationGroupReg.$touch();
-        Swal.fire({
-          icon: 'warning',
-          title: 'Ingrese todos los datos requeridos',
-          showConfirmButton: false,
-          timer: 2000
-        });
-      }
-    },
-    GenerarCarnet: function GenerarCarnet(id_personal) {
+    GenerarReporte: function GenerarReporte() {
       //DGAE
       // this.$v.$reset();
       // if(!this.$v.$invalid){
-      window.open('/carnet?id_p=' + id_personal); // window.open('http://127.0.0.1:8000/carnet?id_p='+id_personal);
+      var promocion = this.promocion;
+      var modulo = this.modulo;
+      var diplomado = this.diplomado;
+      var gestion = this.gestion;
+      window.open('/ant_mod?diplomado=' + diplomado + '&gestion=' + gestion + '&promocion=' + promocion + '&modulo=' + modulo); // window.open('http://127.0.0.1:8000/carnet?id_p='+id_personal);
       // }else{
       //     this.$v.$touch();
       //     Swal.fire({
@@ -5250,12 +5041,21 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuelidate/lib/validators */ "./node_modules/vuelidate/lib/validators/index.js");
 /* harmony import */ var vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__);
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -5434,7 +5234,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       promocion: '',
       modulo: '',
       materia: '',
-      evaluacion: '',
+      // evaluacion : '',
       v: 0,
       // FIN VARIABLES DGAE
       arrayDiplomado: [],
@@ -5443,7 +5243,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       arrayModulo: [],
       arrayMateria: [],
       arrayCursantesPromocion: [],
-      arrayEvaluacion: [],
+      // arrayEvaluacion : [],
       buscar: "",
       setTiemoutBuscador: '',
       isHidden: true,
@@ -5475,10 +5275,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     materia: {
       required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"]
     },
-    evaluacion: {
-      required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"]
-    },
-    validationGroupReg: ['diplomado', 'gestion', 'promocion', 'modulo', 'materia', 'evaluacion']
+    // evaluacion : { required },
+    validationGroupReg: ['diplomado', 'gestion', 'promocion', 'modulo', 'materia' // 'evaluacion'
+    ]
   },
   computed: {
     isActived: function isActived() {
@@ -5658,22 +5457,21 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       });
     },
     BuscarCursantes: function BuscarCursantes(promocion) {
-      var me = this;
+      var _this = this;
+
       axios.post("/listarCursantesPromocion", {
-        promocion: promocion
+        promocion: promocion,
+        materia: this.materia
       }).then(function (response) {
-        me.arrayCursantesPromocion = response.data.cursante.map(function (personal) {
-          return _objectSpread(_objectSpread({}, personal), {}, {
-            nota: ''
-          });
-        });
+        _this.arrayCursantesPromocion = response.data.cursante;
       })["catch"](function (error) {
-        // handle error
-        console.log(error);
+        console.error(error);
+
+        _this.$swal('Error', 'No se pudieron cargar los cursantes y sus notas.', 'error');
       });
     },
     limpiarFormulario: function limpiarFormulario() {
-      var _this = this;
+      var _this2 = this;
 
       // this.per_diplomado = '';
       this.diplomado = '';
@@ -5686,50 +5484,78 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       // this.imagen = '/img/avatar.jpg';
 
       this.$nextTick(function () {
-        _this.$v.$reset();
+        _this2.$v.$reset();
       });
     },
     RegistrarNotas: function RegistrarNotas() {
-      var _this2 = this;
+      var _this3 = this;
 
-      if (this.arrayCursantesPromocion.length === 0) {
+      if (!this.arrayCursantesPromocion || this.arrayCursantesPromocion.length === 0) {
         return;
       }
 
-      var datos = this.arrayCursantesPromocion.map(function (cursante) {
-        return {
-          // per_diplomado: cursante.per_diplomado,
-          diplopromocursante_id: cursante.diplopromocursante_id,
-          personals_id: cursante.personals_id,
-          nota: cursante.nota
-        };
+      var evaluaciones = [{
+        campo: 'pri_parcial',
+        evaluacion_id: 1,
+        registrada: 'pri_parcial_registrada'
+      }, {
+        campo: 'seg_parcial',
+        evaluacion_id: 2,
+        registrada: 'seg_parcial_registrada'
+      }, {
+        campo: 'ex_final',
+        evaluacion_id: 3,
+        registrada: 'ex_final_registrada'
+      }, {
+        campo: 'apr_docente',
+        evaluacion_id: 4,
+        registrada: 'apr_docente_registrada'
+      }];
+      var notas = [];
+      this.arrayCursantesPromocion.forEach(function (cursante) {
+        evaluaciones.forEach(function (evaluacion) {
+          var valor = cursante[evaluacion.campo]; // Registrar solo notas ingresadas y todavía no registradas.
+
+          if (!cursante[evaluacion.registrada] && valor !== null && valor !== undefined && valor !== '') {
+            notas.push({
+              diplopromocursante_id: cursante.diplopromocursante_id,
+              personals_id: cursante.personals_id,
+              evaluacion_id: evaluacion.evaluacion_id,
+              nota: valor
+            });
+          }
+        });
       });
-      var me = this;
+
+      if (notas.length === 0) {
+        this.$swal('Atención', 'No hay notas nuevas para registrar.', 'warning');
+        return;
+      }
+
       axios.post('/guardarNotasCursantes', {
-        cursantes: datos,
-        materia: me.materia,
-        evaluacion: me.evaluacion
+        promocion: this.promocion,
+        materia: this.materia,
+        notas: notas
       }).then(function (response) {
-        // Vaciar la lista solo cuando el servidor confirme el registro.
-        _this2.arrayCursantesPromocion = []; // this.indiceEdicion = null;
+        // Volver a consultar las notas para bloquear las ya registradas.
+        _this3.BuscarCursantes(_this3.promocion);
 
-        _this2.limpiarFormulario();
-
-        _this2.$swal('Correcto', response.data.message || 'Notas de cursantes registradas correctamente', 'success');
+        _this3.$swal('Correcto', response.data.mensaje || 'Notas registradas correctamente.', 'success');
       })["catch"](function (error) {
         console.error(error);
+        var mensaje = error.response && error.response.data && error.response.data.mensaje ? error.response.data.mensaje : 'No se pudieron registrar las notas.';
 
-        _this2.$swal('Error', 'No se pudo registrar las notas de los cursantes.', 'error');
+        _this3.$swal('Error', mensaje, 'error');
       });
     },
     obtenerImagen: function obtenerImagen(e) {
-      var _this3 = this;
+      var _this4 = this;
 
       try {
         var fileReader = new FileReader();
 
         fileReader.onload = function (e) {
-          _this3.per_foto = e.target.result;
+          _this4.per_foto = e.target.result;
         };
 
         fileReader.readAsDataURL(e.target.files[0]);
@@ -5751,7 +5577,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     //     this.v = 0
     //   },
     guardarPromocion: function guardarPromocion() {
-      var _this4 = this;
+      var _this5 = this;
 
       swal.fire({
         title: '¿Desea guardar la promoción?',
@@ -5772,7 +5598,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         reverseButtons: true
       }).then(function (result) {
         if (result.value) {
-          var me = _this4;
+          var me = _this5;
           axios.post("/guardarPromocion", {
             diplomado: me.diplomado,
             gestion: me.gestion,
@@ -5811,7 +5637,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       });
     },
     CrearPersonal: function CrearPersonal() {
-      var _this5 = this;
+      var _this6 = this;
 
       //DGAE
       if (!this.$v.validationGroupReg.$invalid) {
@@ -5834,7 +5660,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           reverseButtons: true
         }).then(function (result) {
           if (result.value) {
-            var me = _this5;
+            var me = _this6;
             axios.post("/crearPersonal", {
               foto: me.per_foto,
               ci: me.per_ci,
@@ -112515,7 +112341,30 @@ var render = function() {
         _c("div", { staticClass: "row" }, [
           _c("div", { staticClass: "col-md-12" }, [
             _c("div", { staticClass: "card card-primary card-outline" }, [
-              _vm._m(1),
+              _c("div", { staticClass: "card-header" }, [
+                _c("div", { staticClass: "row" }, [
+                  _vm._m(1),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "col-sm-4" }, [
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-danger btn-sm float-right",
+                        attrs: { type: "submit" },
+                        on: {
+                          click: function($event) {
+                            return _vm.Atras()
+                          }
+                        }
+                      },
+                      [
+                        _c("i", { staticClass: "fas fa-arrow-left" }),
+                        _vm._v("  VOLVER\n                  ")
+                      ]
+                    )
+                  ])
+                ])
+              ]),
               _vm._v(" "),
               _c("div", { staticClass: "card-body" }, [
                 _c("form", [
@@ -112818,10 +112667,7 @@ var render = function() {
                         attrs: { type: "button" },
                         on: {
                           click: function($event) {
-                            return _vm.BuscarCursantes(
-                              _vm.promocion,
-                              _vm.modulo
-                            )
+                            return _vm.BuscarPromediosModulo()
                           }
                         }
                       },
@@ -112841,204 +112687,191 @@ var render = function() {
                     attrs: { id: "myTable" }
                   },
                   [
-                    _vm.mostrarTabla
-                      ? _c(
-                          "table",
-                          {
-                            staticClass:
-                              "table table-bordered table-striped table-sm"
-                          },
+                    _c(
+                      "table",
+                      { staticClass: "table table-bordered table-sm" },
+                      [
+                        _c("thead", [
+                          _c(
+                            "tr",
+                            [
+                              _c("th", [_vm._v("Nº")]),
+                              _vm._v(" "),
+                              _c("th", [_vm._v("GRADO")]),
+                              _vm._v(" "),
+                              _c("th", [_vm._v("AP. PATERNO")]),
+                              _vm._v(" "),
+                              _c("th", [_vm._v("AP. MATERNO")]),
+                              _vm._v(" "),
+                              _c("th", [_vm._v("NOMBRES")]),
+                              _vm._v(" "),
+                              _vm._l(_vm.arrayMaterias, function(materia) {
+                                return _c("th", { key: materia.id }, [
+                                  _vm._v(
+                                    "\n                                    " +
+                                      _vm._s(materia.materia) +
+                                      "\n                                "
+                                  )
+                                ])
+                              }),
+                              _vm._v(" "),
+                              _c("th", [_vm._v("PROM. FINAL")])
+                            ],
+                            2
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "tbody",
                           [
-                            _c("thead", [
-                              _c(
+                            _vm._l(_vm.arrayCursantesPromocion, function(
+                              personal,
+                              index
+                            ) {
+                              return _c(
                                 "tr",
+                                { key: personal.diplopromocursante_id },
                                 [
-                                  _c("th", { staticClass: "text-center" }, [
-                                    _vm._v("#")
+                                  _c("td", [_vm._v(_vm._s(index + 1))]),
+                                  _vm._v(" "),
+                                  _c("td", [
+                                    _vm._v(_vm._s(personal.abreviatura))
                                   ]),
                                   _vm._v(" "),
-                                  _c("th", { staticClass: "text-center" }, [
-                                    _vm._v("GRADO")
+                                  _c("td", [
+                                    _vm._v(_vm._s(personal.per_paterno))
                                   ]),
                                   _vm._v(" "),
-                                  _c("th", { staticClass: "text-center" }, [
-                                    _vm._v("AP. PATERNO")
+                                  _c("td", [
+                                    _vm._v(_vm._s(personal.per_materno))
                                   ]),
                                   _vm._v(" "),
-                                  _c("th", { staticClass: "text-center" }, [
-                                    _vm._v("AP. MATERNO")
+                                  _c("td", [
+                                    _vm._v(_vm._s(personal.per_nombre))
                                   ]),
                                   _vm._v(" "),
-                                  _c("th", { staticClass: "text-center" }, [
-                                    _vm._v("NOMBRES")
-                                  ]),
-                                  _vm._v(" "),
-                                  _vm._l(_vm.arrayMateriasModulo, function(
-                                    materia
-                                  ) {
+                                  _vm._l(_vm.arrayMaterias, function(materia) {
                                     return _c(
-                                      "th",
+                                      "td",
                                       {
                                         key: materia.id,
-                                        staticClass: "text-center"
+                                        style: {
+                                          color:
+                                            Number(
+                                              personal.promedios_materias[
+                                                materia.id
+                                              ] || 0
+                                            ) < 51
+                                              ? "red"
+                                              : "inherit"
+                                        }
                                       },
                                       [
                                         _vm._v(
                                           "\n                                    " +
-                                            _vm._s(materia.materia) +
+                                            _vm._s(
+                                              Number(
+                                                personal.promedios_materias[
+                                                  materia.id
+                                                ] || 0
+                                              ).toFixed(2)
+                                            ) +
                                             "\n                                "
                                         )
                                       ]
                                     )
-                                  })
+                                  }),
+                                  _vm._v(" "),
+                                  _c("td", [
+                                    _c(
+                                      "strong",
+                                      {
+                                        style: {
+                                          color:
+                                            Number(
+                                              personal.promedio_final || 0
+                                            ) < 51
+                                              ? "red"
+                                              : "inherit"
+                                        }
+                                      },
+                                      [
+                                        _vm._v(
+                                          "\n                                        " +
+                                            _vm._s(
+                                              Number(
+                                                personal.promedio_final || 0
+                                              ).toFixed(2)
+                                            ) +
+                                            "\n                                    "
+                                        )
+                                      ]
+                                    )
+                                  ])
                                 ],
                                 2
                               )
-                            ]),
+                            }),
                             _vm._v(" "),
-                            _c(
-                              "tbody",
-                              [
-                                _vm._l(_vm.arrayCursantesPromocion, function(
-                                  personal,
-                                  index
-                                ) {
-                                  return _c(
-                                    "tr",
+                            _vm.arrayCursantesPromocion.length === 0
+                              ? _c("tr", [
+                                  _c(
+                                    "td",
+                                    {
+                                      staticClass: "text-center",
+                                      attrs: {
+                                        colspan: 6 + _vm.arrayMaterias.length
+                                      }
+                                    },
                                     [
-                                      _c(
-                                        "td",
-                                        {
-                                          staticStyle: {
-                                            "text-align": "center",
-                                            "font-weight": "bold"
-                                          }
-                                        },
-                                        [_vm._v(_vm._s(index + 1))]
-                                      ),
-                                      _vm._v(" "),
-                                      _c("td", {
-                                        domProps: {
-                                          textContent: _vm._s(
-                                            personal.abreviatura
-                                          )
-                                        }
-                                      }),
-                                      _vm._v(" "),
-                                      _c("td", {
-                                        domProps: {
-                                          textContent: _vm._s(
-                                            personal.per_paterno
-                                          )
-                                        }
-                                      }),
-                                      _vm._v(" "),
-                                      _c("td", {
-                                        domProps: {
-                                          textContent: _vm._s(
-                                            personal.per_materno
-                                          )
-                                        }
-                                      }),
-                                      _vm._v(" "),
-                                      _c("td", {
-                                        domProps: {
-                                          textContent: _vm._s(
-                                            personal.per_nombre
-                                          )
-                                        }
-                                      }),
-                                      _vm._v(" "),
-                                      _vm._l(_vm.arrayMateriasModulo, function(
-                                        materia
-                                      ) {
-                                        return _c(
-                                          "td",
-                                          {
-                                            key: materia.id,
-                                            staticClass: "text-center"
-                                          },
-                                          [
-                                            _vm._v(
-                                              "\n                                    " +
-                                                _vm._s(
-                                                  personal.notas &&
-                                                    personal.notas[
-                                                      materia.id
-                                                    ] != null
-                                                    ? personal.notas[materia.id]
-                                                    : "Sin nota"
-                                                ) +
-                                                "\n                                "
-                                            )
-                                          ]
-                                        )
-                                      })
-                                    ],
-                                    2
-                                  )
-                                }),
-                                _vm._v(" "),
-                                _vm.arrayCursantesPromocion.length === 0
-                                  ? _c("tr", [
-                                      _c(
-                                        "td",
-                                        {
-                                          staticClass: "text-center",
-                                          attrs: { colspan: "6" }
-                                        },
-                                        [
-                                          _vm._v(
-                                            "\n                                    No hay cursantes para mostrar.\n                                "
-                                          )
-                                        ]
+                                      _vm._v(
+                                        "\n                                    No hay cursantes para mostrar.\n                                "
                                       )
-                                    ])
-                                  : _vm._e()
-                              ],
-                              2
+                                    ]
+                                  )
+                                ])
+                              : _vm._e()
+                          ],
+                          2
+                        )
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c("div", [
+                      _c("div", { staticClass: "text-right mt-3 mb-4" }, [
+                        _c("strong", [
+                          _vm._v(
+                            "\n                                Total de cursantes: " +
+                              _vm._s(_vm.arrayCursantesPromocion.length) +
+                              "\n                            "
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-success ml-3",
+                            attrs: {
+                              type: "button",
+                              disabled:
+                                _vm.arrayCursantesPromocion.length === 0 ||
+                                _vm.arrayMaterias.length === 0
+                            },
+                            on: {
+                              click: function($event) {
+                                return _vm.GenerarReporte()
+                              }
+                            }
+                          },
+                          [
+                            _c("i", { staticClass: "fas fa-save" }),
+                            _vm._v(
+                              " GENERAR REPORTE\n                            "
                             )
                           ]
                         )
-                      : _vm._e(),
-                    _vm._v(" "),
-                    _vm.mostrarTabla
-                      ? _c("div", [
-                          _c("div", { staticClass: "text-right mt-3 mb-4" }, [
-                            _c("strong", [
-                              _vm._v(
-                                "\n                                Total de cursantes: " +
-                                  _vm._s(_vm.arrayCursantesPromocion.length) +
-                                  "\n                            "
-                              )
-                            ]),
-                            _vm._v(" "),
-                            _c(
-                              "button",
-                              {
-                                staticClass: "btn btn-success ml-3",
-                                attrs: {
-                                  type: "button",
-                                  disabled:
-                                    _vm.arrayCursantesPromocion.length === 0 ||
-                                    _vm.arrayMateriasModulo.length === 0
-                                },
-                                on: {
-                                  click: function($event) {
-                                    return _vm.GenerarReporte()
-                                  }
-                                }
-                              },
-                              [
-                                _c("i", { staticClass: "fas fa-save" }),
-                                _vm._v(
-                                  " GENERAR REPORTE\n                            "
-                                )
-                              ]
-                            )
-                          ])
-                        ])
-                      : _vm._e(),
+                      ])
+                    ]),
                     _vm._v(" "),
                     _c("br")
                   ]
@@ -113073,12 +112906,8 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "card-header" }, [
-      _c("div", { staticClass: "row" }, [
-        _c("div", { staticClass: "col-sm-8" }, [
-          _c("h3", { staticClass: "card-title" })
-        ])
-      ])
+    return _c("div", { staticClass: "col-sm-8" }, [
+      _c("h3", { staticClass: "card-title" })
     ])
   },
   function() {
@@ -115053,73 +114882,6 @@ var render = function() {
                       ])
                     ]),
                     _vm._v(" "),
-                    _c("div", { staticClass: "col-md-4" }, [
-                      _c(
-                        "label",
-                        {
-                          staticClass: "form-control-label",
-                          attrs: { for: "text-input" }
-                        },
-                        [_vm._v("Evaluación")]
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "select",
-                        {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.evaluacion,
-                              expression: "evaluacion"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          class: {
-                            "is-invalid": _vm.$v.evaluacion.$error,
-                            "is-valid": !_vm.$v.evaluacion.$invalid
-                          },
-                          on: {
-                            change: function($event) {
-                              var $$selectedVal = Array.prototype.filter
-                                .call($event.target.options, function(o) {
-                                  return o.selected
-                                })
-                                .map(function(o) {
-                                  var val = "_value" in o ? o._value : o.value
-                                  return val
-                                })
-                              _vm.evaluacion = $event.target.multiple
-                                ? $$selectedVal
-                                : $$selectedVal[0]
-                            }
-                          }
-                        },
-                        [
-                          _c("option", { attrs: { value: "", disabled: "" } }, [
-                            _vm._v("SELECCIONE")
-                          ]),
-                          _vm._v(" "),
-                          _vm._l(_vm.arrayEvaluacion, function(evaluacion) {
-                            return _c("option", {
-                              key: evaluacion.id,
-                              domProps: {
-                                value: evaluacion.id,
-                                textContent: _vm._s(evaluacion.evaluacion)
-                              }
-                            })
-                          })
-                        ],
-                        2
-                      ),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "invalid-feedback" }, [
-                        !_vm.$v.evaluacion.required
-                          ? _c("span", [_vm._v("Este campo es Requerido")])
-                          : _vm._e()
-                      ])
-                    ]),
-                    _vm._v(" "),
                     _c(
                       "button",
                       {
@@ -115205,8 +114967,8 @@ var render = function() {
                                       {
                                         name: "model",
                                         rawName: "v-model.number",
-                                        value: personal.nota,
-                                        expression: "personal.nota",
+                                        value: personal.pri_parcial,
+                                        expression: "personal.pri_parcial",
                                         modifiers: { number: true }
                                       }
                                     ],
@@ -115216,9 +114978,10 @@ var render = function() {
                                       min: "0",
                                       max: "100",
                                       step: "0.01",
+                                      readonly: personal.pri_parcial_registrada,
                                       placeholder: "Ingrese nota"
                                     },
-                                    domProps: { value: personal.nota },
+                                    domProps: { value: personal.pri_parcial },
                                     on: {
                                       input: function($event) {
                                         if ($event.target.composing) {
@@ -115226,7 +114989,124 @@ var render = function() {
                                         }
                                         _vm.$set(
                                           personal,
-                                          "nota",
+                                          "pri_parcial",
+                                          _vm._n($event.target.value)
+                                        )
+                                      },
+                                      blur: function($event) {
+                                        return _vm.$forceUpdate()
+                                      }
+                                    }
+                                  })
+                                ]),
+                                _vm._v(" "),
+                                _c("td", [
+                                  _c("input", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model.number",
+                                        value: personal.seg_parcial,
+                                        expression: "personal.seg_parcial",
+                                        modifiers: { number: true }
+                                      }
+                                    ],
+                                    staticClass: "form-control form-control-sm",
+                                    attrs: {
+                                      type: "number",
+                                      min: "0",
+                                      max: "100",
+                                      step: "0.01",
+                                      readonly: personal.seg_parcial_registrada,
+                                      placeholder: "Ingrese nota"
+                                    },
+                                    domProps: { value: personal.seg_parcial },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          personal,
+                                          "seg_parcial",
+                                          _vm._n($event.target.value)
+                                        )
+                                      },
+                                      blur: function($event) {
+                                        return _vm.$forceUpdate()
+                                      }
+                                    }
+                                  })
+                                ]),
+                                _vm._v(" "),
+                                _c("td", [
+                                  _c("input", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model.number",
+                                        value: personal.ex_final,
+                                        expression: "personal.ex_final",
+                                        modifiers: { number: true }
+                                      }
+                                    ],
+                                    staticClass: "form-control form-control-sm",
+                                    attrs: {
+                                      type: "number",
+                                      min: "0",
+                                      max: "100",
+                                      step: "0.01",
+                                      readonly: personal.ex_final_registrada,
+                                      placeholder: "Ingrese nota"
+                                    },
+                                    domProps: { value: personal.ex_final },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          personal,
+                                          "ex_final",
+                                          _vm._n($event.target.value)
+                                        )
+                                      },
+                                      blur: function($event) {
+                                        return _vm.$forceUpdate()
+                                      }
+                                    }
+                                  })
+                                ]),
+                                _vm._v(" "),
+                                _c("td", [
+                                  _c("input", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model.number",
+                                        value: personal.apr_docente,
+                                        expression: "personal.apr_docente",
+                                        modifiers: { number: true }
+                                      }
+                                    ],
+                                    staticClass: "form-control form-control-sm",
+                                    attrs: {
+                                      type: "number",
+                                      min: "0",
+                                      max: "100",
+                                      step: "0.01",
+                                      readonly: personal.apr_docente_registrada,
+                                      placeholder: "Ingrese nota"
+                                    },
+                                    domProps: { value: personal.apr_docente },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          personal,
+                                          "apr_docente",
                                           _vm._n($event.target.value)
                                         )
                                       },
@@ -115245,7 +115125,7 @@ var render = function() {
                                     "td",
                                     {
                                       staticClass: "text-center",
-                                      attrs: { colspan: "6" }
+                                      attrs: { colspan: "9" }
                                     },
                                     [
                                       _vm._v(
@@ -115345,15 +115225,21 @@ var staticRenderFns = [
       _c("tr", [
         _c("th", { staticClass: "text-center" }, [_vm._v("#")]),
         _vm._v(" "),
-        _c("th", { staticClass: "text-center" }, [_vm._v("GRADO")]),
+        _c("th", { staticClass: "text-center" }, [_vm._v("Grado")]),
         _vm._v(" "),
-        _c("th", { staticClass: "text-center" }, [_vm._v("AP. PATERNO")]),
+        _c("th", { staticClass: "text-center" }, [_vm._v("Ap. Paterno")]),
         _vm._v(" "),
-        _c("th", { staticClass: "text-center" }, [_vm._v("AP. MATERNO")]),
+        _c("th", { staticClass: "text-center" }, [_vm._v("Ap. Materno")]),
         _vm._v(" "),
-        _c("th", { staticClass: "text-center" }, [_vm._v("NOMBRES")]),
+        _c("th", { staticClass: "text-center" }, [_vm._v("Nombres")]),
         _vm._v(" "),
-        _c("th", { staticClass: "text-center" }, [_vm._v("NOTA")])
+        _c("th", { staticClass: "text-center" }, [_vm._v("1er Parcial")]),
+        _vm._v(" "),
+        _c("th", { staticClass: "text-center" }, [_vm._v("2do Parcial")]),
+        _vm._v(" "),
+        _c("th", { staticClass: "text-center" }, [_vm._v("Ex Final")]),
+        _vm._v(" "),
+        _c("th", { staticClass: "text-center" }, [_vm._v("Apr Docente")])
       ])
     ])
   }

@@ -92,7 +92,7 @@
                                     <span v-if="!$v.materia.required">Este campo es Requerido</span>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <!-- <div class="col-md-4">
                                 <label class="form-control-label" for="text-input">Evaluación</label>
                                 <select class="form-control" v-model="evaluacion" :class="{ 'is-invalid' : $v.evaluacion.$error, 'is-valid':!$v.evaluacion.$invalid }">
                                     <option value="" disabled>SELECCIONE</option>
@@ -101,7 +101,7 @@
                                 <div class="invalid-feedback">
                                     <span v-if="!$v.evaluacion.required">Este campo es Requerido</span>
                                 </div>
-                            </div>
+                            </div> -->
                             <button type="button" class="btn btn-primary" @click="BuscarCursantes(promocion)">
                                 <i class="fas fa-plus"></i>&nbsp; BUSCAR
                             </button>
@@ -114,11 +114,14 @@
                             <thead>
                                 <tr>
                                     <th class="text-center">#</th>
-                                    <th class="text-center">GRADO</th>
-                                    <th class="text-center">AP. PATERNO</th>
-                                    <th class="text-center">AP. MATERNO</th>
-                                    <th class="text-center">NOMBRES</th>
-                                    <th class="text-center">NOTA</th>
+                                    <th class="text-center">Grado</th>
+                                    <th class="text-center">Ap. Paterno</th>
+                                    <th class="text-center">Ap. Materno</th>
+                                    <th class="text-center">Nombres</th>
+                                    <th class="text-center">1er Parcial</th>
+                                    <th class="text-center">2do Parcial</th>
+                                    <th class="text-center">Ex Final</th>
+                                    <th class="text-center">Apr Docente</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -130,11 +133,23 @@
                                     <td v-text="personal.per_materno"></td>
                                     <td v-text="personal.per_nombre"></td>
                                     <td>
-                                        <input type="number" class="form-control form-control-sm" min="0" max="100" step="0.01" v-model.number="personal.nota" placeholder="Ingrese nota">
+                                        <input type="number" class="form-control form-control-sm" min="0" max="100" step="0.01" v-model.number="personal.pri_parcial" :readonly="personal.pri_parcial_registrada" placeholder="Ingrese nota">
+                                    </td>
+
+                                    <td>
+                                        <input type="number" class="form-control form-control-sm" min="0" max="100" step="0.01" v-model.number="personal.seg_parcial" :readonly="personal.seg_parcial_registrada" placeholder="Ingrese nota">
+                                    </td>
+
+                                    <td>
+                                        <input type="number" class="form-control form-control-sm" min="0" max="100" step="0.01" v-model.number="personal.ex_final" :readonly="personal.ex_final_registrada" placeholder="Ingrese nota">
+                                    </td>
+
+                                    <td>
+                                        <input type="number" class="form-control form-control-sm" min="0" max="100" step="0.01"  v-model.number="personal.apr_docente" :readonly="personal.apr_docente_registrada" placeholder="Ingrese nota">
                                     </td>
                                 </tr>
                                 <tr v-if="arrayCursantesPromocion.length === 0">
-                                    <td colspan="6" class="text-center">
+                                    <td colspan="9" class="text-center">
                                         No hay cursantes para mostrar.
                                     </td>
                                 </tr>
@@ -177,7 +192,7 @@
         promocion : '',
         modulo : '',
         materia : '',
-        evaluacion : '',
+        // evaluacion : '',
 
         v : 0,
         
@@ -188,7 +203,7 @@
         arrayModulo : [],
         arrayMateria : [],
         arrayCursantesPromocion : [],
-        arrayEvaluacion : [],
+        // arrayEvaluacion : [],
         
         buscar:"",
         setTiemoutBuscador: '',
@@ -213,7 +228,7 @@
         promocion : { required },
         modulo : { required },
         materia : { required },
-        evaluacion : { required },
+        // evaluacion : { required },
 
         validationGroupReg: [
         'diplomado',
@@ -221,7 +236,8 @@
         'promocion',
         'modulo',
         'materia',
-        'evaluacion'],
+        // 'evaluacion'
+        ],
     },
   
    computed: {
@@ -431,22 +447,23 @@
             })
         },
 
-        BuscarCursantes(promocion){
-            let me = this;
-            axios
-            .post("/listarCursantesPromocion", {
-                promocion : promocion,
+        BuscarCursantes(promocion) {
+            axios.post("/listarCursantesPromocion", {
+                promocion: promocion,
+                materia: this.materia
             })
-            .then(function (response) {
-                me.arrayCursantesPromocion = response.data.cursante.map(personal => ({
-                    ...personal,
-                    nota: ''
-                }));
+            .then(response => {
+                this.arrayCursantesPromocion = response.data.cursante;
             })
-            .catch(function (error) {
-            // handle error
-            console.log(error);
-            })
+            .catch(error => {
+                console.error(error);
+
+                this.$swal(
+                    'Error',
+                    'No se pudieron cargar los cursantes y sus notas.',
+                    'error'
+                );
+            });
         },
 
         limpiarFormulario() {
@@ -467,43 +484,75 @@
             });
         },
 
-        RegistrarNotas(){
-            if (this.arrayCursantesPromocion.length === 0) {
+        RegistrarNotas() {
+            if (!this.arrayCursantesPromocion || this.arrayCursantesPromocion.length === 0) {
                 return;
             }
 
-            const datos = this.arrayCursantesPromocion.map(cursante => ({
-                // per_diplomado: cursante.per_diplomado,
-                diplopromocursante_id: cursante.diplopromocursante_id,
-                personals_id: cursante.personals_id,
-                nota: cursante.nota,
-            }));
-            let me = this;
+            const evaluaciones = [
+                { campo: 'pri_parcial', evaluacion_id: 1, registrada: 'pri_parcial_registrada' },
+                { campo: 'seg_parcial', evaluacion_id: 2, registrada: 'seg_parcial_registrada' },
+                { campo: 'ex_final', evaluacion_id: 3, registrada: 'ex_final_registrada' },
+                { campo: 'apr_docente', evaluacion_id: 4, registrada: 'apr_docente_registrada' }
+            ];
+
+            const notas = [];
+
+            this.arrayCursantesPromocion.forEach(cursante => {
+                evaluaciones.forEach(evaluacion => {
+                    const valor = cursante[evaluacion.campo];
+
+                    // Registrar solo notas ingresadas y todavía no registradas.
+                    if (
+                        !cursante[evaluacion.registrada] &&
+                        valor !== null &&
+                        valor !== undefined &&
+                        valor !== ''
+                    ) {
+                        notas.push({
+                            diplopromocursante_id: cursante.diplopromocursante_id,
+                            personals_id: cursante.personals_id,
+                            evaluacion_id: evaluacion.evaluacion_id,
+                            nota: valor
+                        });
+                    }
+                });
+            });
+
+            if (notas.length === 0) {
+                this.$swal(
+                    'Atención',
+                    'No hay notas nuevas para registrar.',
+                    'warning'
+                );
+                return;
+            }
+
             axios.post('/guardarNotasCursantes', {
-                cursantes : datos,
-                materia : me.materia,
-                evaluacion : me.evaluacion
+                promocion: this.promocion,
+                materia: this.materia,
+                notas: notas
             })
             .then(response => {
-                // Vaciar la lista solo cuando el servidor confirme el registro.
-                this.arrayCursantesPromocion = [];
-                // this.indiceEdicion = null;
-                this.limpiarFormulario();
+                // Volver a consultar las notas para bloquear las ya registradas.
+                this.BuscarCursantes(this.promocion);
 
                 this.$swal(
                     'Correcto',
-                    response.data.message || 'Notas de cursantes registradas correctamente',
+                    response.data.mensaje || 'Notas registradas correctamente.',
                     'success'
                 );
             })
             .catch(error => {
                 console.error(error);
 
-                this.$swal(
-                    'Error',
-                    'No se pudo registrar las notas de los cursantes.',
-                    'error'
-                );
+                const mensaje = error.response &&
+                                error.response.data &&
+                                error.response.data.mensaje
+                    ? error.response.data.mensaje
+                    : 'No se pudieron registrar las notas.';
+
+                this.$swal('Error', mensaje, 'error');
             });
         },
 

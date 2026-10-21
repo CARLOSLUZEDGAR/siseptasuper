@@ -91,6 +91,10 @@ Route::post('/listarEvaluacion', 'EvaluacionController@ListarEvaluacion');
 Route::post('/guardarNotasCursantes','CursanteNotaController@CrearCursanteNota');
 Route::post('/listarEspecialidad', 'DiplomadoController@ListarDiplomado');
 Route::post('/listarCursantesPromocionNotas', 'CursanteNotaController@ListarDiplomadoPromocionCursante');
+Route::post('/listarPromediosModulo' , 'CursanteNotaController@ListarPromediosModulo');
+Route::get('/ant_mod' , 'ReporteController@ReporteAntiguedadModulo');
+
+
 
 
 

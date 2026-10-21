@@ -30,11 +30,11 @@
                         <!-- Buscar Personal -->
                       </h3>  
                     </div>                  
-                    <!-- <div class="col-sm-4" v-if="$auth.can('view-antiguedad')">
-                        <button class="btn btn-primary btn-sm float-right" type="submit" @click="VerAntiguedad()">
-                        <i class="fas fa-user-plus"></i>&nbsp; VER ANTIGUEDAD
-                        </button>
-                    </div> -->
+                    <div class="col-sm-4">
+                      <button class="btn btn-danger btn-sm float-right" type="submit" @click="Atras()">
+                        <i class="fas fa-arrow-left"></i>&nbsp; VOLVER
+                      </button>
+                    </div>
                   </div>  
                 </div>
                 <div class="card-body">
@@ -102,7 +102,7 @@
                                     <span v-if="!$v.evaluacion.required">Este campo es Requerido</span>
                                 </div>
                             </div> -->
-                            <button type="button" class="btn btn-primary" @click="BuscarCursantes(promocion, modulo)">
+                            <button type="button" class="btn btn-primary" @click="BuscarPromediosModulo()">
                                 <i class="fas fa-plus"></i>&nbsp; BUSCAR
                             </button>
                         </div>
@@ -110,49 +110,77 @@
                     <div class="table-wrapper-scroll-y my-custom-scrollbar" id="myTable" style="font-size: 12pt;" >
 
                         <!-- <template v-if="datfis2==1"> -->
-                        <table v-if="mostrarTabla" class="table table-bordered table-striped table-sm">
+                        <table class="table table-bordered table-sm">
                             <thead>
                                 <tr>
-                                    <th class="text-center">#</th>
-                                    <th class="text-center">GRADO</th>
-                                    <th class="text-center">AP. PATERNO</th>
-                                    <th class="text-center">AP. MATERNO</th>
-                                    <th class="text-center">NOMBRES</th>
-                                    <!-- Generar una columna por cada materia -->
-                                    <th v-for="materia in arrayMateriasModulo" :key="materia.id" class="text-center">
+                                    <th>Nº</th>
+                                    <th>GRADO</th>
+                                    <th>AP. PATERNO</th>
+                                    <th>AP. MATERNO</th>
+                                    <th>NOMBRES</th>
+
+                                    <th
+                                        v-for="materia in arrayMaterias"
+                                        :key="materia.id"
+                                    >
                                         {{ materia.materia }}
                                     </th>
+
+                                    <th>PROM. FINAL</th>
                                 </tr>
                             </thead>
+
                             <tbody>
-                                <tr v-for="(personal,index) in arrayCursantesPromocion"> 
-                                    <!-- <td v-text="personal.grado+' '+personal.complemento"></td> -->
-                                    <td style="text-align:center; font-weight:bold;">{{ index + 1 }}</td>
-                                    <td v-text="personal.abreviatura"></td>
-                                    <td v-text="personal.per_paterno"></td>
-                                    <td v-text="personal.per_materno"></td>
-                                    <td v-text="personal.per_nombre"></td>
-                                    <!-- Mostrar la nota registrada, sin permitir editarla -->
-                                    <td v-for="materia in arrayMateriasModulo" :key="materia.id" class="text-center">
-                                        {{ personal.notas && personal.notas[materia.id] != null
-                                        ? personal.notas[materia.id]
-                                        : 'Sin nota' }}
+                                <tr
+                                    v-for="(personal, index) in arrayCursantesPromocion"
+                                    :key="personal.diplopromocursante_id"
+                                >
+                                    <td>{{ index + 1 }}</td>
+                                    <td>{{ personal.abreviatura }}</td>
+                                    <td>{{ personal.per_paterno }}</td>
+                                    <td>{{ personal.per_materno }}</td>
+                                    <td>{{ personal.per_nombre }}</td>
+
+                                    <td
+                                        v-for="materia in arrayMaterias"
+                                        :key="materia.id"
+                                        :style="{
+                                        color: Number(personal.promedios_materias[materia.id] || 0) < 51
+                                        ? 'red'
+                                        : 'inherit'
+                                }"
+                                    >
+                                        {{ Number(personal.promedios_materias[materia.id] || 0).toFixed(2) }}
+                                    </td>
+
+                                    <td>
+                                        <strong :style="{
+                                        color: Number(personal.promedio_final || 0) < 51
+                                            ? 'red'
+                                            : 'inherit'
+                                    }">
+                                            {{ Number(personal.promedio_final || 0).toFixed(2) }}
+                                        </strong>
                                     </td>
                                 </tr>
+
                                 <tr v-if="arrayCursantesPromocion.length === 0">
-                                    <td colspan="6" class="text-center">
+                                    <td
+                                        :colspan="6 + arrayMaterias.length"
+                                        class="text-center"
+                                    >
                                         No hay cursantes para mostrar.
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
-                        <div v-if="mostrarTabla">
+                        <div>
                             <!-- Aquí va tu tabla completa -->
                             <div class="text-right mt-3 mb-4">
                                 <strong>
                                     Total de cursantes: {{ arrayCursantesPromocion.length }}
                                 </strong>
-                                <button type="button" class="btn btn-success ml-3" @click="GenerarReporte()" :disabled="arrayCursantesPromocion.length === 0 || arrayMateriasModulo.length === 0">
+                                <button type="button" class="btn btn-success ml-3" @click="GenerarReporte()" :disabled="arrayCursantesPromocion.length === 0 || arrayMaterias.length === 0">
                                     <i class="fas fa-save"></i>&nbsp;GENERAR REPORTE
                                 </button>
                             </div>
@@ -196,8 +224,8 @@
         arrayModulo : [],
         // arrayMateria : [],
         arrayCursantesPromocion : [],
+        arrayMaterias : [],
         arrayMateriasModulo : [],
-        mostrarTabla : false,
         // arrayEvaluacion : [],
         
         buscar:"",
@@ -282,43 +310,11 @@
 
     methods: {
 
-        VerAntiguedad(){
+        Atras(){ //DGAE
             this.$router.push({
-                name: "Antiguedad",  
+                name: "Notas",  
             });
         },
-
-        // crearModulos(){
-        //     this.inputs.push({
-        //         modulo : this.inputs.length + 1,
-        //         ini_mod : '',
-        //         fin_mod : '',
-        //         materias : []
-        //     });
-        // },
-
-        // eliminarModulos(index) {
-        //     this.inputs.splice(index, 1);
-        //     this.inputs.forEach((input, i) => {
-        //         input.modulo = i + 1;
-        //     });
-        // },
-
-        // crearMateria(indexModulo) {
-        //     this.inputs[indexModulo].materias.push({
-        //         numero: this.inputs[indexModulo].materias.length + 1,
-        //         nombre: '',
-        //         docente: ''
-        //     });
-        // },
-
-        // eliminarMateria(indexModulo, indexMateria) {
-        //     this.inputs[indexModulo].materias.splice(indexMateria, 1);
-
-        //     this.inputs[indexModulo].materias.forEach((materia, i) => {
-        //         materia.numero = i + 1;
-        //     });
-        // },
 
         ListarDiplomados(){
             let me = this;
@@ -333,20 +329,6 @@
             console.log(error);
             })
         },
-
-        // ListarPeriodos(){
-        //     let me = this;
-        //     axios
-        //     .post("/listarPeriodo", {
-        //     })
-        //     .then(function (response) {
-        //     me.arrayPeriodo = response.data.periodo
-        //     })
-        //     .catch(function (error) {
-        //     // handle error
-        //     console.log(error);
-        //     })
-        // },
 
         ListarPromociones(especialidad, gestion){
             this.promocion = '';
@@ -383,81 +365,24 @@
             })
         },
 
-        // ListarMaterias(modulo){
-        //     this.materia = '';
-        //     this.arrayMateria = [];
-        //     let me = this;
-        //     axios
-        //     .post("/listarMateria", {
-        //         modulo : modulo,
-        //     })
-        //     .then(function (response) {
-        //     me.arrayMateria = response.data.materia
-        //     })
-        //     .catch(function (error) {
-        //     // handle error
-        //     console.log(error);
-        //     })
-        // },
+        BuscarPromediosModulo() {
+            axios.post('/listarPromediosModulo', {
+            promocion: this.promocion,
+            modulo: this.modulo
+            })
+            .then(response => {
+            this.arrayMaterias = response.data.materias;
+            this.arrayCursantesPromocion = response.data.cursantes;
+            })
+            .catch(error => {
+            console.error(error);
 
-        // ListarEvaluaciones(){
-        //     this.evaluacion = '';
-        //     this.arrayEvaluacion = [];
-        //     let me = this;
-        //     axios
-        //     .post("/listarEvaluacion", {
-        //     })
-        //     .then(function (response) {
-        //     me.arrayEvaluacion = response.data.evaluacion
-        //     })
-        //     .catch(function (error) {
-        //     // handle error
-        //     console.log(error);
-        //     })
-        // },
-
-        BuscarCursantes(promocion, modulo){
-            // Ocultar la tabla mientras se realiza la búsqueda
-            this.mostrarTabla = false;
-
-            // Limpiar los resultados anteriores
-            this.arrayCursantesPromocion = [];
-            this.arrayMateriasModulo = [];
-            let me = this;
-
-            try {
-                axios
-                .post("/listarCursantesPromocionNotas", {
-                    promocion : promocion,
-                    modulo : modulo
-                })
-                .then(function (response) {
-                    me.arrayCursantesPromocion = response.data.cursante
-                })
-                .catch(function (error) {
-                // handle error
-                console.log(error);
-                })
-
-                axios
-                .post("/listarMateria", {
-                    modulo : modulo,
-                })
-                .then(function (response) {
-                me.arrayMateriaModulo = response.data.materia
-                })
-                .catch(function (error) {
-                // handle error
-                console.log(error);
-                })
-
-                // Cuando ambas consultas hayan terminado correctamente:
-                this.mostrarTabla = true;
-
-            } catch (error) {
-                console.error('Error al buscar los cursantes:', error);
-                this.mostrarTabla = false;
-            }
+                this.$swal(
+                    'Error',
+                    'No se pudieron consultar los promedios.',
+                    'error'
+                );
+            });
         },
 
         limpiarFormulario() {
@@ -466,8 +391,6 @@
             this.gestion = '';
             this.promocion = '';
             this.modulo = '';
-            this.materia = '';
-            this.evaluacion = '';
             // this.per_foto = null;
 
             // Ajusta esta ruta a la imagen predeterminada de tu proyecto.
@@ -532,152 +455,15 @@
             }
         },
 
-    //   NuevoPersonal(){ //DGAE
-    //     this.$v.validationGroupReg.$reset(),
-    //     this.per_foto = '',
-    //     this.per_ci = '',
-    //     this.per_nombre = '',
-    //     this.per_appaterno = '',
-    //     this.per_apmaterno = '',
-    //     this.per_sexo = '',
-    //     this.per_celular = '',
-    //     this.per_email = '',
-    //     this.per_fechnac = '',
-    //     this.per_direccion = '',
-    //     this.v = 0
-    //   },
-
-        guardarPromocion() {
-            swal.fire({
-                title: '¿Desea guardar la promoción?', // TITULO 
-                icon: 'question', //ICONO (success, warnning, error, info, question)
-                showCancelButton: true, //HABILITACION DEL BOTON CANCELAR
-                confirmButtonColor: 'info', // COLOR DEL BOTON PARA CONFIRMAR
-                cancelButtonColor: '#868077', // COLOR DEL BOTON CANCELAR
-                confirmButtonText: 'Confirmar', //TITULO DEL BOTON CONFIRMAR
-                cancelButtonText: 'Cancelar', //TIUTLO DEL BOTON CANCELAR
-                buttonsStyling: true,
-                reverseButtons: true
-                }).then((result) => {
-                if (result.value) {
-                    let me = this;
-                    axios
-                    .post("/guardarPromocion", {
-                        diplomado : me.diplomado,
-                        gestion : me.gestion,
-                        periodo : me.periodo,
-                        promocion : me.promocion,
-                        modulos: me.inputs
-                    })
-                    .then(function (response) {
-                        console.log(response);
-                        swal.fire({
-                            title: 'Se realizo el registro correctamente', //TITULO
-                            // response.data.mensaje, //TEXTO DE MENSAJE
-                            // response.data.tipo, // TIPO DE MODAL (success, warnning, error, info)
-                            // response.personal
-                        });
-                        if (!response.data.code) {
-                            // $('#NuevoUsuario').modal('hide');
-                            // $('#ModalNewPersonal').modal('hide');
-                            // me.nick = '';
-                            // me.password = '';
-                            // me.arrayDatPer = response.data.personal;
-                            // me.GenerarCarnet(me.arrayDatPer.id_personal);
-                            me.Atras();
-                            // this.$v.$reset();
-                        } 
-                    })
-                    .catch(function (error) {
-                        // handle error
-                        console.log(error);
-                    })
-                }else{
-                        swal.fire(
-                        "Informacion", //TITULO
-                        "Solicitud cancelada.", //TEXTO DE MENSAJE
-                        "info" // TIPO DE MODAL (success, warnning, error, info)
-                    );
-                }
-            })
-        },
-  
-      CrearPersonal(){ //DGAE
-        if(!this.$v.validationGroupReg.$invalid){
-          swal.fire({
-              title: '¿Desea registrar?', // TITULO 
-              icon: 'question', //ICONO (success, warnning, error, info, question)
-              showCancelButton: true, //HABILITACION DEL BOTON CANCELAR
-              confirmButtonColor: 'info', // COLOR DEL BOTON PARA CONFIRMAR
-              cancelButtonColor: '#868077', // COLOR DEL BOTON CANCELAR
-              confirmButtonText: 'Confirmar', //TITULO DEL BOTON CONFIRMAR
-              cancelButtonText: 'Cancelar', //TIUTLO DEL BOTON CANCELAR
-              buttonsStyling: true,
-              reverseButtons: true
-              }).then((result) => {
-              if (result.value) {
-                  let me = this;
-                  axios
-                  .post("/crearPersonal", {
-                    foto : me.per_foto,
-                    ci : me.per_ci,
-                    nombre : me.per_nombre,
-                    ap_paterno : me.per_appaterno,
-                    ap_materno : me.per_apmaterno,
-                    sexo : me.per_sexo,
-                    celular : me.per_celular,
-                    email : me.per_email,
-                    fech_nac : me.per_fechnac,
-                    direccion : me.per_direccion,
-                  })
-                  .then(function (response) {
-                      
-                      console.log(response);
-                      swal.fire({
-                          title: 'Se realizo el registro correctamente', //TITULO
-                          // response.data.mensaje, //TEXTO DE MENSAJE
-                          // response.data.tipo, // TIPO DE MODAL (success, warnning, error, info)
-                          // response.personal
-                      });
-                      if (!response.data.code) {
-                          // $('#NuevoUsuario').modal('hide');
-                          // $('#ModalNewPersonal').modal('hide');
-                          // me.nick = '';
-                          // me.password = '';
-                          me.arrayDatPer = response.data.personal;
-                          // me.GenerarCarnet(me.arrayDatPer.id_personal);
-                          me.Atras();
-                          this.$v.$reset();
-                      } 
-                  })
-                  .catch(function (error) {
-                      // handle error
-                      console.log(error);
-                  })
-              }else{
-                    swal.fire(
-                      "Informacion", //TITULO
-                      "Solicitud cancelada.", //TEXTO DE MENSAJE
-                      "info" // TIPO DE MODAL (success, warnning, error, info)
-                  );
-              }
-          })
-        }else{
-            this.$v.validationGroupReg.$touch();
-            Swal.fire({
-                icon: 'warning',
-                title: 'Ingrese todos los datos requeridos',
-                showConfirmButton: false,
-                timer: 2000
-            })
-            
-        }
-      },
-
-      GenerarCarnet(id_personal){ //DGAE
+      GenerarReporte(){ //DGAE
           // this.$v.$reset();
           // if(!this.$v.$invalid){
-          window.open('/carnet?id_p='+id_personal);
+          var promocion = this.promocion;
+          var modulo = this.modulo;
+          var diplomado = this.diplomado;
+          var gestion = this.gestion;
+
+          window.open('/ant_mod?diplomado='+diplomado+'&gestion='+gestion+'&promocion='+promocion+'&modulo='+modulo);
           // window.open('http://127.0.0.1:8000/carnet?id_p='+id_personal);
           // }else{
           //     this.$v.$touch();
