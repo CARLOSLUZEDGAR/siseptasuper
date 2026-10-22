@@ -164,7 +164,6 @@ class ReporteController extends Controller
         ])->setPaper('letter', 'portrait');
 
         return $pdf->stream('reporte_promedios.pdf');
-
     }
 
     public function GenerarReportePersonal(Request $request)

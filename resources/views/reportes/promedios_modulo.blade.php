@@ -168,29 +168,27 @@
                             $x = $x + 1;
                         ?> 
                         <tr>
-                    <td style="border: 1px solid #000; padding: 2px; font-size: 9pt; text-align: center;">{{ $x }}</td>
-                    <td style="border: 1px solid #000; padding: 2px; font-size: 9pt;">{{ $row->abreviatura }}</td>
-                    <td style="border: 1px solid #000; padding: 2px; font-size: 9pt;">{{ $row->per_paterno }}</td>
-                    <td style="border: 1px solid #000; padding: 2px; font-size: 9pt;">{{ $row->per_materno }}</td>
-                    <td style="border: 1px solid #000; padding: 2px; font-size: 9pt;">{{ $row->per_nombre }}</td>
+                            <td style="border: 1px solid #000; padding: 2px; font-size: 9pt; text-align: center;">{{ $x }}</td>
+                            <td style="border: 1px solid #000; padding: 2px; font-size: 9pt;">{{ $row->abreviatura }}</td>
+                            <td style="border: 1px solid #000; padding: 2px; font-size: 9pt;">{{ $row->per_paterno }}</td>
+                            <td style="border: 1px solid #000; padding: 2px; font-size: 9pt;">{{ $row->per_materno }}</td>
+                            <td style="border: 1px solid #000; padding: 2px; font-size: 9pt;">{{ $row->per_nombre }}</td>
 
-                    @foreach ($materias as $materia)
-                        @php
-                            $promedio = $row
-                                ->promedios_materias->{$materia->id} ?? 0;
-                        @endphp
+                            @foreach ($materias as $materia)
+                                @php
+                                    $promedio = $row->promedios_materias->{$materia->id} ?? 0;
+                                @endphp
 
-                        <td style="border: 1px solid #000; padding: 2px; font-size: 9pt; text-align: center;" class="{{ $promedio < 51 ? 'reprobado' : '' }}">
-                            {{ number_format($promedio, 2) }}
-                        </td>
-                    @endforeach
+                                <td style="border: 1px solid #000; padding: 2px; font-size: 9pt; text-align: center;" class="{{ $promedio < 51 ? 'reprobado' : '' }}">
+                                    {{ number_format($promedio, 2) }}
+                                </td>
+                            @endforeach
 
-                    <td style="border: 1px solid #000; padding: 2px; font-size: 9pt; font-weight: bold; text-align: center;" class="promedio-final {{ $row->promedio_final < 51 ? 'reprobado' : '' }}">
-                        {{ number_format($row->promedio_final, 2) }}
-                    </td>
-                </tr>
+                            <td style="border: 1px solid #000; padding: 2px; font-size: 9pt; font-weight: bold; text-align: center;" class="promedio-final {{ $row->promedio_final < 51 ? 'reprobado' : '' }}">
+                                {{ number_format($row->promedio_final, 2) }}
+                            </td>
+                        </tr>
                         @endforeach
-                        
                     </tbody>
                 </table>
             @else

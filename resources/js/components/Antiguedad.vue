@@ -118,57 +118,31 @@
                                     <th>AP. PATERNO</th>
                                     <th>AP. MATERNO</th>
                                     <th>NOMBRES</th>
-
-                                    <th
-                                        v-for="materia in arrayMaterias"
-                                        :key="materia.id"
-                                    >
+                                    <th v-for="materia in arrayMaterias" :key="materia.id">
                                         {{ materia.materia }}
                                     </th>
-
                                     <th>PROM. FINAL</th>
                                 </tr>
                             </thead>
 
                             <tbody>
-                                <tr
-                                    v-for="(personal, index) in arrayCursantesPromocion"
-                                    :key="personal.diplopromocursante_id"
-                                >
+                                <tr v-for="(personal, index) in arrayCursantesPromocion" :key="personal.diplopromocursante_id">
                                     <td>{{ index + 1 }}</td>
                                     <td>{{ personal.abreviatura }}</td>
                                     <td>{{ personal.per_paterno }}</td>
                                     <td>{{ personal.per_materno }}</td>
                                     <td>{{ personal.per_nombre }}</td>
-
-                                    <td
-                                        v-for="materia in arrayMaterias"
-                                        :key="materia.id"
-                                        :style="{
-                                        color: Number(personal.promedios_materias[materia.id] || 0) < 51
-                                        ? 'red'
-                                        : 'inherit'
-                                }"
-                                    >
+                                    <td v-for="materia in arrayMaterias" :key="materia.id" :style="{ color: Number(personal.promedios_materias[materia.id] || 0) < 51 ? 'red' : 'inherit'}">
                                         {{ Number(personal.promedios_materias[materia.id] || 0).toFixed(2) }}
                                     </td>
-
                                     <td>
-                                        <strong :style="{
-                                        color: Number(personal.promedio_final || 0) < 51
-                                            ? 'red'
-                                            : 'inherit'
-                                    }">
+                                        <strong :style="{ color: Number(personal.promedio_final || 0) < 51 ? 'red' : 'inherit'}">
                                             {{ Number(personal.promedio_final || 0).toFixed(2) }}
                                         </strong>
                                     </td>
                                 </tr>
-
                                 <tr v-if="arrayCursantesPromocion.length === 0">
-                                    <td
-                                        :colspan="6 + arrayMaterias.length"
-                                        class="text-center"
-                                    >
+                                    <td :colspan="6 + arrayMaterias.length" class="text-center">
                                         No hay cursantes para mostrar.
                                     </td>
                                 </tr>

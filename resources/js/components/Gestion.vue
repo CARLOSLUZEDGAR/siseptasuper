@@ -48,7 +48,7 @@
                 <div class="row d-flex justify-content-center"> 
                     <div class="col-md-4">
                         <label for="">BUSCAR:</label>
-                        <input type="text" style="text-transform:uppercase;" class="form-control" @keyup="BuscarPersona(1)" v-model="buscar">
+                        <input type="text" style="text-transform:uppercase;" class="form-control" @keyup="BuscarPromocion(1)" v-model="buscar">
                     </div>
                 </div>
                 <br>
@@ -63,20 +63,21 @@
                                     <th class="text-center">ESPECIALIDAD</th>
                                     <th class="text-center">PROMOCIÓN</th>
                                     <th class="text-center">GESTIÓN</th>
-                                    <th class="text-center">OPCIONES</th>
+                                    <th class="text-center">PERIODO</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr v-for="(diplomado,index) in listaDiplomadosPromociones"> 
                                     <!-- <td v-text="personal.grado+' '+personal.complemento"></td> -->
                                     <td style="text-align:center; font-weight:bold;">{{ index + 1 }}</td>
-                                    <td v-text="diplomado.diplomado"></td>
-                                    <td v-text="diplomado.promo"></td>
-                                    <td v-text="diplomado.gestion"></td>
-                                    <td style="text-align:center">
+                                    <td>{{ diplomado.diplomado }}</td>
+                                    <td style="text-align:center;">{{ diplomado.promo }}</td>
+                                    <td style="text-align:center;">{{ diplomado.gestion }}</td>
+                                    <td style="text-align:center;">{{ diplomado.periodo }}</td>
+                                    <!-- <td style="text-align:center">
                                       <div class="d-flex justify-content-center align-items-center">
                                         <div v-if="$auth.can('view-renew-per')" class="mr-1">
-                                          <button type="button" @click="RenovarDiplomado(diplomado.id)" class="btn btn-success btn-sm">
+                                          <button type="button" @click="EditarDiplomado(diplomado.id)" class="btn btn-success btn-sm">
                                               <i class="fa fa-retweet" aria-hidden="true"></i>
                                           </button>
                                         </div>
@@ -86,7 +87,7 @@
                                           </button>
                                         </div>
                                       </div>
-                                    </td>
+                                    </td> -->
                                 </tr>
                             </tbody>
                         </table>
@@ -133,7 +134,7 @@ export default {
       listaDiplomadosPromociones : [],
     //   criterio : "p.per_cm",
       buscar :"",
-      setTiemoutBuscador: '',
+      setTimeoutBuscador: '',
       pagination: {
             'total'         :   0,
             'current_page'  :   0,
@@ -192,16 +193,30 @@ export default {
         });
     },
     
-    RenovarDiplomado(diplomadoid){
-        this.$router.push({
-            name: "EditarDiplomado",
-            //ENVIO DE DATOS
-            params:{
-                dilpomadoid: diplomadoid
-            }
-            
-        });
-    },
+    // EditarDiplomado(diplomadoid){
+    //   let me = this;
+    //       this.$v.validationsGroupMod.$reset(),
+    //       // me.modal = 1;
+    //       // me.ListarModulos();
+    //       axios
+    //           .post("/mostrarPromocion", {
+    //               diplomadoid: diplomadoid
+    //           })
+    //           .then((response) => {
+    //               me.ArrayMostrarPromocion = response.data.promocion;
+    //               me.idE = me.ArrayMostrarPromocion.id;
+    //               me.tipo_eventoE = me.ArrayMostrarPromocion.evento;
+    //               me.tipo_predioE = me.ArrayMostrarPromocion.clasificacion;
+    //               me.observacionE = me.ArrayMostrarPromocion.observacion;
+    //           })
+    //           .catch(function (error) {
+    //               // handle error
+    //               console.log(error);
+    //           })
+    //       $('#ModalTipoEvento').modal('show');
+    //       $(".modal-header").css("background-color", "#007bff");
+    //       $(".modal-header").css("color", "white" );
+    // },
 
     cambiarPagina(page,buscar,criterio){
         let me = this;
@@ -270,10 +285,10 @@ export default {
       })
     },
 
-    BuscarPersona(){ //DGAE
-        clearTimeout(this.setTiemoutBuscador);
-        this.setTiemoutBuscador = setTimeout(() => {
-            this.ListarPersonal(1)
+    BuscarPromocion(){ //DGAE
+        clearTimeout(this.setTimeoutBuscador);
+        this.setTimeoutBuscador = setTimeout(() => {
+            this.ListarDiplomadoPromociones(1)
         }, 360)
     },
   },

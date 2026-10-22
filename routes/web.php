@@ -76,7 +76,7 @@ Route::get('/verificarPersonal/{id_per_lic}','PersonalController@VerificarPerson
 Route::post('/datosPersonal','PersonalController@DatosPersonal');
 
 Route::post('/listarDiplomadoPromociones', 'DiplomadoPromocionController@ListarDiplomadoPromocion');
-Route::post('/listarDiplomado', 'DiplomadoController@ListarDiplomado');
+Route::post('/selectEspecialidad', 'DiplomadoController@SelectDiplomado');
 Route::post('/listarPeriodo', 'PeriodoController@ListarPeriodo');
 Route::post('/guardarPromocion', 'DiplomadoPromocionController@CrearDiplomadoPromocion');
 Route::post('/ultimaPromocion', 'DiplomadoPromocionController@UltimoDiplomadoPromocion');
@@ -93,11 +93,7 @@ Route::post('/listarEspecialidad', 'DiplomadoController@ListarDiplomado');
 Route::post('/listarCursantesPromocionNotas', 'CursanteNotaController@ListarDiplomadoPromocionCursante');
 Route::post('/listarPromediosModulo' , 'CursanteNotaController@ListarPromediosModulo');
 Route::get('/ant_mod' , 'ReporteController@ReporteAntiguedadModulo');
-
-
-
-
-
+Route::post('/registrarEspecialidad' , 'DiplomadoController@CrearDiplomado');
 
 
 

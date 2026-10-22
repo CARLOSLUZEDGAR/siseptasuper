@@ -94,9 +94,9 @@ export default new Router ({
         },
 
         {
-            path: '/Diplomados',
-            name: 'Diplomados',
-            component: require('./components/Diplomado.vue').default,
+            path: '/Especialidades',
+            name: 'Especialidades',
+            component: require('./components/Especialidad.vue').default,
             beforeEnter: (to, from, next) => {
                 let per = window.user.permissions.map(permission=>permission.name);
                 if (per.includes('view-diplomados')) {

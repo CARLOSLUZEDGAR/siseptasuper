@@ -47,9 +47,9 @@
                     <ul class="nav nav-treeview" style="display: none;">
                       @can('view-diplomados', Model::class)
                       <li class="nav-item">
-                        <router-link class="nav-link" to='/Diplomados'>
+                        <router-link class="nav-link" to='/Especialidades'>
                           <i class="fas fa-user nav-icon"></i>
-                          <p>Diplomados</p>
+                          <p>Especialidades</p>
                         </router-link>
                       </li>
                       @endcan

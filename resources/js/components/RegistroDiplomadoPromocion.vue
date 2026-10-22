@@ -85,7 +85,10 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                 
+                                <div class="col-md-12">
+                                    <label class="form-control-label" for="text-input">Descripción</label>
+                                    <input type="text" v-model="observacion" style="text-transform:uppercase;" class="form-control">
+                                </div>
                             </div>
                             <div class="form-group row justify-content-end">
                                 <button type="button" class="btn btn-danger" @click="nextStep"><i class="fas fa-forward"></i>&nbsp; SIGUIENTE</button>
@@ -102,7 +105,7 @@
                                 <div class="col-md-3">
                                     <label class="form-control-label">
                                         Promoción:
-                                        <span style="text-transform: uppercase;">
+                                        <span>
                                             {{ promocion }}
                                         </span>
                                     </label>
@@ -160,7 +163,7 @@
                             <h3><i class="fas fa-book"></i>&nbsp;MATERIAS POR MÓDULO</h3>
                             <div class="form-group row">
                                 <div class="col-md-3">
-                                    <label class="form-control-label" for="text-input">Promoción: <span style="text-transform:uppercase;">{{ promocion }}</span></label>
+                                    <label class="form-control-label" for="text-input">Promoción: <span>{{ promocion }}</span></label>
                                 </div>
                             </div>
                             <!-- Recorrer todos los módulos creados en el paso anterior -->
@@ -183,11 +186,11 @@
                                         </div>
                                         <div class="col-md-5">
                                             <label class="form-control-label" :for="'nombre-' + indexModulo + '-' + indexMateria">Materia</label>
-                                            <input type="text" class="form-control" :id="'nombre-' + indexModulo + '-' + indexMateria" v-model="materia.nombre" placeholder="Ingrese el nombre de la materia"/>
+                                            <input type="text" class="form-control" style="text-transform:uppercase;" :id="'nombre-' + indexModulo + '-' + indexMateria" v-model="materia.nombre" placeholder="Ingrese el nombre de la materia"/>
                                         </div>
                                         <div class="col-md-4">
                                             <label class="form-control-label" :for="'docente-' + indexModulo + '-' + indexMateria">Docente</label>
-                                            <input type="text" class="form-control" :id="'docente-' + indexModulo + '-' + indexMateria" v-model="materia.docente" placeholder="Ingrese el nombre del docente"/>
+                                            <input type="text" class="form-control" style="text-transform:uppercase;" :id="'docente-' + indexModulo + '-' + indexMateria" v-model="materia.docente" placeholder="Ingrese el nombre del docente"/>
                                         </div>
                                         <div class="col-md-2">
                                             <label class="form-control-label d-block">Eliminar</label>
@@ -241,6 +244,7 @@
         arrayUltimoPromo : [],
         ultimopromocion : '',
         ultimopromo : '',
+        observacion : '',
        
         v : 0,
         
@@ -361,28 +365,6 @@
                 default:
                     break;
             }
-
-            
-            //DGAE
-            // if (this.currentStep < 4) {
-            //     if(this.currentStep == 1){
-            //         if(!this.$v.validationGroupReg.$invalid){
-            //             this.currentStep++;
-            //         }else{
-            //             this.$v.validationGroupReg.$touch();
-            //             Swal.fire({
-            //                 icon: 'warning',
-            //                 title: 'Ingrese todos los datos requeridos',
-            //                 showConfirmButton: false,
-            //                 timer: 2000
-            //             })   
-            //         }
-            //     }
-            //     if(this.currentStep == 2){
-            //             this.currentStep++;
-            //     }
-            // }
-            // this.currentStep++;
         },
 
         previousStep() { //DGAE
@@ -424,7 +406,7 @@
         ListarDiplomados(){
             let me = this;
             axios
-            .post("/listarDiplomado", {
+            .post("/selectEspecialidad", {
             })
             .then(function (response) {
             me.arrayDiplomado = response.data.diplomado
@@ -467,34 +449,34 @@
             })
         },
 
-      obtenerImagen(e){
-          try {
-              var fileReader = new FileReader();
+    //   obtenerImagen(e){
+    //       try {
+    //           var fileReader = new FileReader();
   
-              fileReader.onload = (e) => {
-                  this.per_foto = e.target.result;
-              }
-              fileReader.readAsDataURL(e.target.files[0])
-              this.v = 1;
-          } catch (error) {
+    //           fileReader.onload = (e) => {
+    //               this.per_foto = e.target.result;
+    //           }
+    //           fileReader.readAsDataURL(e.target.files[0])
+    //           this.v = 1;
+    //       } catch (error) {
               
-          }
-      },
+    //       }
+    //   },
 
-      NuevoPersonal(){ //DGAE
-        this.$v.validationGroupReg.$reset(),
-        this.per_foto = '',
-        this.per_ci = '',
-        this.per_nombre = '',
-        this.per_appaterno = '',
-        this.per_apmaterno = '',
-        this.per_sexo = '',
-        this.per_celular = '',
-        this.per_email = '',
-        this.per_fechnac = '',
-        this.per_direccion = '',
-        this.v = 0
-      },
+    //   NuevoPersonal(){ //DGAE
+    //     this.$v.validationGroupReg.$reset(),
+    //     this.per_foto = '',
+    //     this.per_ci = '',
+    //     this.per_nombre = '',
+    //     this.per_appaterno = '',
+    //     this.per_apmaterno = '',
+    //     this.per_sexo = '',
+    //     this.per_celular = '',
+    //     this.per_email = '',
+    //     this.per_fechnac = '',
+    //     this.per_direccion = '',
+    //     this.v = 0
+    //   },
 
         guardarPromocion() {
             swal.fire({
@@ -516,30 +498,31 @@
                         gestion : me.gestion,
                         periodo : me.periodo,
                         promocion : me.promocion,
+                        observacion : me.observacion
+                                    ? me.observacion.toUpperCase()
+                                    : 'NINGUNA',
                         modulos: me.inputs
                     })
                     .then(function (response) {
                         console.log(response);
-                        swal.fire({
-                            title: 'Se realizo el registro correctamente', //TITULO
-                            // response.data.mensaje, //TEXTO DE MENSAJE
-                            // response.data.tipo, // TIPO DE MODAL (success, warnning, error, info)
-                            // response.personal
-                        });
-                        if (!response.data.code) {
-                            // $('#NuevoUsuario').modal('hide');
-                            // $('#ModalNewPersonal').modal('hide');
-                            // me.nick = '';
-                            // me.password = '';
-                            // me.arrayDatPer = response.data.personal;
-                            // me.GenerarCarnet(me.arrayDatPer.id_personal);
+                        if (response.data.success) {
+                            swal.fire({
+                                icon: 'success',
+                                title: 'REGISTRO CORRECTO',
+                                text: response.data.mensaje
+                            });
                             me.Atras();
-                            // this.$v.$reset();
-                        } 
+                        }
                     })
                     .catch(function (error) {
                         // handle error
                         console.log(error);
+                        swal.fire({
+                            icon: 'error',
+                            title: 'ERROR AL REGISTRAR',
+                            text: error.response?.data?.mensaje ||
+                                'Ocurrió un error al registrar la promoción'
+                        });
                     })
                 }else{
                         swal.fire(

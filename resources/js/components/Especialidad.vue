@@ -48,7 +48,7 @@
                 <div class="row d-flex justify-content-center"> 
                     <div class="col-md-4">
                         <label for="">BUSCAR:</label>
-                        <input type="text" style="text-transform:uppercase;" class="form-control" @keyup="BuscarPersona(1)" v-model="buscar">
+                        <input type="text" style="text-transform:uppercase;" class="form-control" @keyup="BuscarEspecialidad(1)" v-model="buscar">
                     </div>
                 </div>
                 <br>
@@ -114,6 +114,75 @@
         <!-- ./row -->
       </div>
       <!-- /.container-fluid -->
+       <div class="modal fade"  data-backdrop="static" id="ModalEspecialidad">
+            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <template v-if="modal == 0">
+                        <h4 class="modal-title">NUEVA ESPECIALIDAD</h4>
+                    </template>
+                    <template v-else>
+                        <h4 class="modal-title">EDITAR ESPECIALIDAD</h4>
+                    </template>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="Cerrar()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <template v-if="modal == 0">
+                            <div class="col-md-12">
+                                <label class="form-control-label" for="text-input">ESPECIALIDAD:</label>
+                                <input type="text" class="form-control" v-model="especialidad" style="text-transform:uppercase;" :class="{ 'is-invalid' : $v.especialidad.$error, 'is-valid':!$v.especialidad.$invalid }">
+                                <div class="invalid-feedback">
+                                    <span v-if="!$v.especialidad.required">Este campo es Requerido</span>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-control-label" for="text-input">ABREVIATURA:</label>
+                                <input type="text" class="form-control" v-model="abreviatura" style="text-transform:uppercase;" :class="{ 'is-invalid' : $v.abreviatura.$error, 'is-valid':!$v.abreviatura.$invalid }">
+                                <div class="invalid-feedback">
+                                    <span v-if="!$v.abreviatura.required">Este campo es Requerido</span>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-control-label" for="text-input">DESCRIPCIÓN:</label>
+                                <textarea class="form-control" v-model="descripcion" style="text-transform:uppercase;" cols="30" rows="2"></textarea>
+                            </div>
+                        </template>
+                        <template v-else>
+                            <div class="col-md-12">
+                                <label class="form-control-label" for="text-input">ESPECIALIDAD:</label>
+                                <input type="text" class="form-control" v-model="especialidadE" style="text-transform:uppercase;" :class="{ 'is-invalid' : $v.especialidadE.$error, 'is-valid':!$v.especialidadE.$invalid }">
+                                <div class="invalid-feedback">
+                                    <span v-if="!$v.especialidadE.required">Este campo es Requerido</span>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-control-label" for="text-input">ABREVIATURA:</label>
+                                <input type="text" class="form-control" v-model="abreviaturaE" style="text-transform:uppercase;" :class="{ 'is-invalid' : $v.abreviaturaE.$error, 'is-valid':!$v.abreviaturaE.$invalid }">
+                                <div class="invalid-feedback">
+                                    <span v-if="!$v.abreviaturaE.required">Este campo es Requerido</span>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-control-label" for="text-input">DESCRIPCIÓN:</label>
+                                <textarea class="form-control" v-model="descripcionE" style="text-transform:uppercase;" cols="30" rows="2"></textarea>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" @click="Cerrar()">CANCELAR</button>
+                    <button v-if="modal == 0" type="button" class="btn btn-primary" @click="Guardar()" :disabled="procesando">{{ procesando ? 'Procesando...' : 'GUARDAR' }}</button>
+                    <button v-else type="button" class="btn btn-primary" @click="Editar()" :disabled="procesando">{{ procesando ? 'Procesando...' : 'EDITAR' }}</button>
+                </div>
+
+            </div>
+            <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
     </section>
     <!-- /.content -->
   </div>
@@ -124,14 +193,21 @@ import { required, between, minLength, maxLength, alpha, numeric, email} from "v
 export default {
   data() {
     return {
-      // INICIO VARIABLES DGAE
-
-      // FIN VARIABLES DGAE
       
+      especialidad : '',
+      abreviatura : '',
+      descripcion : '',
+      idE : '',
+      especialidadE : '',
+      abreviaturaE : '',
+      descripcionE : '',
+
+      procesando : false,
+      modal : '',
       arrayEspecialidad: [],
       // criterio: "p.per_cm",
       buscar:"",
-      setTiemoutBuscador: '',
+      setTimeoutBuscador: '',
       pagination: {
             'total'         :   0,
             'current_page'  :   0,
@@ -145,7 +221,20 @@ export default {
   },
 
   validations: {
-          
+    especialidad : { required },
+    abreviatura : { required },
+    especialidadE : { required },
+    abreviaturaE : { required },
+
+    validationsGroupReg : [
+      'especialidad',
+      'abreviatura'
+    ],
+
+    validationsGroupMod : [
+      'especialidadE',
+      'abreviaturaE'
+    ]    
   },
 
  computed: {
@@ -185,9 +274,12 @@ export default {
   methods: {
 
     Registro(){
-      this.$router.push({
-          name: "RegistroEspecialidad",  
-      });
+      this.$v.validationsGroupReg.$reset(),
+            this.modal = 0;
+            // this.ListarModulos();
+            $('#ModalEspecialidad').modal('show');
+            $(".modal-header").css("background-color", "#007bff");
+            $(".modal-header").css("color", "white" );
     },
     
     Editar(especialidadid){
@@ -205,7 +297,7 @@ export default {
         let me = this;
         //actualizando la pagina actual
         me.pagination.current_page = page;
-        me.ListarPersonal(page,buscar,criterio);
+        me.ListarEspecialidad(page,buscar,criterio);
     },
     
     ListarEspecialidad(page){
@@ -223,6 +315,91 @@ export default {
             // handle error
             console.log(error);
         })
+    },
+
+    Cerrar(){
+        this.especialidad = '';
+        this.abreviatura = '';
+        this.descripcion = '';
+
+        this.idE = '';
+        this.especialidadE = '';
+        this.abreviaturaE = '';
+        this.descripcionE = '';
+    },
+
+    Guardar() {
+        if (this.procesando) {
+            return;
+        }
+        if (!this.$v.validationsGroupReg.$invalid) {
+            swal.fire({
+                title: '¿Desea registrar esta especialidad?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: 'info',
+                cancelButtonColor: '#868077',
+                confirmButtonText: 'Confirmar',
+                cancelButtonText: 'Cancelar',
+                buttonsStyling: true,
+                reverseButtons: true
+            }).then((result) => {
+                if (result.value) {
+                    this.procesando = true;
+                    axios.post('/registrarEspecialidad', {
+                        especialidad: this.especialidad.toUpperCase(),
+                        abreviatura: this.abreviatura.toUpperCase(),
+                        descripcion: this.descripcion
+                            ? this.descripcion.toUpperCase()
+                            : 'NINGUNA'
+                    })
+                    .then((response) => {
+                        this.procesando = false;
+                        if (response.data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'CORRECTO',
+                                text: response.data.mensaje
+                            });
+                            $('#ModalEspecialidad').modal('hide');
+                            this.Cerrar();
+                            this.ListarEspecialidad();
+                        } else {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'ADVERTENCIA',
+                                text: response.data.mensaje
+                            });
+                        }
+                    })
+                    .catch((error) => {
+                        this.procesando = false;
+                        console.log(error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'ERROR',
+                            text: 'Ocurrió un error inesperado'
+                        });
+                    });
+                } else {
+                    swal.fire(
+                        'Información',
+                        'Solicitud cancelada.',
+                        'info'
+                    );
+                    $('#ModalClasificacion').modal('hide');
+                    this.Cerrar();
+                }
+            });
+        } else {
+            this.$v.validationsGroupReg.$touch();
+            Swal.fire({
+                icon: 'warning',
+                title: 'Ingrese todos los datos requeridos',
+                showConfirmButton: false,
+                timer: 2000
+            });
+        }
     },
 
     Eliminar(personalid){
@@ -269,9 +446,9 @@ export default {
     },
 
     BuscarPersona(){ //DGAE
-        clearTimeout(this.setTiemoutBuscador);
-        this.setTiemoutBuscador = setTimeout(() => {
-            this.ListarPersonal(1)
+        clearTimeout(this.setTimeoutBuscador);
+        this.setTimeoutBuscador = setTimeout(() => {
+            this.ListarEspecialidad(1)
         }, 360)
     },
   },
