@@ -70,7 +70,10 @@ class DiplomadoController extends Controller
         $buscar = $request->buscar;
         if ($buscar == '') {
             $diplomado = DB::table('diplomados as d')
-                    ->select('d.*')
+                    ->select('d.id',
+                            'd.diplomado',
+                            'd.abreviatura',
+                            'd.descripcion')
                     ->where('d.estado', 1)
                     ->orderBy('d.id', 'asc')
                     ->paginate(10);
@@ -88,7 +91,10 @@ class DiplomadoController extends Controller
             ]); 
         } else {
             $diplomado = DB::table('diplomados as d')
-                    ->select('d.*')
+                    ->select('d.id',
+                            'd.diplomado',
+                            'd.abreviatura',
+                            'd.descripcion')
                     ->where('d.estado', 1)
                     ->where(function($q) use ($buscar){
                         $q->where('d.diplomado','LIKE','%'.$buscar.'%');

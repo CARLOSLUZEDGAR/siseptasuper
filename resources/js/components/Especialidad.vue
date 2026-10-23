@@ -308,8 +308,8 @@ export default {
             buscar: me.buscar.toUpperCase(),
         })
         .then(function (response) {
-            me.arrayEspecialidad = response.data.diplomado;
-            // me.pagination =response.data.pagination
+            me.arrayEspecialidad = response.data.diplomado.data;
+            me.pagination =response.data.pagination
         })
         .catch(function (error) {
             // handle error
