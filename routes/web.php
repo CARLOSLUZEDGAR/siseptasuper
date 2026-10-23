@@ -84,7 +84,7 @@ Route::post('/listarPromocion', 'DiplomadoPromocionController@SelectDiplomadoPro
 Route::post('/listarFuerza', 'FuerzaController@ListarFuerza');
 Route::post('/listarGrado', 'GradoController@ListarGrado');
 Route::post('/guardarListaCursantes','PersonalController@CrearPersonal');
-Route::post('/listarModulo', 'DiplomadoModuloController@SelectDiplomadoModulo');
+Route::post('/selectModulo', 'DiplomadoModuloController@SelectDiplomadoModulo');
 Route::post('/listarMateria', 'ModuloMateriaController@SelectModuloMateria');
 Route::post('/listarCursantesPromocion', 'DiplomadoPromocionCursanteController@ListarDiplomadoPromocionCursante');
 Route::post('/listarEvaluacion', 'EvaluacionController@ListarEvaluacion');
@@ -94,6 +94,13 @@ Route::post('/listarCursantesPromocionNotas', 'CursanteNotaController@ListarDipl
 Route::post('/listarPromediosModulo' , 'CursanteNotaController@ListarPromediosModulo');
 Route::get('/ant_mod' , 'ReporteController@ReporteAntiguedadModulo');
 Route::post('/registrarEspecialidad' , 'DiplomadoController@CrearDiplomado');
+Route::post('/mostrarEspecialidad' , 'DiplomadoController@MostrarDiplomado');
+Route::post('/editarEspecialidad' , 'DiplomadoController@EditarDiplomado');
+Route::post('/cambiarEstadoEspecialidad' , 'DiplomadoController@CambiarEstadoDiplomado');
+Route::post('/listarModulo', 'DiplomadoModuloController@ListarDiplomadoModulo');
+Route::post('/selectGestion', 'DiplomadoModuloController@SelectGestionDiplomadoModulo');
+
+
 
 
 
