@@ -99,6 +99,8 @@ Route::post('/editarEspecialidad' , 'DiplomadoController@EditarDiplomado');
 Route::post('/cambiarEstadoEspecialidad' , 'DiplomadoController@CambiarEstadoDiplomado');
 Route::post('/listarModulo', 'DiplomadoModuloController@ListarDiplomadoModulo');
 Route::post('/selectGestion', 'DiplomadoModuloController@SelectGestionDiplomadoModulo');
+Route::post('/selectPromocion', 'DiplomadoModuloController@SelectPromocionDiplomadoModulo');
+Route::post('/listarPromocionModulo', 'DiplomadoModuloController@BuscarDiplomadoModulo');
 
 
 

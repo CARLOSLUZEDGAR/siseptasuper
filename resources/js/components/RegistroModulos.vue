@@ -54,7 +54,7 @@
                                 </div>
                                 <div class="col-md-2">
                                     <label class="form-control-label" for="text-input">Gestión</label>
-                                    <select class="form-control" v-model="gestion" :class="{ 'is-invalid' : $v.gestion.$error, 'is-valid':!$v.gestion.$invalid }">
+                                    <select class="form-control" v-model="gestion" @change="ListarPromociones(diplomado, gestion)" :class="{ 'is-invalid' : $v.gestion.$error, 'is-valid':!$v.gestion.$invalid }">
                                         <option value="" disabled>SELECCIONE</option>
                                         <option v-for="gestion in arrayGestiones" :key="gestion.gestion" :value="gestion.gestion"  v-text="gestion.gestion"></option>
                                     </select>
@@ -63,39 +63,22 @@
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <label class="form-control-label" for="text-input">Periodo</label>
-                                    <select class="form-control" v-model="periodo" :class="{ 'is-invalid' : $v.periodo.$error, 'is-valid':!$v.periodo.$invalid }">
-                                        <option value="" disabled>SELECCIONE</option>
-                                        <option v-for="periodo in arrayPeriodo" :key="periodo.id" :value="periodo.id"  v-text="periodo.periodo"></option>
-                                    </select>
-                                    <div class="invalid-feedback">
-                                        <span v-if="!$v.periodo.required">Este campo es Requerido</span>
-                                    </div>
-                                </div>
-                                <div class="col-md-2">
-                                    <label class="form-control-label" for="text-input">Ultima Promoción</label>
-                                    <p style="font-weight: bold;" class="form-control-label">{{ ultimopromocion == null || ultimopromocion === '' ? 'S/R' : ultimopromocion }} ({{ ultimopromo == null || ultimopromo === '' ? 'S/R' : ultimopromo }})</p>
-                                </div>
-                                <div class="col-md-2">
                                     <label class="form-control-label" for="text-input">Promoción</label>
-                                    <input type="number" v-model="promocion" min="0" class="form-control" :class="{ 'is-invalid' : $v.promocion.$error, 'is-valid':!$v.promocion.$invalid }">
+                                    <select class="form-control" v-model="promocion" :class="{ 'is-invalid' : $v.promocion.$error, 'is-valid':!$v.promocion.$invalid }">
+                                        <option value="" disabled>SELECCIONE</option>
+                                        <option v-for="promocion in arrayPromociones" :key="promocion.id" :value="promocion.id"  v-text="promocion.promo"></option>
+                                    </select>
                                     <div class="invalid-feedback">
                                         <span v-if="!$v.promocion.required">Este campo es Requerido</span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group row">
-                                <div class="col-md-12">
-                                    <label class="form-control-label" for="text-input">Descripción</label>
-                                    <input type="text" v-model="observacion" style="text-transform:uppercase;" class="form-control">
-                                </div>
-                            </div>
-                            <div class="form-group row justify-content-end">
-                                <button type="button" class="btn btn-danger" @click="nextStep"><i class="fas fa-forward"></i>&nbsp; SIGUIENTE</button>
-                            </div>
+                            <button type="button" class="btn btn-primary" @click="BuscarModulo(promocion)">
+                                <i class="fas fa-plus"></i>&nbsp; BUSCAR
+                            </button>
                         </div> 
 
-                        <div class="step" v-if="currentStep === 2">
+                        <div v-if="mostrarModulos">
                             <h3>
                                 <i class="fas fa-inbox"></i>&nbsp;MÓDULOS DEL DIPLOMADO
                             </h3>
@@ -118,31 +101,64 @@
                             </button>
 
                             <!-- Tarjetas de módulos -->
-                            <div class="card mb-3" v-for="(input, index) in inputs" :key="'modulo-' + index">
-                                <!-- Encabezado de la tarjeta -->
-                                <div class="card-header d-flex justify-content-between align-items-center">
-                                    <strong>MÓDULO {{ input.modulo || index + 1 }}</strong>
-                                    <button type="button" class="btn btn-sm btn-danger" @click="eliminarModulos(index)" title="Eliminar módulo">
-                                        <i class="fa fa-trash"></i>&nbsp; Eliminar
-                                    </button>
-                                </div>
+<div
+    class="card mb-3"
+    v-for="(input, index) in inputs"
+    :key="input.id || ('nuevo-modulo-' + index)"
+>
+    <!-- Encabezado de la tarjeta -->
+    <div class="card-header d-flex justify-content-between align-items-center">
 
-                                <!-- Contenido de la tarjeta -->
-                                <div class="card-body">
-                                    <div class="form-group row">
-                                        <!-- Fecha de inicio -->
-                                        <div class="col-md-6">
-                                            <label class="form-control-label" :for="'ini_mod' + index">Fecha de inicio</label>
-                                            <input type="date" v-model="input.ini_mod" class="form-control" :id="'ini_mod' + index"/>
-                                        </div>
-                                        <!-- Fecha de finalización -->
-                                        <div class="col-md-6">
-                                            <label class="form-control-label" :for="'fin_mod' + index">Fecha de finalización</label>
-                                            <input type="date" v-model="input.fin_mod" class="form-control" :id="'fin_mod' + index"/>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+        <strong>MÓDULO {{ input.modulo || index + 1 }}</strong>
+
+        <!-- Solo permite eliminar módulos nuevos -->
+        <button
+            v-if="!input.id"
+            type="button"
+            class="btn btn-sm btn-danger"
+            @click="eliminarModulos(index)"
+            title="Eliminar módulo"
+        >
+            <i class="fa fa-trash"></i>&nbsp; Eliminar
+        </button>
+
+    </div>
+
+    <!-- Contenido de la tarjeta -->
+    <div class="card-body">
+        <div class="form-group row">
+
+            <!-- Fecha de inicio -->
+            <div class="col-md-6">
+                <label :for="'ini_mod' + index">
+                    Fecha de inicio
+                </label>
+
+                <input
+                    type="date"
+                    v-model="input.ini_mod"
+                    class="form-control"
+                    :id="'ini_mod' + index"
+                />
+            </div>
+
+            <!-- Fecha de finalización -->
+            <div class="col-md-6">
+                <label :for="'fin_mod' + index">
+                    Fecha de finalización
+                </label>
+
+                <input
+                    type="date"
+                    v-model="input.fin_mod"
+                    class="form-control"
+                    :id="'fin_mod' + index"
+                />
+            </div>
+
+        </div>
+    </div>
+</div>
 
                             <!-- Mensaje cuando no existen módulos -->
                             <p v-if="inputs.length === 0" class="text-muted">Aun no hay módulos registrados. Presione "+ Agregar Módulo" para comenzar.</p>
@@ -236,107 +252,49 @@
     data() {
       return {
         // INICIO VARIABLES
+        mostrarModulos: false,
         diplomado : '',
         gestion : '',
-
-        arrayGestiones : [],
-
-
-
-
-        periodo : '',
         promocion : '',
+
+        arrayDiplomado : [],
+        arrayGestiones : [],
+        arrayPromociones : [],
+        arrayPromocionModulo : [],
+        
         currentStep : 1,
-        arrayUltimoPromo : [],
-        ultimopromocion : '',
-        ultimopromo : '',
-        observacion : '',
        
         v : 0,
         
         // FIN VARIABLES DGAE
-        arrayDiplomado : [],
-        arrayPeriodo : [],
-        anios: [],
+        
         inputs : [],
         
         listaPersonal: [],
-        criterio: "p.per_cm",
-        buscar:"",
-        setTiemoutBuscador: '',
         isHidden: true,
         datfis2 : 1,
-  
-          
-        pagination: {
-              'total'         :   0,
-              'current_page'  :   0,
-              'per_page'      :   0,
-              'last_page'     :   0,
-              'from'          :   0,
-              'to'            :   0,
-          },
-      offset : 3,
+
       }
     },
   
     validations: {
         diplomado : { required },
         gestion: { required },
-        periodo : { required },
         promocion : { required },
 
         validationGroup1: [
         'diplomado',
         'gestion',
-        'periodo',
         'promocion'
         ],
     },
   
    computed: {
-          isActived   : function(){
-              return this.pagination.current_page;
-          },
-          //creando funcion para calcular los elementos de la paginacion
-          pagesNumber : function(){
-              //si la pagina llega hasta la ultima pagina esta me va retornar un arrary vacio
-              if(!this.pagination.to){
-                  return [];
-              }
-  
-              var from =  this.pagination.current_page - this.offset;
-              if(from < 1){
-                  from = 1;
-              }
-  
-              var to = from + (this.offset * 2);
-              if(to >= this.pagination.last_page){
-                  to = this.pagination.last_page;
-              }
-  
-              var pagesArray = [];
-              while(from <= to){
-                  pagesArray.push(from);
-                  from++;
-              }
-              return pagesArray;
-          },
-          imagen(){
-              return this.per_foto;
-          },
-          imagenA(){
-              return this.per_fotoA;
-          }
+          
       },
     mounted() {
-        let actual = new Date().getFullYear();
-        for (let i = actual - 5; i <= actual + 5; i++) {
-            this.anios.push(i);
-        }
-
         this.ListarDiplomados();
-        this.ListarPeriodos();
+        // this.ListarPeriodos();
     },
 
     methods: {
@@ -377,21 +335,43 @@
             this.currentStep--;
         },
 
-        crearModulos(){
-            this.inputs.push({
-                modulo : this.inputs.length + 1,
-                ini_mod : '',
-                fin_mod : '',
-                materias : []
-            });
-        },
+        crearModulos() {
+    let siguienteModulo = this.inputs.length + 1;
+
+    this.inputs.push({
+        id: null,
+        modulo: siguienteModulo,
+        ini_mod: '',
+        fin_mod: ''
+    });
+},
 
         eliminarModulos(index) {
-            this.inputs.splice(index, 1);
-            this.inputs.forEach((input, i) => {
-                input.modulo = i + 1;
-            });
-        },
+    // Verificar que el módulo sea nuevo
+    if (!this.inputs[index].id) {
+
+        // Eliminar únicamente el módulo nuevo
+        this.inputs.splice(index, 1);
+
+        // Renumerar solamente los módulos nuevos
+        let numeroModulo = 1;
+
+        this.inputs.forEach(input => {
+            if (!input.id) {
+                // Buscar el siguiente número después de los módulos existentes
+                let maximo = Math.max(
+                    0,
+                    ...this.inputs
+                        .filter(mod => mod.id)
+                        .map(mod => Number(mod.modulo) || 0)
+                );
+
+                input.modulo = maximo + numeroModulo;
+                numeroModulo++;
+            }
+        });
+    }
+},
 
         crearMateria(indexModulo) {
             this.inputs[indexModulo].materias.push({
@@ -439,13 +419,15 @@
             })
         },
 
-        ListarPeriodos(){
+        ListarPromociones(diplomadoid, gestion) {
             let me = this;
             axios
-            .post("/listarPeriodo", {
+            .post("/selectPromocion", {
+                diplomadoid : diplomadoid,
+                gestion : gestion
             })
             .then(function (response) {
-            me.arrayPeriodo = response.data.periodo
+            me.arrayPromociones = response.data.promocion
             })
             .catch(function (error) {
             // handle error
@@ -453,52 +435,57 @@
             })
         },
 
-        ultimaPromocion(diplomado) {
-            this.ultimopromocion = '';
-            let me = this;
-            axios
-            .post("/ultimaPromocion", {
-                diplomado : diplomado
-            })
-            .then(function (response) {
-            me.arrayUltimoPromo = response.data.ultimopromo,
-            me.ultimopromo = me.arrayUltimoPromo.promo
-            me.ultimopromocion = me.arrayUltimoPromo.promocion
-            })
-            .catch(function (error) {
-            // handle error
-            console.log(error);
-            })
+        BuscarModulo(diplopromo_id) {
+
+            this.mostrarModulos = false;
+
+            if (!this.$v.validationGroup1.$invalid) {
+
+                axios.post('/listarPromocionModulo', {
+                    diplopromo_id: diplopromo_id
+                })
+                .then(response => {
+
+                    // Guardar los módulos registrados en el formulario
+                    this.inputs = response.data.modulo.map(item => ({
+                        id: item.id,
+                        modulo: item.modulo,
+                        ini_mod: item.inicio_mod,
+                        fin_mod: item.fin_mod
+                    }));
+
+                    // Mostrar el formulario después de cargar los datos
+                    this.mostrarModulos = true;
+
+                })
+                .catch(error => {
+
+                    console.error(error);
+
+                    this.mostrarModulos = false;
+
+                    this.$swal(
+                        'Error',
+                        'No se pudieron cargar los módulos de la promoción seleccionada.',
+                        'error'
+                    );
+                });
+
+            } else {
+
+                this.$v.validationGroup1.$touch();
+
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Seleccione todos los datos requeridos',
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            }
         },
 
-    //   obtenerImagen(e){
-    //       try {
-    //           var fileReader = new FileReader();
-  
-    //           fileReader.onload = (e) => {
-    //               this.per_foto = e.target.result;
-    //           }
-    //           fileReader.readAsDataURL(e.target.files[0])
-    //           this.v = 1;
-    //       } catch (error) {
-              
-    //       }
-    //   },
 
-    //   NuevoPersonal(){ //DGAE
-    //     this.$v.validationGroupReg.$reset(),
-    //     this.per_foto = '',
-    //     this.per_ci = '',
-    //     this.per_nombre = '',
-    //     this.per_appaterno = '',
-    //     this.per_apmaterno = '',
-    //     this.per_sexo = '',
-    //     this.per_celular = '',
-    //     this.per_email = '',
-    //     this.per_fechnac = '',
-    //     this.per_direccion = '',
-    //     this.v = 0
-    //   },
+       
 
         guardarPromocion() {
             swal.fire({

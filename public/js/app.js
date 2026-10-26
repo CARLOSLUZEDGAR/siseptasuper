@@ -8745,6 +8745,34 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuelidate/lib/validators */ "./node_modules/vuelidate/lib/validators/index.js");
 /* harmony import */ var vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__);
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -8982,37 +9010,21 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       // INICIO VARIABLES
+      mostrarModulos: false,
       diplomado: '',
       gestion: '',
-      arrayGestiones: [],
-      periodo: '',
       promocion: '',
+      arrayDiplomado: [],
+      arrayGestiones: [],
+      arrayPromociones: [],
+      arrayPromocionModulo: [],
       currentStep: 1,
-      arrayUltimoPromo: [],
-      ultimopromocion: '',
-      ultimopromo: '',
-      observacion: '',
       v: 0,
       // FIN VARIABLES DGAE
-      arrayDiplomado: [],
-      arrayPeriodo: [],
-      anios: [],
       inputs: [],
       listaPersonal: [],
-      criterio: "p.per_cm",
-      buscar: "",
-      setTiemoutBuscador: '',
       isHidden: true,
-      datfis2: 1,
-      pagination: {
-        'total': 0,
-        'current_page': 0,
-        'per_page': 0,
-        'last_page': 0,
-        'from': 0,
-        'to': 0
-      },
-      offset: 3
+      datfis2: 1
     };
   },
   validations: {
@@ -9022,62 +9034,14 @@ __webpack_require__.r(__webpack_exports__);
     gestion: {
       required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"]
     },
-    periodo: {
-      required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"]
-    },
     promocion: {
       required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"]
     },
-    validationGroup1: ['diplomado', 'gestion', 'periodo', 'promocion']
+    validationGroup1: ['diplomado', 'gestion', 'promocion']
   },
-  computed: {
-    isActived: function isActived() {
-      return this.pagination.current_page;
-    },
-    //creando funcion para calcular los elementos de la paginacion
-    pagesNumber: function pagesNumber() {
-      //si la pagina llega hasta la ultima pagina esta me va retornar un arrary vacio
-      if (!this.pagination.to) {
-        return [];
-      }
-
-      var from = this.pagination.current_page - this.offset;
-
-      if (from < 1) {
-        from = 1;
-      }
-
-      var to = from + this.offset * 2;
-
-      if (to >= this.pagination.last_page) {
-        to = this.pagination.last_page;
-      }
-
-      var pagesArray = [];
-
-      while (from <= to) {
-        pagesArray.push(from);
-        from++;
-      }
-
-      return pagesArray;
-    },
-    imagen: function imagen() {
-      return this.per_foto;
-    },
-    imagenA: function imagenA() {
-      return this.per_fotoA;
-    }
-  },
+  computed: {},
   mounted: function mounted() {
-    var actual = new Date().getFullYear();
-
-    for (var i = actual - 5; i <= actual + 5; i++) {
-      this.anios.push(i);
-    }
-
-    this.ListarDiplomados();
-    this.ListarPeriodos();
+    this.ListarDiplomados(); // this.ListarPeriodos();
   },
   methods: {
     Atras: function Atras() {
@@ -9118,18 +9082,36 @@ __webpack_require__.r(__webpack_exports__);
       this.currentStep--;
     },
     crearModulos: function crearModulos() {
+      var siguienteModulo = this.inputs.length + 1;
       this.inputs.push({
-        modulo: this.inputs.length + 1,
+        id: null,
+        modulo: siguienteModulo,
         ini_mod: '',
-        fin_mod: '',
-        materias: []
+        fin_mod: ''
       });
     },
     eliminarModulos: function eliminarModulos(index) {
-      this.inputs.splice(index, 1);
-      this.inputs.forEach(function (input, i) {
-        input.modulo = i + 1;
-      });
+      var _this = this;
+
+      // Verificar que el módulo sea nuevo
+      if (!this.inputs[index].id) {
+        // Eliminar únicamente el módulo nuevo
+        this.inputs.splice(index, 1); // Renumerar solamente los módulos nuevos
+
+        var numeroModulo = 1;
+        this.inputs.forEach(function (input) {
+          if (!input.id) {
+            // Buscar el siguiente número después de los módulos existentes
+            var maximo = Math.max.apply(Math, [0].concat(_toConsumableArray(_this.inputs.filter(function (mod) {
+              return mod.id;
+            }).map(function (mod) {
+              return Number(mod.modulo) || 0;
+            }))));
+            input.modulo = maximo + numeroModulo;
+            numeroModulo++;
+          }
+        });
+      }
     },
     crearMateria: function crearMateria(indexModulo) {
       this.inputs[indexModulo].materias.push({
@@ -9164,55 +9146,56 @@ __webpack_require__.r(__webpack_exports__);
         console.log(error);
       });
     },
-    ListarPeriodos: function ListarPeriodos() {
+    ListarPromociones: function ListarPromociones(diplomadoid, gestion) {
       var me = this;
-      axios.post("/listarPeriodo", {}).then(function (response) {
-        me.arrayPeriodo = response.data.periodo;
-      })["catch"](function (error) {
-        // handle error
-        console.log(error);
-      });
-    },
-    ultimaPromocion: function ultimaPromocion(diplomado) {
-      this.ultimopromocion = '';
-      var me = this;
-      axios.post("/ultimaPromocion", {
-        diplomado: diplomado
+      axios.post("/selectPromocion", {
+        diplomadoid: diplomadoid,
+        gestion: gestion
       }).then(function (response) {
-        me.arrayUltimoPromo = response.data.ultimopromo, me.ultimopromo = me.arrayUltimoPromo.promo;
-        me.ultimopromocion = me.arrayUltimoPromo.promocion;
+        me.arrayPromociones = response.data.promocion;
       })["catch"](function (error) {
         // handle error
         console.log(error);
       });
     },
-    //   obtenerImagen(e){
-    //       try {
-    //           var fileReader = new FileReader();
-    //           fileReader.onload = (e) => {
-    //               this.per_foto = e.target.result;
-    //           }
-    //           fileReader.readAsDataURL(e.target.files[0])
-    //           this.v = 1;
-    //       } catch (error) {
-    //       }
-    //   },
-    //   NuevoPersonal(){ //DGAE
-    //     this.$v.validationGroupReg.$reset(),
-    //     this.per_foto = '',
-    //     this.per_ci = '',
-    //     this.per_nombre = '',
-    //     this.per_appaterno = '',
-    //     this.per_apmaterno = '',
-    //     this.per_sexo = '',
-    //     this.per_celular = '',
-    //     this.per_email = '',
-    //     this.per_fechnac = '',
-    //     this.per_direccion = '',
-    //     this.v = 0
-    //   },
+    BuscarModulo: function BuscarModulo(diplopromo_id) {
+      var _this2 = this;
+
+      this.mostrarModulos = false;
+
+      if (!this.$v.validationGroup1.$invalid) {
+        axios.post('/listarPromocionModulo', {
+          diplopromo_id: diplopromo_id
+        }).then(function (response) {
+          // Guardar los módulos registrados en el formulario
+          _this2.inputs = response.data.modulo.map(function (item) {
+            return {
+              id: item.id,
+              modulo: item.modulo,
+              ini_mod: item.inicio_mod,
+              fin_mod: item.fin_mod
+            };
+          }); // Mostrar el formulario después de cargar los datos
+
+          _this2.mostrarModulos = true;
+        })["catch"](function (error) {
+          console.error(error);
+          _this2.mostrarModulos = false;
+
+          _this2.$swal('Error', 'No se pudieron cargar los módulos de la promoción seleccionada.', 'error');
+        });
+      } else {
+        this.$v.validationGroup1.$touch();
+        Swal.fire({
+          icon: 'warning',
+          title: 'Seleccione todos los datos requeridos',
+          showConfirmButton: false,
+          timer: 2000
+        });
+      }
+    },
     guardarPromocion: function guardarPromocion() {
-      var _this = this;
+      var _this3 = this;
 
       swal.fire({
         title: '¿Desea guardar la promoción?',
@@ -9233,7 +9216,7 @@ __webpack_require__.r(__webpack_exports__);
         reverseButtons: true
       }).then(function (result) {
         if (result.value) {
-          var me = _this;
+          var me = _this3;
           axios.post("/guardarPromocion", {
             diplomado: me.diplomado,
             gestion: me.gestion,
@@ -9272,7 +9255,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     CrearPersonal: function CrearPersonal() {
-      var _this2 = this;
+      var _this4 = this;
 
       //DGAE
       if (!this.$v.validationGroupReg.$invalid) {
@@ -9295,7 +9278,7 @@ __webpack_require__.r(__webpack_exports__);
           reverseButtons: true
         }).then(function (result) {
           if (result.value) {
-            var me = _this2;
+            var me = _this4;
             axios.post("/crearPersonal", {
               foto: me.per_foto,
               ci: me.per_ci,
@@ -120758,7 +120741,7 @@ var render = function() {
                       },
                       [
                         _c("i", { staticClass: "fas fa-arrow-left" }),
-                        _vm._v("  VOLVER\n                  ")
+                        _vm._v("  VOLVER\n                      ")
                       ]
                     )
                   ])
@@ -120878,20 +120861,30 @@ var render = function() {
                                   "is-valid": !_vm.$v.gestion.$invalid
                                 },
                                 on: {
-                                  change: function($event) {
-                                    var $$selectedVal = Array.prototype.filter
-                                      .call($event.target.options, function(o) {
-                                        return o.selected
-                                      })
-                                      .map(function(o) {
-                                        var val =
-                                          "_value" in o ? o._value : o.value
-                                        return val
-                                      })
-                                    _vm.gestion = $event.target.multiple
-                                      ? $$selectedVal
-                                      : $$selectedVal[0]
-                                  }
+                                  change: [
+                                    function($event) {
+                                      var $$selectedVal = Array.prototype.filter
+                                        .call($event.target.options, function(
+                                          o
+                                        ) {
+                                          return o.selected
+                                        })
+                                        .map(function(o) {
+                                          var val =
+                                            "_value" in o ? o._value : o.value
+                                          return val
+                                        })
+                                      _vm.gestion = $event.target.multiple
+                                        ? $$selectedVal
+                                        : $$selectedVal[0]
+                                    },
+                                    function($event) {
+                                      return _vm.ListarPromociones(
+                                        _vm.diplomado,
+                                        _vm.gestion
+                                      )
+                                    }
+                                  ]
                                 }
                               },
                               [
@@ -120930,7 +120923,7 @@ var render = function() {
                                 staticClass: "form-control-label",
                                 attrs: { for: "text-input" }
                               },
-                              [_vm._v("Periodo")]
+                              [_vm._v("Promoción")]
                             ),
                             _vm._v(" "),
                             _c(
@@ -120940,14 +120933,14 @@ var render = function() {
                                   {
                                     name: "model",
                                     rawName: "v-model",
-                                    value: _vm.periodo,
-                                    expression: "periodo"
+                                    value: _vm.promocion,
+                                    expression: "promocion"
                                   }
                                 ],
                                 staticClass: "form-control",
                                 class: {
-                                  "is-invalid": _vm.$v.periodo.$error,
-                                  "is-valid": !_vm.$v.periodo.$invalid
+                                  "is-invalid": _vm.$v.promocion.$error,
+                                  "is-valid": !_vm.$v.promocion.$invalid
                                 },
                                 on: {
                                   change: function($event) {
@@ -120960,7 +120953,7 @@ var render = function() {
                                           "_value" in o ? o._value : o.value
                                         return val
                                       })
-                                    _vm.periodo = $event.target.multiple
+                                    _vm.promocion = $event.target.multiple
                                       ? $$selectedVal
                                       : $$selectedVal[0]
                                   }
@@ -120973,100 +120966,20 @@ var render = function() {
                                   [_vm._v("SELECCIONE")]
                                 ),
                                 _vm._v(" "),
-                                _vm._l(_vm.arrayPeriodo, function(periodo) {
+                                _vm._l(_vm.arrayPromociones, function(
+                                  promocion
+                                ) {
                                   return _c("option", {
-                                    key: periodo.id,
+                                    key: promocion.id,
                                     domProps: {
-                                      value: periodo.id,
-                                      textContent: _vm._s(periodo.periodo)
+                                      value: promocion.id,
+                                      textContent: _vm._s(promocion.promo)
                                     }
                                   })
                                 })
                               ],
                               2
                             ),
-                            _vm._v(" "),
-                            _c("div", { staticClass: "invalid-feedback" }, [
-                              !_vm.$v.periodo.required
-                                ? _c("span", [
-                                    _vm._v("Este campo es Requerido")
-                                  ])
-                                : _vm._e()
-                            ])
-                          ]),
-                          _vm._v(" "),
-                          _c("div", { staticClass: "col-md-2" }, [
-                            _c(
-                              "label",
-                              {
-                                staticClass: "form-control-label",
-                                attrs: { for: "text-input" }
-                              },
-                              [_vm._v("Ultima Promoción")]
-                            ),
-                            _vm._v(" "),
-                            _c(
-                              "p",
-                              {
-                                staticClass: "form-control-label",
-                                staticStyle: { "font-weight": "bold" }
-                              },
-                              [
-                                _vm._v(
-                                  _vm._s(
-                                    _vm.ultimopromocion == null ||
-                                      _vm.ultimopromocion === ""
-                                      ? "S/R"
-                                      : _vm.ultimopromocion
-                                  ) +
-                                    " (" +
-                                    _vm._s(
-                                      _vm.ultimopromo == null ||
-                                        _vm.ultimopromo === ""
-                                        ? "S/R"
-                                        : _vm.ultimopromo
-                                    ) +
-                                    ")"
-                                )
-                              ]
-                            )
-                          ]),
-                          _vm._v(" "),
-                          _c("div", { staticClass: "col-md-2" }, [
-                            _c(
-                              "label",
-                              {
-                                staticClass: "form-control-label",
-                                attrs: { for: "text-input" }
-                              },
-                              [_vm._v("Promoción")]
-                            ),
-                            _vm._v(" "),
-                            _c("input", {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.promocion,
-                                  expression: "promocion"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              class: {
-                                "is-invalid": _vm.$v.promocion.$error,
-                                "is-valid": !_vm.$v.promocion.$invalid
-                              },
-                              attrs: { type: "number", min: "0" },
-                              domProps: { value: _vm.promocion },
-                              on: {
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.promocion = $event.target.value
-                                }
-                              }
-                            }),
                             _vm._v(" "),
                             _c("div", { staticClass: "invalid-feedback" }, [
                               !_vm.$v.promocion.required
@@ -121078,67 +120991,28 @@ var render = function() {
                           ])
                         ]),
                         _vm._v(" "),
-                        _c("div", { staticClass: "form-group row" }, [
-                          _c("div", { staticClass: "col-md-12" }, [
-                            _c(
-                              "label",
-                              {
-                                staticClass: "form-control-label",
-                                attrs: { for: "text-input" }
-                              },
-                              [_vm._v("Descripción")]
-                            ),
-                            _vm._v(" "),
-                            _c("input", {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.observacion,
-                                  expression: "observacion"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              staticStyle: { "text-transform": "uppercase" },
-                              attrs: { type: "text" },
-                              domProps: { value: _vm.observacion },
-                              on: {
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.observacion = $event.target.value
-                                }
-                              }
-                            })
-                          ])
-                        ]),
-                        _vm._v(" "),
                         _c(
-                          "div",
-                          { staticClass: "form-group row justify-content-end" },
+                          "button",
+                          {
+                            staticClass: "btn btn-primary",
+                            attrs: { type: "button" },
+                            on: {
+                              click: function($event) {
+                                return _vm.BuscarModulo(_vm.promocion)
+                              }
+                            }
+                          },
                           [
-                            _c(
-                              "button",
-                              {
-                                staticClass: "btn btn-danger",
-                                attrs: { type: "button" },
-                                on: { click: _vm.nextStep }
-                              },
-                              [
-                                _c("i", { staticClass: "fas fa-forward" }),
-                                _vm._v("  SIGUIENTE")
-                              ]
-                            )
+                            _c("i", { staticClass: "fas fa-plus" }),
+                            _vm._v("  BUSCAR\n                            ")
                           ]
                         )
                       ])
                     : _vm._e(),
                   _vm._v(" "),
-                  _vm.currentStep === 2
+                  _vm.mostrarModulos
                     ? _c(
                         "div",
-                        { staticClass: "step" },
                         [
                           _vm._m(3),
                           _vm._v(" "),
@@ -121149,13 +121023,13 @@ var render = function() {
                                 { staticClass: "form-control-label" },
                                 [
                                   _vm._v(
-                                    "\n                                    Promoción:\n                                    "
+                                    "\n                                        Promoción:\n                                        "
                                   ),
                                   _c("span", [
                                     _vm._v(
-                                      "\n                                        " +
+                                      "\n                                            " +
                                         _vm._s(_vm.promocion) +
-                                        "\n                                    "
+                                        "\n                                        "
                                     )
                                   ])
                                 ]
@@ -121177,7 +121051,7 @@ var render = function() {
                             },
                             [
                               _vm._v(
-                                "\n                            + Agregar Módulo\n                        "
+                                "\n                                + Agregar Módulo\n                            "
                               )
                             ]
                           ),
@@ -121186,7 +121060,7 @@ var render = function() {
                             return _c(
                               "div",
                               {
-                                key: "modulo-" + index,
+                                key: input.id || "nuevo-modulo-" + index,
                                 staticClass: "card mb-3"
                               },
                               [
@@ -121204,27 +121078,32 @@ var render = function() {
                                       )
                                     ]),
                                     _vm._v(" "),
-                                    _c(
-                                      "button",
-                                      {
-                                        staticClass: "btn btn-sm btn-danger",
-                                        attrs: {
-                                          type: "button",
-                                          title: "Eliminar módulo"
-                                        },
-                                        on: {
-                                          click: function($event) {
-                                            return _vm.eliminarModulos(index)
-                                          }
-                                        }
-                                      },
-                                      [
-                                        _c("i", { staticClass: "fa fa-trash" }),
-                                        _vm._v(
-                                          "  Eliminar\n                                "
+                                    !input.id
+                                      ? _c(
+                                          "button",
+                                          {
+                                            staticClass:
+                                              "btn btn-sm btn-danger",
+                                            attrs: {
+                                              type: "button",
+                                              title: "Eliminar módulo"
+                                            },
+                                            on: {
+                                              click: function($event) {
+                                                return _vm.eliminarModulos(
+                                                  index
+                                                )
+                                              }
+                                            }
+                                          },
+                                          [
+                                            _c("i", {
+                                              staticClass: "fa fa-trash"
+                                            }),
+                                            _vm._v("  Eliminar\n        ")
+                                          ]
                                         )
-                                      ]
-                                    )
+                                      : _vm._e()
                                   ]
                                 ),
                                 _vm._v(" "),
@@ -121233,11 +121112,12 @@ var render = function() {
                                     _c("div", { staticClass: "col-md-6" }, [
                                       _c(
                                         "label",
-                                        {
-                                          staticClass: "form-control-label",
-                                          attrs: { for: "ini_mod" + index }
-                                        },
-                                        [_vm._v("Fecha de inicio")]
+                                        { attrs: { for: "ini_mod" + index } },
+                                        [
+                                          _vm._v(
+                                            "\n                    Fecha de inicio\n                "
+                                          )
+                                        ]
                                       ),
                                       _vm._v(" "),
                                       _c("input", {
@@ -121273,11 +121153,12 @@ var render = function() {
                                     _c("div", { staticClass: "col-md-6" }, [
                                       _c(
                                         "label",
-                                        {
-                                          staticClass: "form-control-label",
-                                          attrs: { for: "fin_mod" + index }
-                                        },
-                                        [_vm._v("Fecha de finalización")]
+                                        { attrs: { for: "fin_mod" + index } },
+                                        [
+                                          _vm._v(
+                                            "\n                    Fecha de finalización\n                "
+                                          )
+                                        ]
                                       ),
                                       _vm._v(" "),
                                       _c("input", {
@@ -121339,12 +121220,12 @@ var render = function() {
                                 [
                                   _c("i", { staticClass: "fas fa-backward" }),
                                   _vm._v(
-                                    "  ANTERIOR\n                            "
+                                    "  ANTERIOR\n                                "
                                   )
                                 ]
                               ),
                               _vm._v(
-                                "\n                             \n                            "
+                                "\n                                 \n                                "
                               ),
                               _c(
                                 "button",
@@ -121356,7 +121237,7 @@ var render = function() {
                                 [
                                   _c("i", { staticClass: "fas fa-forward" }),
                                   _vm._v(
-                                    "  SIGUIENTE\n                            "
+                                    "  SIGUIENTE\n                                "
                                   )
                                 ]
                               )
@@ -121434,7 +121315,7 @@ var render = function() {
                                       },
                                       [
                                         _vm._v(
-                                          "\n                                    + Agregar Materia\n                                "
+                                          "\n                                        + Agregar Materia\n                                    "
                                         )
                                       ]
                                     ),
@@ -121678,12 +121559,12 @@ var render = function() {
                                 [
                                   _c("i", { staticClass: "fas fa-backward" }),
                                   _vm._v(
-                                    "  ANTERIOR\n                            "
+                                    "  ANTERIOR\n                                "
                                   )
                                 ]
                               ),
                               _vm._v(
-                                "\n                             \n                            "
+                                "\n                                 \n                                "
                               ),
                               _c(
                                 "button",
@@ -121699,7 +121580,7 @@ var render = function() {
                                 [
                                   _c("i", { staticClass: "fas fa-forward" }),
                                   _vm._v(
-                                    "  GUARDAR\n                            "
+                                    "  GUARDAR\n                                "
                                   )
                                 ]
                               )
@@ -121729,7 +121610,9 @@ var staticRenderFns = [
           _c("div", { staticClass: "col-sm-12" }, [
             _c("h1", [
               _c("i", { staticClass: "far fa-registered" }),
-              _vm._v(" \n            REGISTRAR/EDITAR MÓDULO\n            ")
+              _vm._v(
+                " \n                REGISTRAR/EDITAR MÓDULO\n                "
+              )
             ])
           ])
         ])
@@ -121759,7 +121642,7 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("h3", [
       _c("i", { staticClass: "fas fa-inbox" }),
-      _vm._v(" MÓDULOS DEL DIPLOMADO\n                        ")
+      _vm._v(" MÓDULOS DEL DIPLOMADO\n                            ")
     ])
   },
   function() {
