@@ -91,16 +91,19 @@ Route::post('/listarEvaluacion', 'EvaluacionController@ListarEvaluacion');
 Route::post('/guardarNotasCursantes','CursanteNotaController@CrearCursanteNota');
 Route::post('/listarEspecialidad', 'DiplomadoController@ListarDiplomado');
 Route::post('/listarCursantesPromocionNotas', 'CursanteNotaController@ListarDiplomadoPromocionCursante');
-Route::post('/listarPromediosModulo' , 'CursanteNotaController@ListarPromediosModulo');
-Route::get('/ant_mod' , 'ReporteController@ReporteAntiguedadModulo');
-Route::post('/registrarEspecialidad' , 'DiplomadoController@CrearDiplomado');
-Route::post('/mostrarEspecialidad' , 'DiplomadoController@MostrarDiplomado');
-Route::post('/editarEspecialidad' , 'DiplomadoController@EditarDiplomado');
-Route::post('/cambiarEstadoEspecialidad' , 'DiplomadoController@CambiarEstadoDiplomado');
+Route::post('/listarPromediosModulo', 'CursanteNotaController@ListarPromediosModulo');
+Route::get('/ant_mod', 'ReporteController@ReporteAntiguedadModulo');
+Route::post('/registrarEspecialidad', 'DiplomadoController@CrearDiplomado');
+Route::post('/mostrarEspecialidad', 'DiplomadoController@MostrarDiplomado');
+Route::post('/editarEspecialidad', 'DiplomadoController@EditarDiplomado');
+Route::post('/cambiarEstadoEspecialidad', 'DiplomadoController@CambiarEstadoDiplomado');
 Route::post('/listarModulo', 'DiplomadoModuloController@ListarDiplomadoModulo');
 Route::post('/selectGestion', 'DiplomadoModuloController@SelectGestionDiplomadoModulo');
 Route::post('/selectPromocion', 'DiplomadoModuloController@SelectPromocionDiplomadoModulo');
 Route::post('/listarPromocionModulo', 'DiplomadoModuloController@BuscarDiplomadoModulo');
+Route::post('/guardarNuevosModulosMaterias', 'DiplomadoModuloController@CrearNuevosModulosMaterias');
+Route::post('/listarMateria', 'ModuloMateriaController@ListarModuloMateria');
+Route::post('/listarModuloMateria', 'ModuloMateriaController@BuscarModuloMateria');
 
 
 

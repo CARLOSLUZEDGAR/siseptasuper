@@ -64,7 +64,7 @@
                                     <th class="text-center">GESTIÓN</th>                 
                                     <th class="text-center">PROMOCIÓN</th>
                                     <th class="text-center">MÓDULO</th>
-                                    <th class="text-center">OPCIONES</th>
+                                    <!-- <th class="text-center">OPCIONES</th> -->
                                 </tr>
                             </thead>
                             <tbody>
@@ -75,7 +75,7 @@
                                     <td style="text-align:center">{{ modulo.gestion }}</td>
                                     <td style="text-align:center">{{ modulo.promo }}</td>
                                     <td style="text-align:center">{{ modulo.modulo || 'SIN MODULOS' }}</td>
-                                    <td style="text-align:center">
+                                    <!-- <td style="text-align:center">
                                       <div class="d-flex justify-content-center align-items-center">
                                         <template v-if="modulo.estado == 1">
                                             <div v-if="$auth.can('edit-espe')" class="mr-1">
@@ -95,7 +95,7 @@
                                             </button>
                                         </template>
                                       </div>
-                                    </td>
+                                    </td> -->
                                 </tr>
                             </tbody>
                         </table>

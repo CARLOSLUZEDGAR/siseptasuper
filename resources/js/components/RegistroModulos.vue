@@ -64,7 +64,7 @@
                                 </div>
                                 <div class="col-md-3">
                                     <label class="form-control-label" for="text-input">Promoción</label>
-                                    <select class="form-control" v-model="promocion" :class="{ 'is-invalid' : $v.promocion.$error, 'is-valid':!$v.promocion.$invalid }">
+                                    <select class="form-control" v-model="promocion" @change="BuscarModulo(promocion)" :class="{ 'is-invalid' : $v.promocion.$error, 'is-valid':!$v.promocion.$invalid }">
                                         <option value="" disabled>SELECCIONE</option>
                                         <option v-for="promocion in arrayPromociones" :key="promocion.id" :value="promocion.id"  v-text="promocion.promo"></option>
                                     </select>
@@ -73,115 +73,64 @@
                                     </div>
                                 </div>
                             </div>
-                            <button type="button" class="btn btn-primary" @click="BuscarModulo(promocion)">
-                                <i class="fas fa-plus"></i>&nbsp; BUSCAR
-                            </button>
+
+                            <div v-if="mostrarModulos">
+                                <h3>
+                                    <i class="fas fa-inbox"></i>&nbsp;MÓDULOS DEL DIPLOMADO
+                                </h3>
+
+                                <!-- Botón para agregar módulos -->
+                                <button type="button" class="btn btn-sm btn-outline-success mb-3" @click="crearModulos()">
+                                    + Agregar Módulo
+                                </button>
+
+                                <!-- Tarjetas de módulos -->
+                                <div class="card mb-3" v-for="(input, index) in inputs" :key="input.id || ('nuevo-modulo-' + index)">
+                                    <!-- Encabezado de la tarjeta -->
+                                    <div class="card-header d-flex justify-content-between align-items-center">
+                                        <strong>MÓDULO {{ input.modulo || index + 1 }}</strong>
+                                        <!-- Solo permite eliminar módulos nuevos -->
+                                        <button v-if="!input.id" type="button" class="btn btn-sm btn-danger" @click="eliminarModulos(index)" title="Eliminar módulo">
+                                            <i class="fa fa-trash"></i>&nbsp; Eliminar
+                                        </button>
+                                    </div>
+                                    <!-- Contenido de la tarjeta -->
+                                    <div class="card-body">
+                                        <div class="form-group row">
+                                            <!-- Fecha de inicio -->
+                                            <div class="col-md-6">
+                                                <label :for="'ini_mod' + index">
+                                                    Fecha de inicio
+                                                </label>
+                                                <input type="date" v-model="input.ini_mod" class="form-control" :id="'ini_mod' + index"/>
+                                            </div>
+                                            <!-- Fecha de finalización -->
+                                            <div class="col-md-6">
+                                                <label :for="'fin_mod' + index">
+                                                    Fecha de finalización
+                                                </label>
+                                                <input type="date" v-model="input.fin_mod" class="form-control" :id="'fin_mod' + index"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Mensaje cuando no existen módulos -->
+                                <p v-if="inputs.length === 0" class="text-muted">Aun no hay módulos registrados. Presione "+ Agregar Módulo" para comenzar.</p>
+                                <!-- Navegación -->
+                                <div class="form-group row justify-content-end">
+                                    <button type="button" class="btn btn-primary" @click="previousStep">
+                                        <i class="fas fa-backward"></i>&nbsp; ANTERIOR
+                                    </button>
+                                    &nbsp;
+                                    <button type="button" class="btn btn-danger" @click="nextStep">
+                                        <i class="fas fa-forward"></i>&nbsp; SIGUIENTE
+                                    </button>
+                                </div>
+                            </div>
                         </div> 
 
-                        <div v-if="mostrarModulos">
-                            <h3>
-                                <i class="fas fa-inbox"></i>&nbsp;MÓDULOS DEL DIPLOMADO
-                            </h3>
-
-                            <!-- Promoción -->
-                            <div class="form-group row">
-                                <div class="col-md-3">
-                                    <label class="form-control-label">
-                                        Promoción:
-                                        <span>
-                                            {{ promocion }}
-                                        </span>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <!-- Botón para agregar módulos -->
-                            <button type="button" class="btn btn-sm btn-outline-success mb-3" @click="crearModulos()">
-                                + Agregar Módulo
-                            </button>
-
-                            <!-- Tarjetas de módulos -->
-<div
-    class="card mb-3"
-    v-for="(input, index) in inputs"
-    :key="input.id || ('nuevo-modulo-' + index)"
->
-    <!-- Encabezado de la tarjeta -->
-    <div class="card-header d-flex justify-content-between align-items-center">
-
-        <strong>MÓDULO {{ input.modulo || index + 1 }}</strong>
-
-        <!-- Solo permite eliminar módulos nuevos -->
-        <button
-            v-if="!input.id"
-            type="button"
-            class="btn btn-sm btn-danger"
-            @click="eliminarModulos(index)"
-            title="Eliminar módulo"
-        >
-            <i class="fa fa-trash"></i>&nbsp; Eliminar
-        </button>
-
-    </div>
-
-    <!-- Contenido de la tarjeta -->
-    <div class="card-body">
-        <div class="form-group row">
-
-            <!-- Fecha de inicio -->
-            <div class="col-md-6">
-                <label :for="'ini_mod' + index">
-                    Fecha de inicio
-                </label>
-
-                <input
-                    type="date"
-                    v-model="input.ini_mod"
-                    class="form-control"
-                    :id="'ini_mod' + index"
-                />
-            </div>
-
-            <!-- Fecha de finalización -->
-            <div class="col-md-6">
-                <label :for="'fin_mod' + index">
-                    Fecha de finalización
-                </label>
-
-                <input
-                    type="date"
-                    v-model="input.fin_mod"
-                    class="form-control"
-                    :id="'fin_mod' + index"
-                />
-            </div>
-
-        </div>
-    </div>
-</div>
-
-                            <!-- Mensaje cuando no existen módulos -->
-                            <p v-if="inputs.length === 0" class="text-muted">Aun no hay módulos registrados. Presione "+ Agregar Módulo" para comenzar.</p>
-
-                            <!-- Navegación -->
-                            <div class="form-group row justify-content-end">
-                                <button type="button" class="btn btn-primary" @click="previousStep">
-                                    <i class="fas fa-backward"></i>&nbsp; ANTERIOR
-                                </button>
-                                &nbsp;
-                                <button type="button" class="btn btn-danger" @click="nextStep">
-                                    <i class="fas fa-forward"></i>&nbsp; SIGUIENTE
-                                </button>
-                            </div>
-                        </div>
- 
-                        <div class="step" v-if="currentStep === 3">
+                        <div class="step" v-if="currentStep === 2">
                             <h3><i class="fas fa-book"></i>&nbsp;MATERIAS POR MÓDULO</h3>
-                            <div class="form-group row">
-                                <div class="col-md-3">
-                                    <label class="form-control-label" for="text-input">Promoción: <span>{{ promocion }}</span></label>
-                                </div>
-                            </div>
                             <!-- Recorrer todos los módulos creados en el paso anterior -->
                             <div class="card mb-3" v-for="(input, indexModulo) in inputs" :key="'modulo-' + indexModulo">
                                 <div class="card-header">
@@ -195,22 +144,57 @@
                                     </button>
 
                                     <!-- Recorrer las materias del módulo actual -->
-                                    <div class="form-group row" v-for="(materia, indexMateria) in input.materias" :key="'materia-' + indexModulo + '-' + indexMateria">
+                                    <div
+                                        class="form-group row"
+                                        v-for="(materia, indexMateria) in input.materias"
+                                        :key="materia.id || ('nueva-materia-' + indexModulo + '-' + indexMateria)"
+                                    >
                                         <div class="col-md-1">
                                             <label class="form-control-label">Nº</label>
-                                            <input type="number" class="form-control" :value="materia.numero" readonly/>
+                                            <input
+                                                type="number"
+                                                class="form-control"
+                                                :value="materia.numero"
+                                                readonly
+                                            />
                                         </div>
+
                                         <div class="col-md-5">
-                                            <label class="form-control-label" :for="'nombre-' + indexModulo + '-' + indexMateria">Materia</label>
-                                            <input type="text" class="form-control" style="text-transform:uppercase;" :id="'nombre-' + indexModulo + '-' + indexMateria" v-model="materia.nombre" placeholder="Ingrese el nombre de la materia"/>
+                                            <label :for="'nombre-' + indexModulo + '-' + indexMateria">
+                                                Materia
+                                            </label>
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                style="text-transform:uppercase;"
+                                                :id="'nombre-' + indexModulo + '-' + indexMateria"
+                                                v-model="materia.nombre"
+                                                placeholder="Ingrese el nombre de la materia"
+                                            />
                                         </div>
+
                                         <div class="col-md-4">
-                                            <label class="form-control-label" :for="'docente-' + indexModulo + '-' + indexMateria">Docente</label>
-                                            <input type="text" class="form-control" style="text-transform:uppercase;" :id="'docente-' + indexModulo + '-' + indexMateria" v-model="materia.docente" placeholder="Ingrese el nombre del docente"/>
+                                            <label :for="'docente-' + indexModulo + '-' + indexMateria">
+                                                Docente
+                                            </label>
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                style="text-transform:uppercase;"
+                                                :id="'docente-' + indexModulo + '-' + indexMateria"
+                                                v-model="materia.docente"
+                                                placeholder="Ingrese el nombre del docente"
+                                            />
                                         </div>
-                                        <div class="col-md-2">
+
+                                        <!-- Solo mostrar para materias nuevas -->
+                                        <div class="col-md-2" v-if="!materia.id">
                                             <label class="form-control-label d-block">Eliminar</label>
-                                            <button type="button" class="btn btn-danger" @click="eliminarMateria(indexModulo, indexMateria)">
+                                            <button
+                                                type="button"
+                                                class="btn btn-danger"
+                                                @click="eliminarMateria(indexModulo, indexMateria)"
+                                            >
                                                 <i class="fa fa-trash"></i>
                                             </button>
                                         </div>
@@ -225,7 +209,7 @@
                                     <i class="fas fa-backward"></i>&nbsp; ANTERIOR
                                 </button>
                                 &nbsp;
-                                <button type="button" class="btn btn-danger" @click="guardarPromocion()">
+                                <button type="button" class="btn btn-danger" @click="guardarModuloMateria()">
                                     <i class="fas fa-forward"></i>&nbsp; GUARDAR
                                 </button>
                             </div>
@@ -336,58 +320,89 @@
         },
 
         crearModulos() {
-    let siguienteModulo = this.inputs.length + 1;
+            let siguienteModulo = this.inputs.length + 1;
 
-    this.inputs.push({
+            this.inputs.push({
+                id: null,
+                modulo: siguienteModulo,
+                ini_mod: '',
+                fin_mod: '',
+                materias: [],
+            });
+        },
+
+        eliminarModulos(index) {
+            // Verificar que el módulo sea nuevo
+            if (!this.inputs[index].id) {
+
+                // Eliminar únicamente el módulo nuevo
+                this.inputs.splice(index, 1);
+
+                // Renumerar solamente los módulos nuevos
+                let numeroModulo = 1;
+
+                this.inputs.forEach(input => {
+                    if (!input.id) {
+                        // Buscar el siguiente número después de los módulos existentes
+                        let maximo = Math.max(
+                            0,
+                            ...this.inputs
+                                .filter(mod => mod.id)
+                                .map(mod => Number(mod.modulo) || 0)
+                        );
+
+                        input.modulo = maximo + numeroModulo;
+                        numeroModulo++;
+                    }
+                });
+            }
+        },
+
+        crearMateria(indexModulo) {
+    const materias = this.inputs[indexModulo].materias || [];
+
+    const numerosExistentes = materias.map(materia =>
+        Number(materia.numero) || 0
+    );
+
+    const siguienteNumero = Math.max(0, ...numerosExistentes) + 1;
+
+    this.inputs[indexModulo].materias.push({
         id: null,
-        modulo: siguienteModulo,
-        ini_mod: '',
-        fin_mod: ''
+        numero: siguienteNumero,
+        nombre: '',
+        docente: ''
     });
 },
 
-        eliminarModulos(index) {
-    // Verificar que el módulo sea nuevo
-    if (!this.inputs[index].id) {
-
-        // Eliminar únicamente el módulo nuevo
-        this.inputs.splice(index, 1);
-
-        // Renumerar solamente los módulos nuevos
-        let numeroModulo = 1;
-
-        this.inputs.forEach(input => {
-            if (!input.id) {
-                // Buscar el siguiente número después de los módulos existentes
-                let maximo = Math.max(
-                    0,
-                    ...this.inputs
-                        .filter(mod => mod.id)
-                        .map(mod => Number(mod.modulo) || 0)
-                );
-
-                input.modulo = maximo + numeroModulo;
-                numeroModulo++;
-            }
-        });
-    }
-},
-
-        crearMateria(indexModulo) {
-            this.inputs[indexModulo].materias.push({
-                numero: this.inputs[indexModulo].materias.length + 1,
-                nombre: '',
-                docente: ''
-            });
-        },
-
         eliminarMateria(indexModulo, indexMateria) {
-            this.inputs[indexModulo].materias.splice(indexMateria, 1);
+    const materias = this.inputs[indexModulo].materias;
+    const materia = materias[indexMateria];
 
-            this.inputs[indexModulo].materias.forEach((materia, i) => {
-                materia.numero = i + 1;
-            });
-        },
+    // No permitir eliminar materias registradas
+    if (materia.id) {
+        return;
+    }
+
+    // Eliminar únicamente la materia nueva
+    materias.splice(indexMateria, 1);
+
+    // Renumerar solamente las materias nuevas
+    const numeroExistente = Math.max(
+        0,
+        ...materias
+            .filter(item => item.id)
+            .map(item => Number(item.numero) || 0)
+    );
+
+    let siguienteNumero = numeroExistente + 1;
+
+    materias.forEach(item => {
+        if (!item.id) {
+            item.numero = siguienteNumero++;
+        }
+    });
+},
 
         ListarDiplomados(){
             let me = this;
@@ -405,6 +420,10 @@
         },
 
         ListarGestiones(diplomadoid) {
+            this.gestion = '';
+            this.arrayGestiones = [];
+            this.promocion = '';
+            this.arrayPromociones = [];
             let me = this;
             axios
             .post("/selectGestion", {
@@ -420,6 +439,8 @@
         },
 
         ListarPromociones(diplomadoid, gestion) {
+            this.promocion = '';
+            this.arrayPromociones = [];
             let me = this;
             axios
             .post("/selectPromocion", {
@@ -446,16 +467,21 @@
                 })
                 .then(response => {
 
-                    // Guardar los módulos registrados en el formulario
                     this.inputs = response.data.modulo.map(item => ({
-                        id: item.id,
-                        modulo: item.modulo,
-                        ini_mod: item.inicio_mod,
-                        fin_mod: item.fin_mod
-                    }));
+    id: item.id,
+    modulo: item.modulo,
+    ini_mod: item.inicio_mod,
+    fin_mod: item.fin_mod,
 
-                    // Mostrar el formulario después de cargar los datos
-                    this.mostrarModulos = true;
+    materias: (item.materias || []).map(materia => ({
+        id: materia.id,
+        numero: materia.numero,
+        nombre: materia.nombre,
+        docente: materia.docente || ''
+    }))
+}));
+
+this.mostrarModulos = true;
 
                 })
                 .catch(error => {
@@ -487,9 +513,9 @@
 
        
 
-        guardarPromocion() {
+        guardarModuloMateria() {
             swal.fire({
-                title: '¿Desea guardar la promoción?', // TITULO 
+                title: '¿Desea guardar los modulos y materias?', // TITULO 
                 icon: 'question', //ICONO (success, warnning, error, info, question)
                 showCancelButton: true, //HABILITACION DEL BOTON CANCELAR
                 confirmButtonColor: 'info', // COLOR DEL BOTON PARA CONFIRMAR
@@ -502,14 +528,8 @@
                 if (result.value) {
                     let me = this;
                     axios
-                    .post("/guardarPromocion", {
-                        diplomado : me.diplomado,
-                        gestion : me.gestion,
-                        periodo : me.periodo,
-                        promocion : me.promocion,
-                        observacion : me.observacion
-                                    ? me.observacion.toUpperCase()
-                                    : 'NINGUNA',
+                    .post("/guardarNuevosModulosMaterias", {
+                        diplopromo_id : me.promocion,
                         modulos: me.inputs
                     })
                     .then(function (response) {
@@ -530,7 +550,7 @@
                             icon: 'error',
                             title: 'ERROR AL REGISTRAR',
                             text: error.response?.data?.mensaje ||
-                                'Ocurrió un error al registrar la promoción'
+                                'Ocurrió un error al registrar los modulos y materias'
                         });
                     })
                 }else{
