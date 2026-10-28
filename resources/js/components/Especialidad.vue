@@ -67,7 +67,6 @@
                             </thead>
                             <tbody>
                                 <tr v-for="(especialidad,index) in arrayEspecialidad"> 
-                                    <!-- <td v-text="personal.grado+' '+personal.complemento"></td> -->
                                     <td style="text-align:center; font-weight:bold;">{{ index + 1 }}</td>
                                     <td v-text="especialidad.diplomado"></td>
                                     <td v-text="especialidad.descripcion"></td>
@@ -101,13 +100,13 @@
                 <nav>
                     <ul class="pagination">
                         <li class="page-item" v-if="pagination.current_page > 1">
-                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar,criterio)">Ant</a>
+                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar)">Ant</a>
                         </li>
                         <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
-                            <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar,criterio)" v-text="page"></a>
+                            <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar)" v-text="page"></a>
                         </li>
                         <li class="page-item" v-if="pagination.current_page < pagination.last_page">
-                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar,criterio)">Sig</a>
+                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar)">Sig</a>
                         </li>
                     </ul>
                 </nav>
@@ -213,7 +212,6 @@ export default {
       modal : '',
       arrayEspecialidad : [],
       arrayMostrarEspecialidad : [],
-      // criterio: "p.per_cm",
       buscar :"",
       setTimeoutBuscador : '',
       pagination : {
@@ -317,7 +315,7 @@ export default {
         let me = this;
         //actualizando la pagina actual
         me.pagination.current_page = page;
-        me.ListarEspecialidad(page,buscar,criterio);
+        me.ListarEspecialidad(page,buscar);
     },
     
     ListarEspecialidad(page){

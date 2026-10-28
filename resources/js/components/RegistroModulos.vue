@@ -40,9 +40,9 @@
                 <div class="card-body">
                     <form>
                         <div class="step" v-if="currentStep === 1">
-                            <h3><i class="fas fa-inbox"></i>&nbsp;ASIGNAR GESTIÓN Y PROMOCIÓN</h3>
+                            <h3><i class="fas fa-inbox"></i>&nbsp;SELECCIONAR ESPECIALIDAD, GESTIÓN Y PROMOCIÓN</h3>
                             <div class="form-group row">
-                                <div class="col-md-3">
+                                <div class="col-md-4">
                                     <label class="form-control-label" for="text-input">Especialidad</label>
                                     <select class="form-control" v-model="diplomado" @change="ListarGestiones(diplomado)" :class="{ 'is-invalid' : $v.diplomado.$error, 'is-valid':!$v.diplomado.$invalid }">
                                         <option value="" disabled>SELECCIONE</option>
@@ -52,7 +52,7 @@
                                         <span v-if="!$v.diplomado.required">Este campo es Requerido</span>
                                     </div>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-4">
                                     <label class="form-control-label" for="text-input">Gestión</label>
                                     <select class="form-control" v-model="gestion" @change="ListarPromociones(diplomado, gestion)" :class="{ 'is-invalid' : $v.gestion.$error, 'is-valid':!$v.gestion.$invalid }">
                                         <option value="" disabled>SELECCIONE</option>
@@ -62,7 +62,7 @@
                                         <span v-if="!$v.gestion.required">Este campo es Requerido</span>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-4">
                                     <label class="form-control-label" for="text-input">Promoción</label>
                                     <select class="form-control" v-model="promocion" @change="BuscarModulo(promocion)" :class="{ 'is-invalid' : $v.promocion.$error, 'is-valid':!$v.promocion.$invalid }">
                                         <option value="" disabled>SELECCIONE</option>
@@ -75,10 +75,6 @@
                             </div>
 
                             <div v-if="mostrarModulos">
-                                <h3>
-                                    <i class="fas fa-inbox"></i>&nbsp;MÓDULOS DEL DIPLOMADO
-                                </h3>
-
                                 <!-- Botón para agregar módulos -->
                                 <button type="button" class="btn btn-sm btn-outline-success mb-3" @click="crearModulos()">
                                     + Agregar Módulo
@@ -257,7 +253,6 @@
         listaPersonal: [],
         isHidden: true,
         datfis2 : 1,
-
       }
     },
   
@@ -278,11 +273,9 @@
       },
     mounted() {
         this.ListarDiplomados();
-        // this.ListarPeriodos();
     },
 
     methods: {
-
         Atras(){
             this.$router.push({
                 name: "Modulos",  
@@ -304,12 +297,6 @@
                         })   
                     }
                     break;
-                case 2:
-                    this.currentStep++;
-                    break;
-                case 3:
-                    break;    
-            
                 default:
                     break;
             }
@@ -359,50 +346,50 @@
         },
 
         crearMateria(indexModulo) {
-    const materias = this.inputs[indexModulo].materias || [];
+            const materias = this.inputs[indexModulo].materias || [];
 
-    const numerosExistentes = materias.map(materia =>
-        Number(materia.numero) || 0
-    );
+            const numerosExistentes = materias.map(materia =>
+                Number(materia.numero) || 0
+            );
 
-    const siguienteNumero = Math.max(0, ...numerosExistentes) + 1;
+            const siguienteNumero = Math.max(0, ...numerosExistentes) + 1;
 
-    this.inputs[indexModulo].materias.push({
-        id: null,
-        numero: siguienteNumero,
-        nombre: '',
-        docente: ''
-    });
-},
+            this.inputs[indexModulo].materias.push({
+                id: null,
+                numero: siguienteNumero,
+                nombre: '',
+                docente: ''
+            });
+        },
 
         eliminarMateria(indexModulo, indexMateria) {
-    const materias = this.inputs[indexModulo].materias;
-    const materia = materias[indexMateria];
+            const materias = this.inputs[indexModulo].materias;
+            const materia = materias[indexMateria];
 
-    // No permitir eliminar materias registradas
-    if (materia.id) {
-        return;
-    }
+            // No permitir eliminar materias registradas
+            if (materia.id) {
+                return;
+            }
 
-    // Eliminar únicamente la materia nueva
-    materias.splice(indexMateria, 1);
+            // Eliminar únicamente la materia nueva
+            materias.splice(indexMateria, 1);
 
-    // Renumerar solamente las materias nuevas
-    const numeroExistente = Math.max(
-        0,
-        ...materias
-            .filter(item => item.id)
-            .map(item => Number(item.numero) || 0)
-    );
+            // Renumerar solamente las materias nuevas
+            const numeroExistente = Math.max(
+                0,
+                ...materias
+                    .filter(item => item.id)
+                    .map(item => Number(item.numero) || 0)
+            );
 
-    let siguienteNumero = numeroExistente + 1;
+            let siguienteNumero = numeroExistente + 1;
 
-    materias.forEach(item => {
-        if (!item.id) {
-            item.numero = siguienteNumero++;
-        }
-    });
-},
+            materias.forEach(item => {
+                if (!item.id) {
+                    item.numero = siguienteNumero++;
+                }
+            });
+        },
 
         ListarDiplomados(){
             let me = this;
@@ -457,39 +444,29 @@
         },
 
         BuscarModulo(diplopromo_id) {
-
             this.mostrarModulos = false;
-
             if (!this.$v.validationGroup1.$invalid) {
-
                 axios.post('/listarPromocionModulo', {
                     diplopromo_id: diplopromo_id
                 })
                 .then(response => {
-
                     this.inputs = response.data.modulo.map(item => ({
-    id: item.id,
-    modulo: item.modulo,
-    ini_mod: item.inicio_mod,
-    fin_mod: item.fin_mod,
-
-    materias: (item.materias || []).map(materia => ({
-        id: materia.id,
-        numero: materia.numero,
-        nombre: materia.nombre,
-        docente: materia.docente || ''
-    }))
-}));
-
-this.mostrarModulos = true;
-
+                    id: item.id,
+                    modulo: item.modulo,
+                    ini_mod: item.inicio_mod,
+                    fin_mod: item.fin_mod,
+                    materias: (item.materias || []).map(materia => ({
+                        id: materia.id,
+                        numero: materia.numero,
+                        nombre: materia.nombre,
+                        docente: materia.docente || ''
+                    }))
+                }));
+                this.mostrarModulos = true;
                 })
                 .catch(error => {
-
                     console.error(error);
-
                     this.mostrarModulos = false;
-
                     this.$swal(
                         'Error',
                         'No se pudieron cargar los módulos de la promoción seleccionada.',
@@ -498,9 +475,7 @@ this.mostrarModulos = true;
                 });
 
             } else {
-
                 this.$v.validationGroup1.$touch();
-
                 Swal.fire({
                     icon: 'warning',
                     title: 'Seleccione todos los datos requeridos',
@@ -510,148 +485,65 @@ this.mostrarModulos = true;
             }
         },
 
-
-       
-
         guardarModuloMateria() {
-            swal.fire({
-                title: '¿Desea guardar los modulos y materias?', // TITULO 
-                icon: 'question', //ICONO (success, warnning, error, info, question)
-                showCancelButton: true, //HABILITACION DEL BOTON CANCELAR
-                confirmButtonColor: 'info', // COLOR DEL BOTON PARA CONFIRMAR
-                cancelButtonColor: '#868077', // COLOR DEL BOTON CANCELAR
-                confirmButtonText: 'Confirmar', //TITULO DEL BOTON CONFIRMAR
-                cancelButtonText: 'Cancelar', //TIUTLO DEL BOTON CANCELAR
-                buttonsStyling: true,
-                reverseButtons: true
-                }).then((result) => {
-                if (result.value) {
-                    let me = this;
-                    axios
-                    .post("/guardarNuevosModulosMaterias", {
-                        diplopromo_id : me.promocion,
-                        modulos: me.inputs
-                    })
-                    .then(function (response) {
-                        console.log(response);
-                        if (response.data.success) {
+            if (!this.$v.validationGroup1.$invalid) {
+                swal.fire({
+                    title: '¿Desea guardar los modulos y materias?', // TITULO 
+                    icon: 'question', //ICONO (success, warnning, error, info, question)
+                    showCancelButton: true, //HABILITACION DEL BOTON CANCELAR
+                    confirmButtonColor: 'info', // COLOR DEL BOTON PARA CONFIRMAR
+                    cancelButtonColor: '#868077', // COLOR DEL BOTON CANCELAR
+                    confirmButtonText: 'Confirmar', //TITULO DEL BOTON CONFIRMAR
+                    cancelButtonText: 'Cancelar', //TIUTLO DEL BOTON CANCELAR
+                    buttonsStyling: true,
+                    reverseButtons: true
+                    }).then((result) => {
+                    if (result.value) {
+                        let me = this;
+                        axios
+                        .post("/guardarNuevosModulosMaterias", {
+                            diplopromo_id : me.promocion,
+                            modulos: me.inputs
+                        })
+                        .then(function (response) {
+                            console.log(response);
+                            if (response.data.success) {
+                                swal.fire({
+                                    icon: 'success',
+                                    title: 'REGISTRO CORRECTO',
+                                    text: response.data.mensaje
+                                });
+                                me.Atras();
+                            }
+                        })
+                        .catch(function (error) {
+                            // handle error
+                            console.log(error);
                             swal.fire({
-                                icon: 'success',
-                                title: 'REGISTRO CORRECTO',
-                                text: response.data.mensaje
+                                icon: 'error',
+                                title: 'ERROR AL REGISTRAR',
+                                text: error.response?.data?.mensaje ||
+                                    'Ocurrió un error al registrar los modulos y materias'
                             });
-                            me.Atras();
-                        }
-                    })
-                    .catch(function (error) {
-                        // handle error
-                        console.log(error);
-                        swal.fire({
-                            icon: 'error',
-                            title: 'ERROR AL REGISTRAR',
-                            text: error.response?.data?.mensaje ||
-                                'Ocurrió un error al registrar los modulos y materias'
-                        });
-                    })
-                }else{
-                        swal.fire(
-                        "Informacion", //TITULO
-                        "Solicitud cancelada.", //TEXTO DE MENSAJE
-                        "info" // TIPO DE MODAL (success, warnning, error, info)
-                    );
-                }
-            })
+                        })
+                    }else{
+                            swal.fire(
+                            "Informacion", //TITULO
+                            "Solicitud cancelada.", //TEXTO DE MENSAJE
+                            "info" // TIPO DE MODAL (success, warnning, error, info)
+                        );
+                    }
+                })
+            } else {
+                this.$v.validationGroup1.$touch();
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Ingrese todos los datos requeridos',
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            }   
         },
-  
-      CrearPersonal(){ //DGAE
-        if(!this.$v.validationGroupReg.$invalid){
-          swal.fire({
-              title: '¿Desea registrar?', // TITULO 
-              icon: 'question', //ICONO (success, warnning, error, info, question)
-              showCancelButton: true, //HABILITACION DEL BOTON CANCELAR
-              confirmButtonColor: 'info', // COLOR DEL BOTON PARA CONFIRMAR
-              cancelButtonColor: '#868077', // COLOR DEL BOTON CANCELAR
-              confirmButtonText: 'Confirmar', //TITULO DEL BOTON CONFIRMAR
-              cancelButtonText: 'Cancelar', //TIUTLO DEL BOTON CANCELAR
-              buttonsStyling: true,
-              reverseButtons: true
-              }).then((result) => {
-              if (result.value) {
-                  let me = this;
-                  axios
-                  .post("/crearPersonal", {
-                    foto : me.per_foto,
-                    ci : me.per_ci,
-                    nombre : me.per_nombre,
-                    ap_paterno : me.per_appaterno,
-                    ap_materno : me.per_apmaterno,
-                    sexo : me.per_sexo,
-                    celular : me.per_celular,
-                    email : me.per_email,
-                    fech_nac : me.per_fechnac,
-                    direccion : me.per_direccion,
-                  })
-                  .then(function (response) {
-                      
-                      console.log(response);
-                      swal.fire({
-                          title: 'Se realizo el registro correctamente', //TITULO
-                          // response.data.mensaje, //TEXTO DE MENSAJE
-                          // response.data.tipo, // TIPO DE MODAL (success, warnning, error, info)
-                          // response.personal
-                      });
-                      if (!response.data.code) {
-                          // $('#NuevoUsuario').modal('hide');
-                          // $('#ModalNewPersonal').modal('hide');
-                          // me.nick = '';
-                          // me.password = '';
-                          me.arrayDatPer = response.data.personal;
-                          // me.GenerarCarnet(me.arrayDatPer.id_personal);
-                          me.Atras();
-                          this.$v.$reset();
-                      } 
-                  })
-                  .catch(function (error) {
-                      // handle error
-                      console.log(error);
-                  })
-              }else{
-                    swal.fire(
-                      "Informacion", //TITULO
-                      "Solicitud cancelada.", //TEXTO DE MENSAJE
-                      "info" // TIPO DE MODAL (success, warnning, error, info)
-                  );
-              }
-          })
-        }else{
-            this.$v.validationGroupReg.$touch();
-            Swal.fire({
-                icon: 'warning',
-                title: 'Ingrese todos los datos requeridos',
-                showConfirmButton: false,
-                timer: 2000
-            })
-            
-        }
-      },
-
-      GenerarCarnet(id_personal){ //DGAE
-          // this.$v.$reset();
-          // if(!this.$v.$invalid){
-          window.open('/carnet?id_p='+id_personal);
-          // window.open('http://127.0.0.1:8000/carnet?id_p='+id_personal);
-          // }else{
-          //     this.$v.$touch();
-          //     Swal.fire({
-          //         icon: 'warning',
-          //         title: 'Ingrese todos los datos requeridos',
-          //         showConfirmButton: false,
-          //         timer: 2000
-          //     })
-              
-          // }
-      },
-  
     },
   };
   

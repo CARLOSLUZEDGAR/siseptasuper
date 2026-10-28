@@ -354,7 +354,7 @@
         ListarDiplomados(){
             let me = this;
             axios
-            .post("/listarDiplomado", {
+            .post("/selectEspecialidad", {
             })
             .then(function (response) {
             me.arrayDiplomado = response.data.diplomado
@@ -402,8 +402,8 @@
             this.arrayModulo = [];
             let me = this;
             axios
-            .post("/listarModulo", {
-                promocion : promocion,
+            .post("/selectModulo", {
+                diplopromo_id : promocion,
             })
             .then(function (response) {
             me.arrayModulo = response.data.modulo
@@ -419,7 +419,7 @@
             this.arrayMateria = [];
             let me = this;
             axios
-            .post("/listarMateria", {
+            .post("/selectMateria", {
                 modulo : modulo,
             })
             .then(function (response) {

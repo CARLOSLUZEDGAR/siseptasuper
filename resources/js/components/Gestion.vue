@@ -97,13 +97,13 @@
                 <nav>
                     <ul class="pagination">
                         <li class="page-item" v-if="pagination.current_page > 1">
-                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar,criterio)">Ant</a>
+                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar)">Ant</a>
                         </li>
                         <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
-                            <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar,criterio)" v-text="page"></a>
+                            <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar)" v-text="page"></a>
                         </li>
                         <li class="page-item" v-if="pagination.current_page < pagination.last_page">
-                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar,criterio)">Sig</a>
+                            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar)">Sig</a>
                         </li>
                     </ul>
                 </nav>
@@ -132,7 +132,6 @@ export default {
       // FIN VARIABLES DGAE
       
       listaDiplomadosPromociones : [],
-    //   criterio : "p.per_cm",
       buscar :"",
       setTimeoutBuscador: '',
       pagination: {
@@ -192,37 +191,12 @@ export default {
             name: "RegistroDiplomadoPromocion",  
         });
     },
-    
-    // EditarDiplomado(diplomadoid){
-    //   let me = this;
-    //       this.$v.validationsGroupMod.$reset(),
-    //       // me.modal = 1;
-    //       // me.ListarModulos();
-    //       axios
-    //           .post("/mostrarPromocion", {
-    //               diplomadoid: diplomadoid
-    //           })
-    //           .then((response) => {
-    //               me.ArrayMostrarPromocion = response.data.promocion;
-    //               me.idE = me.ArrayMostrarPromocion.id;
-    //               me.tipo_eventoE = me.ArrayMostrarPromocion.evento;
-    //               me.tipo_predioE = me.ArrayMostrarPromocion.clasificacion;
-    //               me.observacionE = me.ArrayMostrarPromocion.observacion;
-    //           })
-    //           .catch(function (error) {
-    //               // handle error
-    //               console.log(error);
-    //           })
-    //       $('#ModalTipoEvento').modal('show');
-    //       $(".modal-header").css("background-color", "#007bff");
-    //       $(".modal-header").css("color", "white" );
-    // },
 
     cambiarPagina(page,buscar,criterio){
         let me = this;
         //actualizando la pagina actual
         me.pagination.current_page = page;
-        me.ListarDiplomadoPromociones(page,buscar,criterio);
+        me.ListarDiplomadoPromociones(page,buscar);
     },
     
     ListarDiplomadoPromociones(page){
@@ -240,49 +214,6 @@ export default {
             // handle error
             console.log(error);
         })
-    },
-
-    Eliminar(personalid){
-      swal.fire({
-          title: '¿Desea eliminar este personal?', // TITULO 
-          icon: 'question', //ICONO (success, warnning, error, info, question)
-          showCancelButton: true, //HABILITACION DEL BOTON CANCELAR
-          confirmButtonColor: 'info', // COLOR DEL BOTON PARA CONFIRMAR
-          cancelButtonColor: '#868077', // CLOR DEL BOTON CANCELAR
-          confirmButtonText: 'Confirmar', //TITULO DEL BOTON CONFIRMAR
-          cancelButtonText: 'Cancelar', //TIUTLO DEL BOTON CANCELAR
-          buttonsStyling: true,
-          reverseButtons: true
-          }).then((result) => {
-          if (result.value) {
-              let me = this;
-              axios
-              .post("/eliminarPersonal", {
-                  persona_id: personalid,
-              })
-              .then(function (response) {
-              console.log(response);
-                  swal.fire(
-                      "ELIMINADO", //TITULO
-                      "Se elimino correctamente al personal.", //TEXTO DE MENSAJE
-                      "success" // TIPO DE MODAL (success, warnning, error, info)
-                  );
-                  me.ListarPersonal(1);
-              })
-              .catch(function (error) {
-                  // handle error
-                  console.log(error);
-              })
-          }else{
-              let me = this;
-              swal.fire(
-                  "Informacion", //TITULO
-                  "Solicitud cancelada.", //TEXTO DE MENSAJE
-                  "info" // TIPO DE MODAL (success, warnning, error, info)
-              );
-              me.ListarPersonal(1);
-          }
-      })
     },
 
     BuscarPromocion(){ //DGAE

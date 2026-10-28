@@ -44,12 +44,11 @@
                   </div>  
                 </div>
                 <div class="card-body">
-                    <h3><i class="fas fa-inbox"></i>&nbsp;SELECCIONAR PROMOCIÓN</h3>
-                    <br>
+                    <h3><i class="fas fa-inbox"></i>&nbsp;SELECCIONAR ESPECIALIDAD, GESTIÓN Y PROMOCIÓN</h3>
                     <div class="form-group row">
                         <div class="col-md-4">
                             <label class="form-control-label" for="text-input">Especialidad</label>
-                            <select class="form-control" v-model="diplomado" @change="ListarPromociones(diplomado, gestion)" :class="{ 'is-invalid' : $v.diplomado.$error, 'is-valid':!$v.diplomado.$invalid }">
+                            <select class="form-control" v-model="diplomado" @change="ListarGestiones(diplomado)" :class="{ 'is-invalid' : $v.diplomado.$error, 'is-valid':!$v.diplomado.$invalid }">
                                 <option value="" disabled>SELECCIONE</option>
                                 <option v-for="diplomado in arrayDiplomado" :key="diplomado.id" :value="diplomado.id"  v-text="diplomado.diplomado"></option>
                             </select>
@@ -61,7 +60,7 @@
                             <label class="form-control-label" for="text-input">Gestión</label>
                             <select class="form-control" v-model="gestion" @change="ListarPromociones(diplomado, gestion)" :class="{ 'is-invalid' : $v.gestion.$error, 'is-valid':!$v.gestion.$invalid }">
                                 <option value="" disabled>SELECCIONE</option>
-                                <option v-for="a in anios" :key="a" :value="a">{{ a }}</option>
+                                <option v-for="gestion in arrayGestiones" :key="gestion.gestion" :value="gestion.gestion"  v-text="gestion.gestion"></option>
                             </select>
                             <div class="invalid-feedback">
                                 <span v-if="!$v.gestion.required">Este campo es Requerido</span>
@@ -80,7 +79,6 @@
                     </div>
                   <form>
                         <h3><i class="fas fa-inbox"></i>&nbsp;CURSANTE</h3>
-                        <br>
                         <div class="form-group row">
                             <div class="col-md-3">
                                 <label class="form-control-label" for="text-input">Carnet de Identidad</label>
@@ -98,7 +96,7 @@
                             </div>
                             <div class="col-md-3">
                                 <label class="form-control-label" for="text-input">Fuerza</label>
-                                <select class="form-control" v-model="per_fuerza" @change="ListarGrado(per_fuerza)" :class="{ 'is-invalid' : $v.per_fuerza.$error, 'is-valid':!$v.per_fuerza.$invalid }">
+                                <select class="form-control" v-model="per_fuerza" @change="ListarGrado(per_fuerza), SelectFuerza(per_fuerza)"  :class="{ 'is-invalid' : $v.per_fuerza.$error, 'is-valid':!$v.per_fuerza.$invalid }">
                                     <option value="" disabled>SELECCIONE</option>
                                     <option v-for="fuerza in arrayFuerza" :key="fuerza.id" :value="fuerza.id"  v-text="fuerza.fuerza"></option>
                                 </select>
@@ -108,7 +106,7 @@
                             </div>
                             <div class="col-md-3">
                                 <label class="form-control-label" for="text-input">Grado</label>
-                                <select class="form-control" v-model="per_grado" :class="{ 'is-invalid' : $v.per_grado.$error, 'is-valid':!$v.per_grado.$invalid }">
+                                <select class="form-control" v-model="per_grado" @change="SelectGrado(per_grado)" :class="{ 'is-invalid' : $v.per_grado.$error, 'is-valid':!$v.per_grado.$invalid }">
                                     <option value="" disabled>SELECCIONE</option>
                                     <option v-for="grado in arrayGrado" :key="grado.id" :value="grado.id"  v-text="grado.abreviatura"></option>
                                 </select>
@@ -187,21 +185,6 @@
                                 </div>
                             </div>                          
                         </div>
-                        <!-- <div class="form-group row">
-                            <div class="col-md-3" style="text-align: center;">
-                              <template> -->
-                                <!-- <img :src="v === 0 ? '/img/avatar.jpg' : imagen" width="150" height="150" style="border: 1.5px solid black;"> -->
-                                <!-- <img :src="v === 0 ? 'URL_AVATAR_SUPABASE' : imagen" width="150" height="150" style="border: 1.5px solid black;">
-                              </template> 
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-control-label" for="text-input">Fotografia</label>
-                                <input type="file" class="form-control" @change="obtenerImagen" accept="image/*" v-bind:class="{ 'is-invalid': $v.per_foto.$error, 'is-valid':!$v.per_foto.$invalid }">
-                                <div class="invalid-feedback">
-                                    <div v-if="!$v.per_foto.required">Por favor, carga tu fotografia.</div>
-                                </div>
-                            </div>
-                        </div> -->
                         <button type="button" class="btn btn-primary" @click="agregarPersonal()">
                             <i class="fas fa-plus"></i>&nbsp; AGREGAR
                         </button>             
@@ -270,14 +253,6 @@
                         </button>
                     </div>
                 </div>
-
-
-
-
-
-
-
-
                 </div>
                 <!-- /.card -->
               </div>
@@ -297,15 +272,9 @@
   export default {
     data() {
       return {
-
-
         personasTemporales: [],
         indiceEdicion: null,
         contadorTemporal: 0,
-
-
-
-
 
         // INICIO VARIABLES DGAE
         // per_foto : '',
@@ -333,24 +302,16 @@
         arrayPromocion : [],
         arrayFuerza : [],
         arrayGrado : [],
-        anios: [],
+        arrayGestiones : [],
+        arraySelectFuerza : [],
+        selectFuerza : '',
         
         listaPersonal: [],
-        criterio: "p.per_cm",
-        buscar:"",
-        setTiemoutBuscador: '',
         isHidden: true,
         datfis2 : 1,
   
           
-        pagination: {
-              'total'         :   0,
-              'current_page'  :   0,
-              'per_page'      :   0,
-              'last_page'     :   0,
-              'from'          :   0,
-              'to'            :   0,
-          },
+        
         offset : 3,
         }
     },
@@ -387,56 +348,20 @@
         'per_celular',
         'per_email',
         'per_fechnac',
-        'per_direccion'],
+        'per_direccion',
+        'diplomado',
+        'gestion',
+        'promocion'
+        ],
     },
   
    computed: {
-        isActived   : function(){
-            return this.pagination.current_page;
-        },
-        //creando funcion para calcular los elementos de la paginacion
-        pagesNumber : function(){
-            //si la pagina llega hasta la ultima pagina esta me va retornar un arrary vacio
-            if(!this.pagination.to){
-                return [];
-            }
-
-            var from =  this.pagination.current_page - this.offset;
-            if(from < 1){
-                from = 1;
-            }
-
-            var to = from + (this.offset * 2);
-            if(to >= this.pagination.last_page){
-                to = this.pagination.last_page;
-            }
-
-            var pagesArray = [];
-            while(from <= to){
-                pagesArray.push(from);
-                from++;
-            }
-            return pagesArray;
-        },
-        // imagen(){
-        //     return this.per_foto;
-        // },
-        // imagenA(){
-        //     return this.per_fotoA;
-        // }
+        
     },
 
     mounted() {
-        let actual = new Date().getFullYear();
-        for (let i = actual - 5; i <= actual + 5; i++) {
-            this.anios.push(i);
-        }
-
         this.ListarDiplomados();
         this.ListarFuerzas();
-
-
-        // this.NuevoPersonal();
     },
 
     methods: {
@@ -449,10 +374,29 @@
         ListarDiplomados(){
             let me = this;
             axios
-            .post("/listarDiplomado", {
+            .post("/selectEspecialidad", {
             })
             .then(function (response) {
             me.arrayDiplomado = response.data.diplomado
+            })
+            .catch(function (error) {
+            // handle error
+            console.log(error);
+            })
+        },
+
+        ListarGestiones(diplomadoid) {
+            this.gestion = '';
+            this.arrayGestiones = [];
+            this.promocion = '';
+            this.arrayPromociones = [];
+            let me = this;
+            axios
+            .post("/selectGestion", {
+                diplomadoid : diplomadoid
+            })
+            .then(function (response) {
+            me.arrayGestiones = response.data.gestion
             })
             .catch(function (error) {
             // handle error
@@ -509,60 +453,90 @@
             })
         },
 
+        SelectFuerza(fuerzaid) {
+            let me = this;
+            axios
+            .post("/selectFuerza", {
+                fuerzaid : fuerzaid,
+            })
+            .then(function (response) {
+            me.arraySelectFuerza = response.data.fuerza;
+            me.selectFuerza = me.arraySelectFuerza.abreviatura;
+            })
+            .catch(function (error) {
+            // handle error
+            console.log(error);
+            })
+        },
+
+        SelectGrado(gradoid) {
+            axios
+            .post("/selectGrado", {
+                gradoid : gradoid,
+            })
+            .then(function (response) {
+            me.arraySelectGrado = response.data.grado
+            })
+            .catch(function (error) {
+            // handle error
+            console.log(error);
+            })
+        },
+
         agregarPersonal() {
-            // Ejecutar las validaciones de Vuelidate
-            this.$v.$touch();
+            if(!this.$v.validationGroupRegTemp.$invalid){
+                const persona = {
+                    idTemporal: this.indiceEdicion !== null
+                        ? this.personasTemporales[this.indiceEdicion].idTemporal
+                        : ++this.contadorTemporal,
+                    // per_fuerza: this.per_fuerza,
+                    per_fuerzaid: this.per_fuerza,
+                    per_fuerza: this.selectFuerza,
+                    per_grado: this.per_grado,
+                    per_ci: this.per_ci,
+                    per_cm: this.per_cm,
+                    per_nombre: (this.per_nombre || '').toUpperCase(),
+                    per_appaterno: (this.per_appaterno || '').toUpperCase(),
+                    per_apmaterno: (this.per_apmaterno || '').toUpperCase(),
+                    per_fechnac: this.per_fechnac,
+                    per_sexo: this.per_sexo,
+                    per_celular: this.per_celular,
+                    per_email: this.per_email,
+                    per_direccion: (this.per_direccion || '').toUpperCase(),
+                };
 
-            if (this.$v.$invalid) {
-                return;
-            }
+                if (this.indiceEdicion !== null) {
+                    // Actualizar la persona seleccionada
+                    this.$set(
+                        this.personasTemporales,
+                        this.indiceEdicion,
+                        persona
+                    );
 
-            const persona = {
-                idTemporal: this.indiceEdicion !== null
-                    ? this.personasTemporales[this.indiceEdicion].idTemporal
-                    : ++this.contadorTemporal,
+                    this.indiceEdicion = null;
+                } else {
+                    // Agregar una nueva persona
+                    this.personasTemporales.push(persona);
+                }
 
-                // per_diplomado: this.per_diplomado,
-                per_fuerza: this.per_fuerza,
-                per_grado: this.per_grado,
-                per_ci: this.per_ci,
-                per_cm: this.per_cm,
-                per_nombre: this.per_nombre,
-                per_appaterno: this.per_appaterno,
-                per_apmaterno: this.per_apmaterno,
-                per_fechnac: this.per_fechnac,
-                per_sexo: this.per_sexo,
-                per_celular: this.per_celular,
-                per_email: this.per_email,
-                per_direccion: this.per_direccion,
-
-                // Conservar el archivo y su vista previa
-                // per_foto: this.per_foto,
-                // fotoVista: this.imagen
-            };
-
-            if (this.indiceEdicion !== null) {
-                // Actualizar la persona seleccionada
-                this.$set(
-                    this.personasTemporales,
-                    this.indiceEdicion,
-                    persona
-                );
-
-                this.indiceEdicion = null;
-            } else {
-                // Agregar una nueva persona
-                this.personasTemporales.push(persona);
-            }
-
-            this.limpiarFormulario();
+                this.limpiarFormulario();
+            } else{
+                this.$v.validationGroupRegTemp.$touch();
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Ingrese todos los datos requeridos',
+                    showConfirmButton: false,
+                    timer: 2000
+                })
+                
+            }        
         },
 
         editarPersonal(index) {
             const persona = this.personasTemporales[index];
 
             // this.per_diplomado = persona.per_diplomado;
-            this.per_fuerza = persona.per_fuerza;
+            this.per_fuerza = persona.per_fuerzaid;
             this.per_ci = persona.per_ci;
             this.per_cm = persona.per_cm;
             this.per_grado = persona.per_grado;
@@ -580,7 +554,7 @@
             this.indiceEdicion = index;
 
             // Limpiar los errores anteriores de validación
-            this.$v.$reset();
+            this.$v.validationGroupRegTemp.$reset();
         },
 
         eliminarPersonal(index) {
@@ -600,7 +574,6 @@
         },
 
         limpiarFormulario() {
-            // this.per_diplomado = '';
             this.per_fuerza = '';
             this.per_ci = '';
             this.per_cm = '';
@@ -613,10 +586,8 @@
             this.per_celular = '';
             this.per_email = '';
             this.per_direccion = '';
-            // this.per_foto = null;
-
-            // Ajusta esta ruta a la imagen predeterminada de tu proyecto.
-            // this.imagen = '/img/avatar.jpg';
+            this.arraySelectFuerza = [],
+            this.selectFuerza = '',
 
             this.$nextTick(() => {
                 this.$v.$reset();
@@ -629,8 +600,7 @@
             }
 
             const datos = this.personasTemporales.map(persona => ({
-                // per_diplomado: persona.per_diplomado,
-                per_fuerza: persona.per_fuerza,
+                per_fuerza: persona.per_fuerzaid,
                 per_ci: persona.per_ci,
                 per_cm: persona.per_cm,
                 per_grado: persona.per_grado,
@@ -670,49 +640,6 @@
                 );
             });
         },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      obtenerImagen(e){
-          try {
-              var fileReader = new FileReader();
-  
-              fileReader.onload = (e) => {
-                  this.per_foto = e.target.result;
-              }
-              fileReader.readAsDataURL(e.target.files[0])
-              this.v = 1;
-          } catch (error) {
-              
-          }
-      },
-
-    //   NuevoPersonal(){ //DGAE
-    //     this.$v.validationGroupReg.$reset(),
-    //     this.per_foto = '',
-    //     this.per_ci = '',
-    //     this.per_nombre = '',
-    //     this.per_appaterno = '',
-    //     this.per_apmaterno = '',
-    //     this.per_sexo = '',
-    //     this.per_celular = '',
-    //     this.per_email = '',
-    //     this.per_fechnac = '',
-    //     this.per_direccion = '',
-    //     this.v = 0
-    //   },
   
       CrearPersonal(){ //DGAE
         if(!this.$v.validationGroupReg.$invalid){
@@ -785,24 +712,6 @@
             
         }
       },
-
-      GenerarCarnet(id_personal){ //DGAE
-          // this.$v.$reset();
-          // if(!this.$v.$invalid){
-          window.open('/carnet?id_p='+id_personal);
-          // window.open('http://127.0.0.1:8000/carnet?id_p='+id_personal);
-          // }else{
-          //     this.$v.$touch();
-          //     Swal.fire({
-          //         icon: 'warning',
-          //         title: 'Ingrese todos los datos requeridos',
-          //         showConfirmButton: false,
-          //         timer: 2000
-          //     })
-              
-          // }
-      },
-  
     },
   };
   

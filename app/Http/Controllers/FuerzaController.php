@@ -28,4 +28,14 @@ class FuerzaController extends Controller
 
         return response()->json(['fuerza' => $fuerza]);
     }
+
+    public function SelectFuerza (Request $request) {
+        $fuerza = DB::table('fuerzas as f')
+                    ->select('f.*')
+                    ->where('f.estado', 1)
+                    ->where('f.id', $request->fuerzaid)
+                    ->first();
+
+        return response()->json(['fuerza' => $fuerza]);
+    }
 }

@@ -57,6 +57,10 @@
         * {
             font-family: verdana, arial, sans-serif;
         }
+
+        .reprobado {
+            color: #FF0000 !important;
+        }
     </style>
 
 </head>

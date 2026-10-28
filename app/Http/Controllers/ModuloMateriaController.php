@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ModuloMateriaController extends Controller
 {
@@ -33,6 +34,7 @@ class ModuloMateriaController extends Controller
                             'dp.promocion',
                             'dm.modulo',
                             'mm.materia',
+                            'mm.docente',
                             'mm.estado')
                     ->orderBy('dp.gestion', 'desc')
                     ->orderBy('d.id', 'asc')
@@ -64,6 +66,7 @@ class ModuloMateriaController extends Controller
                             'dp.promocion',
                             'dm.modulo',
                             'mm.materia',
+                            'mm.docente',
                             'mm.estado')
                     ->where(function($q) use ($buscar){
                         $q->where('d.diplomado','LIKE','%'.$buscar.'%')
@@ -157,4 +160,157 @@ class ModuloMateriaController extends Controller
         'modulo' => $modulo
     ]);
 }
+
+    
+public function GuardarNuevasMaterias(Request $request)
+{
+    // 1. Validar los datos recibidos desde Vue
+    $request->validate([
+        'diplomod_id' => 'required|integer',
+        'modulos' => 'required|array|min:1|size:1',
+        'modulos.*.id' => 'required|integer',
+        'modulos.*.materias' => 'present|array',
+        'modulos.*.materias.*.id' => 'nullable|integer',
+        'modulos.*.materias.*.nombre' => 'required|string|max:255',
+        'modulos.*.materias.*.docente' => 'nullable|string|max:255',
+    ]);
+
+    try {
+        DB::beginTransaction();
+
+        // 2. Buscar el módulo seleccionado
+        $modulo = DB::table('diplomado_modulos')
+            ->where('id', $request->diplomod_id)
+            ->where('estado', 1)
+            ->lockForUpdate()
+            ->first();
+
+        if (!$modulo) {
+            throw new \Exception(
+                'El módulo seleccionado no existe o está inactivo.'
+            );
+        }
+
+        // 3. Verificar que Vue haya enviado ese mismo módulo
+        $datosModulo = $request->modulos[0];
+
+        if ((int) $datosModulo['id'] !== (int) $modulo->id) {
+            throw new \Exception(
+                'El módulo enviado no coincide con el módulo seleccionado.'
+            );
+        }
+
+        $materiasActualizadas = 0;
+        $materiasRegistradas = 0;
+
+        // 4. Procesar las materias recibidas
+        foreach ($datosModulo['materias'] as $materia) {
+
+            $nombre = mb_strtoupper(
+                trim($materia['nombre']),
+                'UTF-8'
+            );
+
+            $docenteTexto = trim($materia['docente'] ?? '');
+
+            $docente = $docenteTexto !== ''
+                ? mb_strtoupper($docenteTexto, 'UTF-8')
+                : null;
+
+            // 5. Si tiene ID, la materia ya existe
+            if (!empty($materia['id'])) {
+
+                $registro = DB::table('modulo_materias')
+                    ->where('id', $materia['id'])
+                    ->where('diplomod_id', $modulo->id)
+                    ->where('estado', 1)
+                    ->first();
+
+                if (!$registro) {
+                    throw new \Exception(
+                        'Una materia no existe, está inactiva o no pertenece al módulo seleccionado.'
+                    );
+                }
+
+                // Comparar los valores actuales con los nuevos
+                $nombreActual = mb_strtoupper(
+                    trim($registro->materia ?? ''),
+                    'UTF-8'
+                );
+
+                $docenteActual = mb_strtoupper(
+                    trim($registro->docente ?? ''),
+                    'UTF-8'
+                );
+
+                // Actualizar solamente si hubo cambios
+                if (
+                    $nombreActual !== $nombre ||
+                    $docenteActual !== ($docente ?? '')
+                ) {
+                    DB::table('modulo_materias')
+                        ->where('id', $registro->id)
+                        ->where('diplomod_id', $modulo->id)
+                        ->update([
+                            'materia' => $nombre,
+                            'docente' => $docente,
+                            'sysuser' => auth()->id(),
+                        ]);
+
+                    $materiasActualizadas++;
+                }
+
+            } else {
+
+                // 6. Si no tiene ID, es una materia nueva.
+                // Obtener el último orden registrado del módulo.
+                $ultimoOrden = DB::table('modulo_materias')
+                    ->where('diplomod_id', $modulo->id)
+                    ->max('orden');
+
+                $siguienteOrden = ((int) $ultimoOrden) + 1;
+
+                // Registrar la nueva materia
+                DB::table('modulo_materias')->insert([
+                    'diplomod_id' => $modulo->id,
+                    'orden' => $siguienteOrden,
+                    'materia' => $nombre,
+                    'docente' => $docente,
+                    'observacion' => 'MATERIA DEL MODULO '
+                        . $modulo->modulo,
+                    'estado' => 1,
+                    'sysuser' => auth()->id(),
+                ]);
+
+                $materiasRegistradas++;
+            }
+        }
+
+        DB::commit();
+
+        return response()->json([
+            'success' => true,
+            'mensaje' => 'Proceso realizado correctamente.',
+            'actualizadas' => $materiasActualizadas,
+            'registradas' => $materiasRegistradas,
+        ], 200);
+
+    } catch (\Throwable $e) {
+
+        DB::rollBack();
+
+        Log::error(
+            'Error al guardar materias del módulo: ' . $e->getMessage()
+        );
+
+        return response()->json([
+            'success' => false,
+            'mensaje' => 'No se pudieron guardar las materias.',
+            'error' => config('app.debug')
+                ? $e->getMessage()
+                : null,
+        ], 500);
+    }
+}
+
 }

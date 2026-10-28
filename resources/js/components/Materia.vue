@@ -48,7 +48,7 @@
                 <div class="row d-flex justify-content-center"> 
                     <div class="col-md-4">
                         <label for="">BUSCAR:</label>
-                        <input type="text" style="text-transform:uppercase;" class="form-control" @keyup="BuscarModulo(1)" v-model="buscar">
+                        <input type="text" style="text-transform:uppercase;" class="form-control" @keyup="BuscarMateria(1)" v-model="buscar">
                     </div>
                 </div>
                 <br>
@@ -65,39 +65,18 @@
                                     <th class="text-center">PROMOCIÓN</th>
                                     <th class="text-center">MÓDULO</th>
                                     <th class="text-center">MATERIA</th>
-                                    <!-- <th class="text-center">OPCIONES</th> -->
+                                    <th class="text-center">DOCENTE</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr v-for="(materia,index) in arrayMateria"> 
-                                    <!-- <td v-text="personal.grado+' '+personal.complemento"></td> -->
                                     <td style="text-align:center; font-weight:bold;">{{ index + 1 }}</td>
                                     <td>{{ materia.diplomado }}</td>
                                     <td style="text-align:center">{{ materia.gestion }}</td>
                                     <td style="text-align:center">{{ materia.promo }}</td>
                                     <td style="text-align:center">{{ materia.modulo }}</td>
                                     <td style="text-align:center">{{ materia.materia || 'SIN MATERIAS' }}</td>
-                                    <!-- <td style="text-align:center">
-                                      <div class="d-flex justify-content-center align-items-center">
-                                        <template v-if="modulo.estado == 1">
-                                            <div v-if="$auth.can('edit-espe')" class="mr-1">
-                                                <button type="button" @click="Mostrar(modulo.id)" class="btn btn-success btn-sm">
-                                                    <i class="fa fa-retweet" aria-hidden="true"></i>
-                                                </button>
-                                            </div>
-                                        </template>
-                                        <template v-if="modulo.estado == 1">
-                                            <button type="button" class="btn btn-danger btn-sm" @click="CambiarEstado(modulo.id, modulo.estado)" :disabled="procesando">
-                                                <i class="fas fa-lock-open"></i>
-                                            </button>
-                                        </template>
-                                        <template v-else>
-                                            <button type="button" class="btn btn-success btn-sm" @click="CambiarEstado(modulo.id, modulo.estado)" :disabled="procesando">
-                                                <i class="fas fa-lock"></i>
-                                            </button>
-                                        </template>
-                                      </div>
-                                    </td> -->
+                                    <td style="text-align:center">{{ materia.docente}}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -138,19 +117,7 @@ export default {
   data() {
     return {
       
-    //   especialidad : '',
-    //   abreviatura : '',
-    //   descripcion : '',
-    //   idE : '',
-    //   especialidadE : '',
-    //   abreviaturaE : '',
-    //   descripcionE : '',
-
-    //   procesando : false,
-    //   modal : '',
       arrayMateria : [],
-    //   arrayMostrarEspecialidad : [],
-      // criterio: "p.per_cm",
       buscar :"",
       setTimeoutBuscador : '',
       pagination : {
@@ -166,20 +133,7 @@ export default {
   },
 
   validations: {
-    // especialidad : { required },
-    // abreviatura : { required },
-    // especialidadE : { required },
-    // abreviaturaE : { required },
-
-    // validationsGroupReg : [
-    //   'especialidad',
-    //   'abreviatura'
-    // ],
-
-    // validationsGroupMod : [
-    //   'especialidadE',
-    //   'abreviaturaE'
-    // ]    
+   
   },
 
  computed: {
@@ -223,30 +177,6 @@ export default {
             name: "RegistroMaterias",  
         });
     },
-    
-    // Mostrar(especialidadid){
-    //     this.$v.validationsGroupMod.$reset();
-    //     let me = this;
-    //     me.modal = 1;
-    //     axios
-    //         .post("/mostrarEspecialidad", {
-    //             especialidadid: especialidadid
-    //         })
-    //         .then((response) => {
-    //             me.arrayMostrarEspecialidad = response.data.especialidad;
-    //             me.idE = me.arrayMostrarEspecialidad.id;
-    //             me.especialidadE = me.arrayMostrarEspecialidad.diplomado;
-    //             me.abreviaturaE = me.arrayMostrarEspecialidad.abreviatura;
-    //             me.descripcionE = me.arrayMostrarEspecialidad.descripcion;
-    //         })
-    //         .catch(function (error) {
-    //             // handle error
-    //             console.log(error);
-    //         })
-    //     $('#ModalEspecialidad').modal('show');
-    //     $(".modal-header").css("background-color", "#007bff");
-    //     $(".modal-header").css("color", "white" );
-    // },
 
     cambiarPagina(page,buscar){
         let me = this;
@@ -272,240 +202,10 @@ export default {
         })
     },
 
-    // Cerrar(){
-    //     this.especialidad = '';
-    //     this.abreviatura = '';
-    //     this.descripcion = '';
-
-    //     this.idE = '';
-    //     this.especialidadE = '';
-    //     this.abreviaturaE = '';
-    //     this.descripcionE = '';
-    // },
-
-    // Guardar() {
-    //     if (this.procesando) {
-    //         return;
-    //     }
-    //     if (!this.$v.validationsGroupReg.$invalid) {
-    //         swal.fire({
-    //             title: '¿Desea registrar esta especialidad?',
-    //             icon: 'question',
-    //             showCancelButton: true,
-    //             confirmButtonColor: 'info',
-    //             cancelButtonColor: '#868077',
-    //             confirmButtonText: 'Confirmar',
-    //             cancelButtonText: 'Cancelar',
-    //             buttonsStyling: true,
-    //             reverseButtons: true
-    //         }).then((result) => {
-    //             if (result.value) {
-    //                 this.procesando = true;
-    //                 axios.post('/registrarEspecialidad', {
-    //                     especialidad: this.especialidad.toUpperCase(),
-    //                     abreviatura: this.abreviatura.toUpperCase(),
-    //                     descripcion: this.descripcion
-    //                         ? this.descripcion.toUpperCase()
-    //                         : 'NINGUNA'
-    //                 })
-    //                 .then((response) => {
-    //                     this.procesando = false;
-    //                     if (response.data.success) {
-    //                         Swal.fire({
-    //                             icon: 'success',
-    //                             title: 'CORRECTO',
-    //                             text: response.data.mensaje
-    //                         });
-    //                         $('#ModalEspecialidad').modal('hide');
-    //                         this.Cerrar();
-    //                         this.ListarEspecialidad(1);
-    //                     } else {
-    //                         Swal.fire({
-    //                             icon: 'warning',
-    //                             title: 'ADVERTENCIA',
-    //                             text: response.data.mensaje
-    //                         });
-    //                     }
-    //                 })
-    //                 .catch((error) => {
-    //                     this.procesando = false;
-    //                     console.log(error);
-    //                     Swal.fire({
-    //                         icon: 'error',
-    //                         title: 'ERROR',
-    //                         text: 'Ocurrió un error inesperado'
-    //                     });
-    //                 });
-    //             } else {
-    //                 swal.fire(
-    //                     'Información',
-    //                     'Solicitud cancelada.',
-    //                     'info'
-    //                 );
-    //                 $('#ModalEspecialidad').modal('hide');
-    //                 this.Cerrar();
-    //             }
-    //         });
-    //     } else {
-    //         this.$v.validationsGroupReg.$touch();
-    //         Swal.fire({
-    //             icon: 'warning',
-    //             title: 'Ingrese todos los datos requeridos',
-    //             showConfirmButton: false,
-    //             timer: 2000
-    //         });
-    //     }
-    // },
-
-    // Editar() {
-    //     if (this.procesando) {
-    //             return;
-    //         }
-    //         if(!this.$v.validationsGroupMod.$invalid){
-    //             swal.fire({
-    //                 title: '¿Desea editar esta especialidad?', // TITULO 
-    //                 icon: 'question', //ICONO (success, warnning, error, info, question)
-    //                 showCancelButton: true, //HABILITACION DEL BOTON CANCELAR
-    //                 confirmButtonColor: 'info', // COLOR DEL BOTON PARA CONFIRMAR
-    //                 cancelButtonColor: '#868077', // CLOR DEL BOTON CANCELAR
-    //                 confirmButtonText: 'Confirmar', //TITULO DEL BOTON CONFIRMAR
-    //                 cancelButtonText: 'Cancelar', //TIUTLO DEL BOTON CANCELAR
-    //                 buttonsStyling: true,
-    //                 reverseButtons: true
-    //                 }).then((result) => {
-    //                 if (result.value) {
-    //                     let me = this;
-    //                     this.procesando = true;
-    //                     axios.post('/editarEspecialidad', {
-    //                         id: this.idE,
-    //                         especialidad: this.especialidadE.toUpperCase(),
-    //                         abreviatura: this.abreviaturaE
-    //                             ? this.abreviaturaE.toUpperCase()
-    //                             : '',
-    //                         descripcion: this.descripcionE
-    //                             ? this.descripcionE.toUpperCase()
-    //                             : 'NINGUNA'
-    //                     })
-    //                     .then((response) => {
-    //                         if(response.data.success){
-    //                             Swal.fire({
-    //                                 icon: 'success',
-    //                                 title: 'CORRECTO',
-    //                                 text: response.data.mensaje
-    //                             });
-    //                             $('#ModalEspecialidad').modal('hide');
-    //                             this.Cerrar();
-    //                             this.ListarEspecialidad(1);
-    //                         }else{
-    //                             Swal.fire({
-    //                                 icon: 'warning',
-    //                                 title: 'ADVERTENCIA',
-    //                                 text: response.data.mensaje
-    //                             });
-    //                         }
-    //                     })
-    //                     .catch((error) => {
-    //                         console.log(error);
-    //                         Swal.fire({
-    //                             icon: 'error',
-    //                             title: 'ERROR',
-    //                             text: 'Ocurrió un error inesperado'
-    //                         });
-    //                     })
-    //                     .finally(() => {
-    //                         this.procesando = false;
-    //                     });
-    //                 }else{
-    //                     let me = this;
-    //                     swal.fire(
-    //                         "Informacion", //TITULO
-    //                         "Solicitud cancelada.", //TEXTO DE MENSAJE
-    //                         "info" // TIPO DE MODAL (success, warnning, error, info)
-    //                     );
-    //                     $('#ModalEspecialidad').modal('hide');
-    //                     me.Cerrar();
-    //                 }
-    //             })
-    //         }else{
-    //             this.$v.validationsGroupMod.$touch();
-    //             Swal.fire({
-    //                 icon: 'warning',
-    //                 title: 'Ingrese todos los datos requeridos',
-    //                 showConfirmButton: false,
-    //                 timer: 2000
-    //             }) 
-    //         }
-    // },
-
-    CambiarEstado(especialidadid, estado){
-        if (this.procesando) {
-                    return;
-                }
-                if (estado == 1) {
-                    var titulo = '¿Desea deshabilitar esta especialidad?';
-                } else {
-                    var titulo = '¿Desea habilitar esta especialidad?';
-                }
-                swal.fire({
-                    title: titulo, // TITULO 
-                    icon: 'question', //ICONO (success, warnning, error, info, question)
-                    showCancelButton: true, //HABILITACION DEL BOTON CANCELAR
-                    confirmButtonColor: 'info', // COLOR DEL BOTON PARA CONFIRMAR
-                    cancelButtonColor: '#868077', // CLOR DEL BOTON CANCELAR
-                    confirmButtonText: 'Confirmar', //TITULO DEL BOTON CONFIRMAR
-                    cancelButtonText: 'Cancelar', //TIUTLO DEL BOTON CANCELAR
-                    buttonsStyling: true,
-                    reverseButtons: true
-                    }).then((result) => {
-                    if (result.value) {
-                        let me = this;
-                        this.procesando = true;
-                        axios.post('/cambiarEstadoEspecialidad', {
-                            id: especialidadid,
-                            estado: estado
-                        })
-                        .then((response) => {
-                            if(response.data.success){
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'CORRECTO',
-                                    text: response.data.mensaje
-                                });
-                                this.ListarEspecialidad(1);
-                            }else{
-                                Swal.fire({
-                                    icon: 'warning',
-                                    title: 'ADVERTENCIA',
-                                    text: response.data.mensaje
-                                });
-                            }
-                        })
-                        .catch((error) => {
-                            console.log(error);
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'ERROR',
-                                text: 'Ocurrió un error inesperado'
-                            });
-                        })
-                        .finally(() => {
-                            this.procesando = false;
-                        });
-                    }else{
-                        let me = this;
-                        swal.fire(
-                            "Informacion", //TITULO
-                            "Solicitud cancelada.", //TEXTO DE MENSAJE
-                            "info" // TIPO DE MODAL (success, warnning, error, info)
-                        );
-                    }
-                })
-    },
-
-    BuscarModulo(){ //DGAE
+    BuscarMateria(){ //DGAE
         clearTimeout(this.setTimeoutBuscador);
         this.setTimeoutBuscador = setTimeout(() => {
-            this.ListarModulo(1)
+            this.ListarMateria(1)
         }, 360)
     },
   },

@@ -85,7 +85,7 @@ Route::post('/listarFuerza', 'FuerzaController@ListarFuerza');
 Route::post('/listarGrado', 'GradoController@ListarGrado');
 Route::post('/guardarListaCursantes','PersonalController@CrearPersonal');
 Route::post('/selectModulo', 'DiplomadoModuloController@SelectDiplomadoModulo');
-Route::post('/listarMateria', 'ModuloMateriaController@SelectModuloMateria');
+Route::post('/selectMateria', 'ModuloMateriaController@SelectModuloMateria');
 Route::post('/listarCursantesPromocion', 'DiplomadoPromocionCursanteController@ListarDiplomadoPromocionCursante');
 Route::post('/listarEvaluacion', 'EvaluacionController@ListarEvaluacion');
 Route::post('/guardarNotasCursantes','CursanteNotaController@CrearCursanteNota');
@@ -104,6 +104,9 @@ Route::post('/listarPromocionModulo', 'DiplomadoModuloController@BuscarDiplomado
 Route::post('/guardarNuevosModulosMaterias', 'DiplomadoModuloController@CrearNuevosModulosMaterias');
 Route::post('/listarMateria', 'ModuloMateriaController@ListarModuloMateria');
 Route::post('/listarModuloMateria', 'ModuloMateriaController@BuscarModuloMateria');
+Route::post('/guardarNuevasMaterias', 'ModuloMateriaController@GuardarNuevasMaterias');
+Route::post('/listarPromediosPromocion', 'CursanteNotaController@ListarPromediosPromocion');
+Route::post('/selectFuerza', 'FuerzaController@SelectFuerza');
 
 
 

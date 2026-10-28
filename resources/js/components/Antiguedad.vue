@@ -39,76 +39,87 @@
                 </div>
                 <div class="card-body">
                     <form>
-                        <h3><i class="fas fa-inbox"></i>&nbsp;ELEGIR PROMOCION Y MATERIA</h3>
-                        <br>
+                        <h3><i class="fas fa-inbox"></i>&nbsp;ELEGIR TIPO REPORTE</h3>
                         <div class="form-group row">
-                            <div class="col-md-3">
-                                <label class="form-control-label" for="text-input">Especialidad</label>
-                                <select class="form-control" v-model="diplomado" @change="ListarPromociones(diplomado, gestion)" :class="{ 'is-invalid' : $v.diplomado.$error, 'is-valid':!$v.diplomado.$invalid }">
+                             <div class="col-md-3">
+                                <label class="form-control-label" for="text-input">Antiguedad</label>
+                                <select class="form-control" v-model="reporte">
                                     <option value="" disabled>SELECCIONE</option>
-                                    <option v-for="diplomado in arrayDiplomado" :key="diplomado.id" :value="diplomado.id"  v-text="diplomado.diplomado"></option>
+                                    <option value="1">POR MODULO</option>
+                                    <option value="2">EN GENERAL</option>
                                 </select>
-                                <div class="invalid-feedback">
-                                    <span v-if="!$v.diplomado.required">Este campo es Requerido</span>
-                                </div>
                             </div>
-                            <div class="col-md-3">
-                                <label class="form-control-label" for="text-input">Gestión</label>
-                                <select class="form-control" v-model="gestion" @change="ListarPromociones(diplomado, gestion)" :class="{ 'is-invalid' : $v.gestion.$error, 'is-valid':!$v.gestion.$invalid }">
-                                    <option value="" disabled>SELECCIONE</option>
-                                    <option v-for="a in anios" :key="a" :value="a">{{ a }}</option>
-                                </select>
-                                <div class="invalid-feedback">
-                                    <span v-if="!$v.gestion.required">Este campo es Requerido</span>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-control-label" for="text-input">Promoción</label>
-                                <select class="form-control" v-model="promocion" @change="ListarModulos(promocion)" :class="{ 'is-invalid' : $v.promocion.$error, 'is-valid':!$v.promocion.$invalid }">
-                                    <option value="" disabled>SELECCIONE</option>
-                                    <option v-for="promocion in arrayPromocion" :key="promocion.id" :value="promocion.id"  v-text="promocion.promo"></option>
-                                </select>
-                                <div class="invalid-feedback">
-                                    <span v-if="!$v.promocion.required">Este campo es Requerido</span>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-control-label" for="text-input">Módulo</label>
-                                <select class="form-control" v-model="modulo" :class="{ 'is-invalid' : $v.modulo.$error, 'is-valid':!$v.modulo.$invalid }">
-                                    <option value="" disabled>SELECCIONE</option>
-                                    <option v-for="modulo in arrayModulo" :key="modulo.id" :value="modulo.id"  v-text="modulo.modulo"></option>
-                                </select>
-                                <div class="invalid-feedback">
-                                    <span v-if="!$v.modulo.required">Este campo es Requerido</span>
-                                </div>
-                            </div> 
-                            <!-- <div class="col-md-4">
-                                <label class="form-control-label" for="text-input">Materia</label>
-                                <select class="form-control" v-model="materia" @change="ListarEvaluaciones()" :class="{ 'is-invalid' : $v.materia.$error, 'is-valid':!$v.materia.$invalid }">
-                                    <option value="" disabled>SELECCIONE</option>
-                                    <option v-for="materia in arrayMateria" :key="materia.id" :value="materia.id"  v-text="materia.materia"></option>
-                                </select>
-                                <div class="invalid-feedback">
-                                    <span v-if="!$v.materia.required">Este campo es Requerido</span>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-control-label" for="text-input">Evaluación</label>
-                                <select class="form-control" v-model="evaluacion" :class="{ 'is-invalid' : $v.evaluacion.$error, 'is-valid':!$v.evaluacion.$invalid }">
-                                    <option value="" disabled>SELECCIONE</option>
-                                    <option v-for="evaluacion in arrayEvaluacion" :key="evaluacion.id" :value="evaluacion.id"  v-text="evaluacion.evaluacion"></option>
-                                </select>
-                                <div class="invalid-feedback">
-                                    <span v-if="!$v.evaluacion.required">Este campo es Requerido</span>
-                                </div>
-                            </div> -->
-                            <button type="button" class="btn btn-primary" @click="BuscarPromediosModulo()">
-                                <i class="fas fa-plus"></i>&nbsp; BUSCAR
-                            </button>
                         </div>
-                    </form>
-                    <div class="table-wrapper-scroll-y my-custom-scrollbar" id="myTable" style="font-size: 12pt;" >
+                        <div v-if="reporte == 1">
+                            <h3><i class="fas fa-inbox"></i>&nbsp;ELEGIR ESPECIALIDAD, PROMOCIÓN y MÓDULO</h3>
+                            <br>
+                            <div class="form-group row">
+                                <div class="col-md-3">
+                                    <label class="form-control-label" for="text-input">Especialidad</label>
+                                    <select class="form-control" v-model="diplomado" @change="ListarPromociones(diplomado, gestion)" :class="{ 'is-invalid' : $v.diplomado.$error, 'is-valid':!$v.diplomado.$invalid }">
+                                        <option value="" disabled>SELECCIONE</option>
+                                        <option v-for="diplomado in arrayDiplomado" :key="diplomado.id" :value="diplomado.id"  v-text="diplomado.diplomado"></option>
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        <span v-if="!$v.diplomado.required">Este campo es Requerido</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-control-label" for="text-input">Gestión</label>
+                                    <select class="form-control" v-model="gestion" @change="ListarPromociones(diplomado, gestion)" :class="{ 'is-invalid' : $v.gestion.$error, 'is-valid':!$v.gestion.$invalid }">
+                                        <option value="" disabled>SELECCIONE</option>
+                                        <option v-for="a in anios" :key="a" :value="a">{{ a }}</option>
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        <span v-if="!$v.gestion.required">Este campo es Requerido</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-control-label" for="text-input">Promoción</label>
+                                    <select class="form-control" v-model="promocion" @change="ListarModulos(promocion)" :class="{ 'is-invalid' : $v.promocion.$error, 'is-valid':!$v.promocion.$invalid }">
+                                        <option value="" disabled>SELECCIONE</option>
+                                        <option v-for="promocion in arrayPromocion" :key="promocion.id" :value="promocion.id"  v-text="promocion.promo"></option>
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        <span v-if="!$v.promocion.required">Este campo es Requerido</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-control-label" for="text-input">Módulo</label>
+                                    <select class="form-control" v-model="modulo" :class="{ 'is-invalid' : $v.modulo.$error, 'is-valid':!$v.modulo.$invalid }">
+                                        <option value="" disabled>SELECCIONE</option>
+                                        <option v-for="modulo in arrayModulo" :key="modulo.id" :value="modulo.id"  v-text="modulo.modulo"></option>
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        <span v-if="!$v.modulo.required">Este campo es Requerido</span>
+                                    </div>
+                                </div> 
+                                <!-- <div class="col-md-4">
+                                    <label class="form-control-label" for="text-input">Materia</label>
+                                    <select class="form-control" v-model="materia" @change="ListarEvaluaciones()" :class="{ 'is-invalid' : $v.materia.$error, 'is-valid':!$v.materia.$invalid }">
+                                        <option value="" disabled>SELECCIONE</option>
+                                        <option v-for="materia in arrayMateria" :key="materia.id" :value="materia.id"  v-text="materia.materia"></option>
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        <span v-if="!$v.materia.required">Este campo es Requerido</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-control-label" for="text-input">Evaluación</label>
+                                    <select class="form-control" v-model="evaluacion" :class="{ 'is-invalid' : $v.evaluacion.$error, 'is-valid':!$v.evaluacion.$invalid }">
+                                        <option value="" disabled>SELECCIONE</option>
+                                        <option v-for="evaluacion in arrayEvaluacion" :key="evaluacion.id" :value="evaluacion.id"  v-text="evaluacion.evaluacion"></option>
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        <span v-if="!$v.evaluacion.required">Este campo es Requerido</span>
+                                    </div>
+                                </div> -->
+                                <button type="button" class="btn btn-primary" @click="BuscarPromediosModulo()">
+                                    <i class="fas fa-plus"></i>&nbsp; BUSCAR
+                                </button>
+                            </div>
 
+                            <div class="table-wrapper-scroll-y my-custom-scrollbar" id="myTable" style="font-size: 12pt;" >
                         <!-- <template v-if="datfis2==1"> -->
                         <table class="table table-bordered table-sm">
                             <thead>
@@ -162,6 +173,158 @@
                         <!-- </template> -->
                         <br>
                     </div>
+                        </div>
+                        <div v-if="reporte == 2">
+                            <h3><i class="fas fa-inbox"></i>&nbsp;ELEGIR ESPECIALIDAD, PROMOCIÓN</h3>
+                            <br>
+                            <div class="form-group row">
+                                <div class="col-md-3">
+                                    <label class="form-control-label" for="text-input">Especialidad</label>
+                                    <select class="form-control" v-model="diplomado" @change="ListarPromociones(diplomado, gestion)" :class="{ 'is-invalid' : $v.diplomado.$error, 'is-valid':!$v.diplomado.$invalid }">
+                                        <option value="" disabled>SELECCIONE</option>
+                                        <option v-for="diplomado in arrayDiplomado" :key="diplomado.id" :value="diplomado.id"  v-text="diplomado.diplomado"></option>
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        <span v-if="!$v.diplomado.required">Este campo es Requerido</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-control-label" for="text-input">Gestión</label>
+                                    <select class="form-control" v-model="gestion" @change="ListarPromociones(diplomado, gestion)" :class="{ 'is-invalid' : $v.gestion.$error, 'is-valid':!$v.gestion.$invalid }">
+                                        <option value="" disabled>SELECCIONE</option>
+                                        <option v-for="a in anios" :key="a" :value="a">{{ a }}</option>
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        <span v-if="!$v.gestion.required">Este campo es Requerido</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-control-label" for="text-input">Promoción</label>
+                                    <select class="form-control" v-model="promocion" :class="{ 'is-invalid' : $v.promocion.$error, 'is-valid':!$v.promocion.$invalid }">
+                                        <option value="" disabled>SELECCIONE</option>
+                                        <option v-for="promocion in arrayPromocion" :key="promocion.id" :value="promocion.id"  v-text="promocion.promo"></option>
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        <span v-if="!$v.promocion.required">Este campo es Requerido</span>
+                                    </div>
+                                </div>
+                                <!-- <div class="col-md-3">
+                                    <label class="form-control-label" for="text-input">Módulo</label>
+                                    <select class="form-control" v-model="modulo" :class="{ 'is-invalid' : $v.modulo.$error, 'is-valid':!$v.modulo.$invalid }">
+                                        <option value="" disabled>SELECCIONE</option>
+                                        <option v-for="modulo in arrayModulo" :key="modulo.id" :value="modulo.id"  v-text="modulo.modulo"></option>
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        <span v-if="!$v.modulo.required">Este campo es Requerido</span>
+                                    </div>
+                                </div>  -->
+                                <!-- <div class="col-md-4">
+                                    <label class="form-control-label" for="text-input">Materia</label>
+                                    <select class="form-control" v-model="materia" @change="ListarEvaluaciones()" :class="{ 'is-invalid' : $v.materia.$error, 'is-valid':!$v.materia.$invalid }">
+                                        <option value="" disabled>SELECCIONE</option>
+                                        <option v-for="materia in arrayMateria" :key="materia.id" :value="materia.id"  v-text="materia.materia"></option>
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        <span v-if="!$v.materia.required">Este campo es Requerido</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-control-label" for="text-input">Evaluación</label>
+                                    <select class="form-control" v-model="evaluacion" :class="{ 'is-invalid' : $v.evaluacion.$error, 'is-valid':!$v.evaluacion.$invalid }">
+                                        <option value="" disabled>SELECCIONE</option>
+                                        <option v-for="evaluacion in arrayEvaluacion" :key="evaluacion.id" :value="evaluacion.id"  v-text="evaluacion.evaluacion"></option>
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        <span v-if="!$v.evaluacion.required">Este campo es Requerido</span>
+                                    </div>
+                                </div> -->
+                                <button type="button" class="btn btn-primary" @click="BuscarPromediosGral()">
+                                    <i class="fas fa-plus"></i>&nbsp; BUSCAR
+                                </button>
+                            </div>
+
+                            
+<div class="table-wrapper-scroll-y my-custom-scrollbar"
+     id="myTable"
+     style="font-size: 12pt;">
+
+    <table class="table table-bordered table-sm">
+        <thead>
+            <tr>
+                <th>Nº</th>
+                <th>GRADO</th>
+                <th>AP. PATERNO</th>
+                <th>AP. MATERNO</th>
+                <th>NOMBRES</th>
+
+                <th v-for="modulo in arrayModulos"
+                    :key="modulo.id">
+                    MÓDULO {{ modulo.modulo }}
+                </th>
+
+                <th>PROM. FINAL</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr v-for="(personal, index) in arrayCursantesPromocion"
+                :key="personal.diplopromocursante_id">
+
+                <td>{{ index + 1 }}</td>
+                <td>{{ personal.abreviatura }}</td>
+                <td>{{ personal.per_paterno }}</td>
+                <td>{{ personal.per_materno }}</td>
+                <td>{{ personal.per_nombre }}</td>
+
+                <td v-for="modulo in arrayModulos"
+                    :key="modulo.id"
+                    class="text-center"
+                    :style="{
+                        color: Number(
+                            personal.promedios_modulos[modulo.id] || 0
+                        ) < 51 ? 'red' : 'inherit'
+                    }">
+
+                    {{ Number(
+                        personal.promedios_modulos[modulo.id] || 0
+                    ).toFixed(2) }}
+                </td>
+
+                <td class="text-center">
+                    <strong
+                        :style="{
+                            color: Number(personal.promedio_final || 0) < 51
+                                ? 'red'
+                                : 'inherit'
+                        }">
+                        {{ Number(personal.promedio_final || 0).toFixed(2) }}
+                    </strong>
+                </td>
+            </tr>
+
+            <tr v-if="arrayCursantesPromocion.length === 0">
+                <td :colspan="6 + arrayModulos.length"
+                    class="text-center">
+                    No hay cursantes para mostrar.
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="text-right mt-3 mb-4">
+        <strong>
+            Total de cursantes: {{ arrayCursantesPromocion.length }}
+        </strong>
+        <button type="button" class="btn btn-success ml-3" @click="GenerarReporte()" :disabled="arrayCursantesPromocion.length === 0 || arrayMaterias.length === 0">
+            <i class="fas fa-save"></i>&nbsp;GENERAR REPORTE
+        </button>
+    </div>
+</div>
+
+                        </div>
+                        
+                    </form>
+                    
                 </div>
                 <!-- /.card -->
               </div>
@@ -186,6 +349,7 @@
         gestion : '',
         promocion : '',
         modulo : '',
+        reporte : '',
         // materia : '',
         // evaluacion : '',
 
@@ -196,6 +360,7 @@
         arrayPromocion : [],
         anios: [],
         arrayModulo : [],
+        arrayModulos : [],
         // arrayMateria : [],
         arrayCursantesPromocion : [],
         arrayMaterias : [],
@@ -293,7 +458,7 @@
         ListarDiplomados(){
             let me = this;
             axios
-            .post("/listarDiplomado", {
+            .post("/selectEspecialidad", {
             })
             .then(function (response) {
             me.arrayDiplomado = response.data.diplomado
@@ -327,8 +492,8 @@
             this.arrayModulo = [];
             let me = this;
             axios
-            .post("/listarModulo", {
-                promocion : promocion,
+            .post("/selectModulo", {
+                diplopromo_id : promocion,
             })
             .then(function (response) {
             me.arrayModulo = response.data.modulo
@@ -357,6 +522,29 @@
                     'error'
                 );
             });
+        },
+
+        BuscarPromediosGral() {
+            axios.post('/listarPromediosPromocion', {
+        promocion: this.promocion
+    })
+    .then(response => {
+        this.arrayModulos = response.data.modulos || [];
+        this.arrayCursantesPromocion = response.data.cursantes || [];
+    })
+    .catch(error => {
+        console.error(error);
+
+        this.arrayModulos = [];
+        this.arrayCursantesPromocion = [];
+
+        this.$swal(
+            'Error',
+            error.response?.data?.message ||
+            'No se pudieron obtener los promedios de la promoción.',
+            'error'
+        );
+    });
         },
 
         limpiarFormulario() {

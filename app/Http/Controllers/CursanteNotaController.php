@@ -228,8 +228,196 @@ class CursanteNotaController extends Controller
             'materias' => $materias,
             'cursantes' => $cursantes
         ]);
-
     }
+
+    public function ListarPromediosPromocion(Request $request)
+    {
+        $request->validate([
+            'promocion' => 'required|integer',
+        ]);
+
+        // 1. Obtener todos los módulos activos de la promoción.
+        $modulos = DB::table('diplomado_modulos as dm')
+            ->select(
+                'dm.id',
+                'dm.modulo'
+            )
+            ->where('dm.diplopromo_id', $request->promocion)
+            ->where('dm.estado', 1)
+            ->orderBy('dm.modulo', 'asc')
+            ->get();
+
+        if ($modulos->isEmpty()) {
+            return response()->json([
+                'modulos' => [],
+                'cursantes' => [],
+                'mensaje' => 'La promoción no tiene módulos registrados.'
+            ]);
+        }
+
+        // 2. Obtener las materias activas de todos los módulos.
+        $materias = DB::table('modulo_materias as mm')
+            ->select(
+                'mm.id',
+                'mm.diplomod_id',
+                'mm.materia',
+                'mm.orden'
+            )
+            ->whereIn('mm.diplomod_id', $modulos->pluck('id'))
+            ->where('mm.estado', 1)
+            ->orderBy('mm.orden', 'asc')
+            ->get();
+
+        // Agrupar las materias por módulo.
+        $materiasPorModulo = $materias->groupBy('diplomod_id');
+
+        // 3. Obtener los cursantes de la promoción.
+        $cursantes = DB::table('diplopromo_cursantes as dpc')
+            ->join('personals as p', 'p.id', '=', 'dpc.personals_id')
+            ->join('grados as g', 'g.id', '=', 'p.per_grado_id')
+            ->select(
+                'dpc.id as diplopromocursante_id',
+                'dpc.personals_id',
+                'g.abreviatura',
+                'p.per_paterno',
+                'p.per_materno',
+                'p.per_nombre'
+            )
+            ->where('dpc.estado', 1)
+            ->where('dpc.diplopromo_id', $request->promocion)
+            ->where('p.estado', 1)
+            ->orderBy('p.id', 'asc')
+            ->get();
+
+        if ($cursantes->isEmpty()) {
+            return response()->json([
+                'modulos' => $modulos,
+                'cursantes' => []
+            ]);
+        }
+
+        // 4. Consultar las notas de todas las materias de la promoción.
+        $notas = collect();
+
+        if ($materias->isNotEmpty()) {
+            $notas = DB::table('cursante_notas')
+                ->whereIn(
+                    'diplopromocursante_id',
+                    $cursantes->pluck('diplopromocursante_id')
+                )
+                ->whereIn('materia_id', $materias->pluck('id'))
+                ->where('estado', 1)
+                ->get([
+                    'diplopromocursante_id',
+                    'materia_id',
+                    'evaluacion_id',
+                    'nota'
+                ]);
+        }
+
+        // Agrupar las notas por cursante y materia.
+        $notasAgrupadas = $notas->groupBy(function ($nota) {
+            return $nota->diplopromocursante_id
+                . '-'
+                . $nota->materia_id;
+        });
+
+        // Ponderaciones de las evaluaciones.
+        $ponderaciones = [
+            1 => 0.25,
+            2 => 0.25,
+            3 => 0.40,
+            4 => 0.10,
+        ];
+
+        // 5. Calcular los promedios de módulos para cada cursante.
+        foreach ($cursantes as $cursante) {
+
+            $promediosModulos = [];
+            $sumaPromediosModulos = 0;
+            $cantidadModulos = $modulos->count();
+
+            foreach ($modulos as $modulo) {
+
+                $materiasModulo = $materiasPorModulo->get(
+                    $modulo->id,
+                    collect()
+                );
+
+                $sumaPromediosMaterias = 0;
+                $cantidadMaterias = $materiasModulo->count();
+
+                foreach ($materiasModulo as $materia) {
+
+                    $clave = $cursante->diplopromocursante_id
+                        . '-'
+                        . $materia->id;
+
+                    $notasMateria = $notasAgrupadas->get(
+                        $clave,
+                        collect()
+                    );
+
+                    // Tomar una nota por evaluación.
+                    $notasPorEvaluacion = $notasMateria
+                        ->keyBy('evaluacion_id');
+
+                    $promedioMateria = 0;
+
+                    foreach ($ponderaciones as $evaluacionId => $porcentaje) {
+
+                        if ($notasPorEvaluacion->has($evaluacionId)) {
+
+                            $nota = $notasPorEvaluacion
+                                ->get($evaluacionId)
+                                ->nota;
+
+                            if ($nota !== null) {
+                                $promedioMateria +=
+                                    (float) $nota * $porcentaje;
+                            }
+                        }
+                    }
+
+                    $sumaPromediosMaterias += $promedioMateria;
+                }
+
+                // Promedio del módulo = promedio de sus materias.
+                $promedioModulo = $cantidadMaterias > 0
+                    ? round(
+                        $sumaPromediosMaterias / $cantidadMaterias,
+                        2
+                    )
+                    : 0;
+
+                // Asociar el promedio al ID del módulo.
+                $promediosModulos[$modulo->id] = $promedioModulo;
+
+                $sumaPromediosModulos += $promedioModulo;
+            }
+
+            $cursante->promedios_modulos = (object) $promediosModulos;
+
+            // Promedio final = promedio de todos los módulos.
+            $cursante->promedio_final = $cantidadModulos > 0
+                ? round(
+                    $sumaPromediosModulos / $cantidadModulos,
+                    2
+                )
+                : 0;
+        }
+
+        // 6. Ordenar por promedio final descendente.
+        $cursantes = $cursantes
+            ->sortByDesc('promedio_final')
+            ->values();
+
+        return response()->json([
+            'modulos' => $modulos,
+            'cursantes' => $cursantes,
+        ]);
+    }
+
 
     public function SelectCursanteNota (Request $request) {
         $diplomado_modulo = DB::table('diplomado_modulos as dm')
