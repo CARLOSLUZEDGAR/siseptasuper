@@ -29,4 +29,14 @@ class GradoController extends Controller
 
         return response()->json(['grado' => $grado]);
     }
+
+    public function SelectGrado (Request $request) {
+        $grado = DB::table('grados as g')
+                    ->select('g.*')
+                    ->where('g.estado', 1)
+                    ->where('g.id', $request->gradoid)
+                    ->first();
+
+        return response()->json(['grado' => $grado]);
+    }
 }

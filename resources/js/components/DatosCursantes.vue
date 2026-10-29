@@ -60,8 +60,8 @@
                             <thead>
                                 <tr>
                                     <th class="text-center">#</th>
-                                    <th class="text-center">PROMOCIÓN</th>
                                     <th class="text-center">ESPECIALIDAD</th>
+                                    <th class="text-center">PROMOCIÓN</th>
                                     <th class="text-center">FUERZA</th>
                                     <th class="text-center">GRADO</th>
                                     <th class="text-center">AP. PATERNO</th>
@@ -69,15 +69,15 @@
                                     <th class="text-center">NOMBRES</th>
                                     <th class="text-center">C.I.</th>
                                     <th class="text-center">C.M.</th>
-                                    <th class="text-center">OPCIONES</th>
+                                    <!-- <th class="text-center">OPCIONES</th> -->
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr v-for="(personal,index) in listaPersonal"> 
                                     <!-- <td v-text="personal.grado+' '+personal.complemento"></td> -->
                                     <td style="text-align:center; font-weight:bold;">{{ index + 1 }}</td>
-                                    <td v-text="personal.promo"></td>
                                     <td v-text="personal.diplomado"></td>
+                                    <td v-text="personal.promo"></td>
                                     <td v-text="personal.fuerza"></td>
                                     <td v-text="personal.abreviatura"></td>
                                     <td v-text="personal.per_paterno"></td>
@@ -85,7 +85,7 @@
                                     <td v-text="personal.per_nombre"></td>
                                     <td v-text="personal.per_ci"></td>
                                     <td v-text="personal.per_cm"></td>
-                                    <td style="text-align:center">
+                                    <!-- <td style="text-align:center">
                                       <div class="d-flex justify-content-center align-items-center">
                                         <div v-if="$auth.can('view-renew-per')" class="mr-1">
                                           <button type="button" @click="Renovar(personal.id)" class="btn btn-success btn-sm">
@@ -98,7 +98,7 @@
                                           </button>
                                         </div>
                                       </div>
-                                    </td>
+                                    </td> -->
                                 </tr>
                             </tbody>
                         </table>

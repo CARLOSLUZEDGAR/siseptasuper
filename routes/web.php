@@ -107,6 +107,7 @@ Route::post('/listarModuloMateria', 'ModuloMateriaController@BuscarModuloMateria
 Route::post('/guardarNuevasMaterias', 'ModuloMateriaController@GuardarNuevasMaterias');
 Route::post('/listarPromediosPromocion', 'CursanteNotaController@ListarPromediosPromocion');
 Route::post('/selectFuerza', 'FuerzaController@SelectFuerza');
+Route::post('/selectGrado', 'GradoController@SelectGrado');
 
 
 

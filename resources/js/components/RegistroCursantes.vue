@@ -96,7 +96,7 @@
                             </div>
                             <div class="col-md-3">
                                 <label class="form-control-label" for="text-input">Fuerza</label>
-                                <select class="form-control" v-model="per_fuerza" @change="ListarGrado(per_fuerza), SelectFuerza(per_fuerza)"  :class="{ 'is-invalid' : $v.per_fuerza.$error, 'is-valid':!$v.per_fuerza.$invalid }">
+                                <select class="form-control" v-model="per_fuerza" @change="ListarGrado(per_fuerza)"  :class="{ 'is-invalid' : $v.per_fuerza.$error, 'is-valid':!$v.per_fuerza.$invalid }">
                                     <option value="" disabled>SELECCIONE</option>
                                     <option v-for="fuerza in arrayFuerza" :key="fuerza.id" :value="fuerza.id"  v-text="fuerza.fuerza"></option>
                                 </select>
@@ -106,7 +106,7 @@
                             </div>
                             <div class="col-md-3">
                                 <label class="form-control-label" for="text-input">Grado</label>
-                                <select class="form-control" v-model="per_grado" @change="SelectGrado(per_grado)" :class="{ 'is-invalid' : $v.per_grado.$error, 'is-valid':!$v.per_grado.$invalid }">
+                                <select class="form-control" v-model="per_grado" :class="{ 'is-invalid' : $v.per_grado.$error, 'is-valid':!$v.per_grado.$invalid }">
                                     <option value="" disabled>SELECCIONE</option>
                                     <option v-for="grado in arrayGrado" :key="grado.id" :value="grado.id"  v-text="grado.abreviatura"></option>
                                 </select>
@@ -185,7 +185,7 @@
                                 </div>
                             </div>                          
                         </div>
-                        <button type="button" class="btn btn-primary" @click="agregarPersonal()">
+                        <button type="button" class="btn btn-primary" @click="SelectFuerza(per_fuerza)">
                             <i class="fas fa-plus"></i>&nbsp; AGREGAR
                         </button>             
                   </form>
@@ -218,7 +218,7 @@
                                 <tbody>
                                     <tr v-if="personasTemporales.length === 0">
                                         <td colspan="9" class="text-center">
-                                            No hay personas agregadas.
+                                            No hay cursantes agregados.
                                         </td>
                                     </tr>
 
@@ -249,7 +249,7 @@
                         </div>
 
                         <button type="button" class="btn btn-success mt-3" @click="registrarLista()" :disabled="personasTemporales.length === 0">
-                            <i class="fas fa-save"></i>REGISTRAR LISTA
+                            <i class="fas fa-save"></i>&nbsp; REGISTRAR LISTA
                         </button>
                     </div>
                 </div>
@@ -304,7 +304,9 @@
         arrayGrado : [],
         arrayGestiones : [],
         arraySelectFuerza : [],
+        arraySelectGrado : [],
         selectFuerza : '',
+        selectGrado : '',
         
         listaPersonal: [],
         isHidden: true,
@@ -337,22 +339,26 @@
 
         validationGroupRegTemp: [
         // 'per_foto',
-        'per_ci',
-        'per_cm',
-        'per_fuerza',
-        'per_grado',
-        'per_nombre',
-        'per_appaterno',
-        'per_apmaterno',
-        'per_sexo',
-        'per_celular',
-        'per_email',
-        'per_fechnac',
-        'per_direccion',
-        'diplomado',
-        'gestion',
-        'promocion'
+            'per_ci',
+            'per_cm',
+            'per_fuerza',
+            'per_grado',
+            'per_nombre',
+            'per_appaterno',
+            'per_apmaterno',
+            'per_sexo',
+            'per_celular',
+            'per_email',
+            'per_fechnac',
+            'per_direccion',
+            'diplomado',
+            'gestion',
+            'promocion'
         ],
+
+        validationGroupReg: [
+            'promocion'
+        ]
     },
   
    computed: {
@@ -462,6 +468,7 @@
             .then(function (response) {
             me.arraySelectFuerza = response.data.fuerza;
             me.selectFuerza = me.arraySelectFuerza.abreviatura;
+            me.SelectGrado(me.per_grado);
             })
             .catch(function (error) {
             // handle error
@@ -470,12 +477,15 @@
         },
 
         SelectGrado(gradoid) {
+            let me = this;
             axios
             .post("/selectGrado", {
                 gradoid : gradoid,
             })
             .then(function (response) {
-            me.arraySelectGrado = response.data.grado
+            me.arraySelectGrado = response.data.grado;
+            me.selectGrado = me.arraySelectGrado.abreviatura;
+            me.agregarPersonal();
             })
             .catch(function (error) {
             // handle error
@@ -484,6 +494,8 @@
         },
 
         agregarPersonal() {
+            // this.SelectFuerza(this.per_fuerza);
+            // this.SelectGrado(this.per_grado);
             if(!this.$v.validationGroupRegTemp.$invalid){
                 const persona = {
                     idTemporal: this.indiceEdicion !== null
@@ -492,7 +504,8 @@
                     // per_fuerza: this.per_fuerza,
                     per_fuerzaid: this.per_fuerza,
                     per_fuerza: this.selectFuerza,
-                    per_grado: this.per_grado,
+                    per_gradoid: this.per_grado,
+                    per_grado: this.selectGrado,
                     per_ci: this.per_ci,
                     per_cm: this.per_cm,
                     per_nombre: (this.per_nombre || '').toUpperCase(),
@@ -539,7 +552,7 @@
             this.per_fuerza = persona.per_fuerzaid;
             this.per_ci = persona.per_ci;
             this.per_cm = persona.per_cm;
-            this.per_grado = persona.per_grado;
+            this.per_grado = persona.per_gradoid;
             this.per_nombre = persona.per_nombre;
             this.per_appaterno = persona.per_appaterno;
             this.per_apmaterno = persona.per_apmaterno;
@@ -587,7 +600,9 @@
             this.per_email = '';
             this.per_direccion = '';
             this.arraySelectFuerza = [],
+            this.arraySelectGrado = [],
             this.selectFuerza = '',
+            this.selectGrado = '',
 
             this.$nextTick(() => {
                 this.$v.$reset();
@@ -595,123 +610,152 @@
         },
 
         registrarLista() {
-            if (this.personasTemporales.length === 0) {
-                return;
+            if(!this.$v.validationGroupReg.$invalid){
+                if (this.personasTemporales.length === 0) {
+                    return;
+                }
+                swal.fire({
+                    title: '¿Desea registrar la lista de cursantes?', // TITULO 
+                    icon: 'question', //ICONO (success, warnning, error, info, question)
+                    showCancelButton: true, //HABILITACION DEL BOTON CANCELAR
+                    confirmButtonColor: 'info', // COLOR DEL BOTON PARA CONFIRMAR
+                    cancelButtonColor: '#868077', // COLOR DEL BOTON CANCELAR
+                    confirmButtonText: 'Confirmar', //TITULO DEL BOTON CONFIRMAR
+                    cancelButtonText: 'Cancelar', //TIUTLO DEL BOTON CANCELAR
+                    buttonsStyling: true,
+                    reverseButtons: true
+                }).then((result) => {
+                    if(result.value) {
+                        const datos = this.personasTemporales.map(persona => ({
+                            per_fuerza: persona.per_fuerzaid,
+                            per_ci: persona.per_ci,
+                            per_cm: persona.per_cm,
+                            per_grado: persona.per_gradoid,
+                            per_nombre: persona.per_nombre,
+                            per_appaterno: persona.per_appaterno,
+                            per_apmaterno: persona.per_apmaterno,
+                            per_fechnac: persona.per_fechnac,
+                            per_sexo: persona.per_sexo,
+                            per_celular: persona.per_celular,
+                            per_email: persona.per_email,
+                            per_direccion: persona.per_direccion
+                        }));
+                        let me = this;
+                        axios.post('/guardarListaCursantes', {
+                            cursantes : datos,
+                            diplopromo_id : me.promocion
+                        })
+                        .then(response => {
+                            // Vaciar la lista solo cuando el servidor confirme el registro.
+                            this.personasTemporales = [];
+                            this.indiceEdicion = null;
+                            this.limpiarFormulario();
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Cursantes registrados a una promoción correctamente',
+                                // showConfirmButton: false,
+                                timer: 3000
+                            });
+                            this.Atras();
+                        })
+                        .catch(error => {
+                            console.error(error);
+
+                            this.$swal(
+                                'Error',
+                                'No se pudo registrar la lista de cursantes.',
+                                'error'
+                            );
+                        });
+                    } else{
+                        swal.fire(
+                            "Informacion", //TITULO
+                            "Solicitud cancelada.", //TEXTO DE MENSAJE
+                            "info" // TIPO DE MODAL (success, warnning, error, info)
+                        );
+                    }
+                })          
+            } else{
+                this.$v.validationGroupReg.$touch();
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Ingrese todos los datos requeridos',
+                    showConfirmButton: false,
+                    timer: 2000
+                })
             }
-
-            const datos = this.personasTemporales.map(persona => ({
-                per_fuerza: persona.per_fuerzaid,
-                per_ci: persona.per_ci,
-                per_cm: persona.per_cm,
-                per_grado: persona.per_grado,
-                per_nombre: persona.per_nombre,
-                per_appaterno: persona.per_appaterno,
-                per_apmaterno: persona.per_apmaterno,
-                per_fechnac: persona.per_fechnac,
-                per_sexo: persona.per_sexo,
-                per_celular: persona.per_celular,
-                per_email: persona.per_email,
-                per_direccion: persona.per_direccion
-            }));
-            let me = this;
-            axios.post('/guardarListaCursantes', {
-                cursantes : datos,
-                diplopromo_id : me.promocion
-            })
-            .then(response => {
-                // Vaciar la lista solo cuando el servidor confirme el registro.
-                this.personasTemporales = [];
-                this.indiceEdicion = null;
-                this.limpiarFormulario();
-
-                this.$swal(
-                    'Correcto',
-                    response.data.message || 'Personas registradas correctamente',
-                    'success'
-                );
-            })
-            .catch(error => {
-                console.error(error);
-
-                this.$swal(
-                    'Error',
-                    'No se pudo registrar la lista de personas.',
-                    'error'
-                );
-            });
         },
   
-      CrearPersonal(){ //DGAE
-        if(!this.$v.validationGroupReg.$invalid){
-          swal.fire({
-              title: '¿Desea registrar?', // TITULO 
-              icon: 'question', //ICONO (success, warnning, error, info, question)
-              showCancelButton: true, //HABILITACION DEL BOTON CANCELAR
-              confirmButtonColor: 'info', // COLOR DEL BOTON PARA CONFIRMAR
-              cancelButtonColor: '#868077', // COLOR DEL BOTON CANCELAR
-              confirmButtonText: 'Confirmar', //TITULO DEL BOTON CONFIRMAR
-              cancelButtonText: 'Cancelar', //TIUTLO DEL BOTON CANCELAR
-              buttonsStyling: true,
-              reverseButtons: true
-              }).then((result) => {
-              if (result.value) {
-                  let me = this;
-                  axios
-                  .post("/crearPersonal", {
-                    foto : me.per_foto,
-                    ci : me.per_ci,
-                    nombre : me.per_nombre,
-                    ap_paterno : me.per_appaterno,
-                    ap_materno : me.per_apmaterno,
-                    sexo : me.per_sexo,
-                    celular : me.per_celular,
-                    email : me.per_email,
-                    fech_nac : me.per_fechnac,
-                    direccion : me.per_direccion,
-                  })
-                  .then(function (response) {
-                      
-                      console.log(response);
-                      swal.fire({
-                          title: 'Se realizo el registro correctamente', //TITULO
-                          // response.data.mensaje, //TEXTO DE MENSAJE
-                          // response.data.tipo, // TIPO DE MODAL (success, warnning, error, info)
-                          // response.personal
-                      });
-                      if (!response.data.code) {
-                          // $('#NuevoUsuario').modal('hide');
-                          // $('#ModalNewPersonal').modal('hide');
-                          // me.nick = '';
-                          // me.password = '';
-                          me.arrayDatPer = response.data.personal;
-                          // me.GenerarCarnet(me.arrayDatPer.id_personal);
-                          me.Atras();
-                          this.$v.$reset();
-                      } 
-                  })
-                  .catch(function (error) {
-                      // handle error
-                      console.log(error);
-                  })
-              }else{
-                    swal.fire(
-                      "Informacion", //TITULO
-                      "Solicitud cancelada.", //TEXTO DE MENSAJE
-                      "info" // TIPO DE MODAL (success, warnning, error, info)
-                  );
-              }
-          })
-        }else{
-            this.$v.validationGroupReg.$touch();
-            Swal.fire({
-                icon: 'warning',
-                title: 'Ingrese todos los datos requeridos',
-                showConfirmButton: false,
-                timer: 2000
-            })
+    //   CrearPersonal(){ //DGAE
+    //     if(!this.$v.validationGroupReg.$invalid){
+    //         swal.fire({
+    //             title: '¿Desea registrar?', // TITULO 
+    //             icon: 'question', //ICONO (success, warnning, error, info, question)
+    //             showCancelButton: true, //HABILITACION DEL BOTON CANCELAR
+    //             confirmButtonColor: 'info', // COLOR DEL BOTON PARA CONFIRMAR
+    //             cancelButtonColor: '#868077', // COLOR DEL BOTON CANCELAR
+    //             confirmButtonText: 'Confirmar', //TITULO DEL BOTON CONFIRMAR
+    //             cancelButtonText: 'Cancelar', //TIUTLO DEL BOTON CANCELAR
+    //             buttonsStyling: true,
+    //             reverseButtons: true
+    //             }).then((result) => {
+    //                 if (result.value) {
+    //                     let me = this;
+    //                     axios
+    //                     .post("/crearPersonal", {
+    //                         foto : me.per_foto,
+    //                         ci : me.per_ci,
+    //                         nombre : me.per_nombre,
+    //                         ap_paterno : me.per_appaterno,
+    //                         ap_materno : me.per_apmaterno,
+    //                         sexo : me.per_sexo,
+    //                         celular : me.per_celular,
+    //                         email : me.per_email,
+    //                         fech_nac : me.per_fechnac,
+    //                         direccion : me.per_direccion,
+    //                     })
+    //                     .then(function (response) {
+    //                         console.log(response);
+    //                         swal.fire({
+    //                             title: 'Se realizo el registro correctamente', //TITULO
+    //                             // response.data.mensaje, //TEXTO DE MENSAJE
+    //                             // response.data.tipo, // TIPO DE MODAL (success, warnning, error, info)
+    //                             // response.personal
+    //                         });
+    //                         if (!response.data.code) {
+    //                             // $('#NuevoUsuario').modal('hide');
+    //                             // $('#ModalNewPersonal').modal('hide');
+    //                             // me.nick = '';
+    //                             // me.password = '';
+    //                             me.arrayDatPer = response.data.personal;
+    //                             // me.GenerarCarnet(me.arrayDatPer.id_personal);
+    //                             me.Atras();
+    //                             this.$v.$reset();
+    //                         } 
+    //                     })
+    //                     .catch(function (error) {
+    //                         // handle error
+    //                         console.log(error);
+    //                     })
+    //                 }else{
+    //                     swal.fire(
+    //                         "Informacion", //TITULO
+    //                         "Solicitud cancelada.", //TEXTO DE MENSAJE
+    //                         "info" // TIPO DE MODAL (success, warnning, error, info)
+    //                     );
+    //                 }
+    //             })
+    //     }else{
+    //         this.$v.validationGroupReg.$touch();
+    //         Swal.fire({
+    //             icon: 'warning',
+    //             title: 'Ingrese todos los datos requeridos',
+    //             showConfirmButton: false,
+    //             timer: 2000
+    //         })
             
-        }
-      },
+    //     }
+    //   },
     },
   };
   

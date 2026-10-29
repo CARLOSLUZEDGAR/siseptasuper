@@ -7673,7 +7673,9 @@ __webpack_require__.r(__webpack_exports__);
       arrayGrado: [],
       arrayGestiones: [],
       arraySelectFuerza: [],
+      arraySelectGrado: [],
       selectFuerza: '',
+      selectGrado: '',
       listaPersonal: [],
       isHidden: true,
       datfis2: 1,
@@ -7740,7 +7742,8 @@ __webpack_require__.r(__webpack_exports__);
       required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"]
     },
     validationGroupRegTemp: [// 'per_foto',
-    'per_ci', 'per_cm', 'per_fuerza', 'per_grado', 'per_nombre', 'per_appaterno', 'per_apmaterno', 'per_sexo', 'per_celular', 'per_email', 'per_fechnac', 'per_direccion', 'diplomado', 'gestion', 'promocion']
+    'per_ci', 'per_cm', 'per_fuerza', 'per_grado', 'per_nombre', 'per_appaterno', 'per_apmaterno', 'per_sexo', 'per_celular', 'per_email', 'per_fechnac', 'per_direccion', 'diplomado', 'gestion', 'promocion'],
+    validationGroupReg: ['promocion']
   },
   computed: {},
   mounted: function mounted() {
@@ -7821,29 +7824,36 @@ __webpack_require__.r(__webpack_exports__);
       }).then(function (response) {
         me.arraySelectFuerza = response.data.fuerza;
         me.selectFuerza = me.arraySelectFuerza.abreviatura;
+        me.SelectGrado(me.per_grado);
       })["catch"](function (error) {
         // handle error
         console.log(error);
       });
     },
     SelectGrado: function SelectGrado(gradoid) {
+      var me = this;
       axios.post("/selectGrado", {
         gradoid: gradoid
       }).then(function (response) {
         me.arraySelectGrado = response.data.grado;
+        me.selectGrado = me.arraySelectGrado.abreviatura;
+        me.agregarPersonal();
       })["catch"](function (error) {
         // handle error
         console.log(error);
       });
     },
     agregarPersonal: function agregarPersonal() {
+      // this.SelectFuerza(this.per_fuerza);
+      // this.SelectGrado(this.per_grado);
       if (!this.$v.validationGroupRegTemp.$invalid) {
         var persona = {
           idTemporal: this.indiceEdicion !== null ? this.personasTemporales[this.indiceEdicion].idTemporal : ++this.contadorTemporal,
           // per_fuerza: this.per_fuerza,
           per_fuerzaid: this.per_fuerza,
           per_fuerza: this.selectFuerza,
-          per_grado: this.per_grado,
+          per_gradoid: this.per_grado,
+          per_grado: this.selectGrado,
           per_ci: this.per_ci,
           per_cm: this.per_cm,
           per_nombre: (this.per_nombre || '').toUpperCase(),
@@ -7882,7 +7892,7 @@ __webpack_require__.r(__webpack_exports__);
       this.per_fuerza = persona.per_fuerzaid;
       this.per_ci = persona.per_ci;
       this.per_cm = persona.per_cm;
-      this.per_grado = persona.per_grado;
+      this.per_grado = persona.per_gradoid;
       this.per_nombre = persona.per_nombre;
       this.per_appaterno = persona.per_appaterno;
       this.per_apmaterno = persona.per_apmaterno;
@@ -7923,58 +7933,20 @@ __webpack_require__.r(__webpack_exports__);
       this.per_celular = '';
       this.per_email = '';
       this.per_direccion = '';
-      this.arraySelectFuerza = [], this.selectFuerza = '', this.$nextTick(function () {
+      this.arraySelectFuerza = [], this.arraySelectGrado = [], this.selectFuerza = '', this.selectGrado = '', this.$nextTick(function () {
         _this.$v.$reset();
       });
     },
     registrarLista: function registrarLista() {
       var _this2 = this;
 
-      if (this.personasTemporales.length === 0) {
-        return;
-      }
-
-      var datos = this.personasTemporales.map(function (persona) {
-        return {
-          per_fuerza: persona.per_fuerzaid,
-          per_ci: persona.per_ci,
-          per_cm: persona.per_cm,
-          per_grado: persona.per_grado,
-          per_nombre: persona.per_nombre,
-          per_appaterno: persona.per_appaterno,
-          per_apmaterno: persona.per_apmaterno,
-          per_fechnac: persona.per_fechnac,
-          per_sexo: persona.per_sexo,
-          per_celular: persona.per_celular,
-          per_email: persona.per_email,
-          per_direccion: persona.per_direccion
-        };
-      });
-      var me = this;
-      axios.post('/guardarListaCursantes', {
-        cursantes: datos,
-        diplopromo_id: me.promocion
-      }).then(function (response) {
-        // Vaciar la lista solo cuando el servidor confirme el registro.
-        _this2.personasTemporales = [];
-        _this2.indiceEdicion = null;
-
-        _this2.limpiarFormulario();
-
-        _this2.$swal('Correcto', response.data.message || 'Personas registradas correctamente', 'success');
-      })["catch"](function (error) {
-        console.error(error);
-
-        _this2.$swal('Error', 'No se pudo registrar la lista de personas.', 'error');
-      });
-    },
-    CrearPersonal: function CrearPersonal() {
-      var _this3 = this;
-
-      //DGAE
       if (!this.$v.validationGroupReg.$invalid) {
+        if (this.personasTemporales.length === 0) {
+          return;
+        }
+
         swal.fire({
-          title: '¿Desea registrar?',
+          title: '¿Desea registrar la lista de cursantes?',
           // TITULO 
           icon: 'question',
           //ICONO (success, warnning, error, info, question)
@@ -7992,42 +7964,46 @@ __webpack_require__.r(__webpack_exports__);
           reverseButtons: true
         }).then(function (result) {
           if (result.value) {
-            var _me = _this3;
-            axios.post("/crearPersonal", {
-              foto: _me.per_foto,
-              ci: _me.per_ci,
-              nombre: _me.per_nombre,
-              ap_paterno: _me.per_appaterno,
-              ap_materno: _me.per_apmaterno,
-              sexo: _me.per_sexo,
-              celular: _me.per_celular,
-              email: _me.per_email,
-              fech_nac: _me.per_fechnac,
-              direccion: _me.per_direccion
-            }).then(function (response) {
-              console.log(response);
-              swal.fire({
-                title: 'Se realizo el registro correctamente' //TITULO
-                // response.data.mensaje, //TEXTO DE MENSAJE
-                // response.data.tipo, // TIPO DE MODAL (success, warnning, error, info)
-                // response.personal
+            var datos = _this2.personasTemporales.map(function (persona) {
+              return {
+                per_fuerza: persona.per_fuerzaid,
+                per_ci: persona.per_ci,
+                per_cm: persona.per_cm,
+                per_grado: persona.per_gradoid,
+                per_nombre: persona.per_nombre,
+                per_appaterno: persona.per_appaterno,
+                per_apmaterno: persona.per_apmaterno,
+                per_fechnac: persona.per_fechnac,
+                per_sexo: persona.per_sexo,
+                per_celular: persona.per_celular,
+                per_email: persona.per_email,
+                per_direccion: persona.per_direccion
+              };
+            });
 
+            var me = _this2;
+            axios.post('/guardarListaCursantes', {
+              cursantes: datos,
+              diplopromo_id: me.promocion
+            }).then(function (response) {
+              // Vaciar la lista solo cuando el servidor confirme el registro.
+              _this2.personasTemporales = [];
+              _this2.indiceEdicion = null;
+
+              _this2.limpiarFormulario();
+
+              Swal.fire({
+                icon: 'success',
+                title: 'Cursantes registrados a una promoción correctamente',
+                // showConfirmButton: false,
+                timer: 3000
               });
 
-              if (!response.data.code) {
-                // $('#NuevoUsuario').modal('hide');
-                // $('#ModalNewPersonal').modal('hide');
-                // me.nick = '';
-                // me.password = '';
-                _me.arrayDatPer = response.data.personal; // me.GenerarCarnet(me.arrayDatPer.id_personal);
-
-                _me.Atras();
-
-                this.$v.$reset();
-              }
+              _this2.Atras();
             })["catch"](function (error) {
-              // handle error
-              console.log(error);
+              console.error(error);
+
+              _this2.$swal('Error', 'No se pudo registrar la lista de cursantes.', 'error');
             });
           } else {
             swal.fire("Informacion", //TITULO
@@ -8045,7 +8021,76 @@ __webpack_require__.r(__webpack_exports__);
           timer: 2000
         });
       }
-    }
+    } //   CrearPersonal(){ //DGAE
+    //     if(!this.$v.validationGroupReg.$invalid){
+    //         swal.fire({
+    //             title: '¿Desea registrar?', // TITULO 
+    //             icon: 'question', //ICONO (success, warnning, error, info, question)
+    //             showCancelButton: true, //HABILITACION DEL BOTON CANCELAR
+    //             confirmButtonColor: 'info', // COLOR DEL BOTON PARA CONFIRMAR
+    //             cancelButtonColor: '#868077', // COLOR DEL BOTON CANCELAR
+    //             confirmButtonText: 'Confirmar', //TITULO DEL BOTON CONFIRMAR
+    //             cancelButtonText: 'Cancelar', //TIUTLO DEL BOTON CANCELAR
+    //             buttonsStyling: true,
+    //             reverseButtons: true
+    //             }).then((result) => {
+    //                 if (result.value) {
+    //                     let me = this;
+    //                     axios
+    //                     .post("/crearPersonal", {
+    //                         foto : me.per_foto,
+    //                         ci : me.per_ci,
+    //                         nombre : me.per_nombre,
+    //                         ap_paterno : me.per_appaterno,
+    //                         ap_materno : me.per_apmaterno,
+    //                         sexo : me.per_sexo,
+    //                         celular : me.per_celular,
+    //                         email : me.per_email,
+    //                         fech_nac : me.per_fechnac,
+    //                         direccion : me.per_direccion,
+    //                     })
+    //                     .then(function (response) {
+    //                         console.log(response);
+    //                         swal.fire({
+    //                             title: 'Se realizo el registro correctamente', //TITULO
+    //                             // response.data.mensaje, //TEXTO DE MENSAJE
+    //                             // response.data.tipo, // TIPO DE MODAL (success, warnning, error, info)
+    //                             // response.personal
+    //                         });
+    //                         if (!response.data.code) {
+    //                             // $('#NuevoUsuario').modal('hide');
+    //                             // $('#ModalNewPersonal').modal('hide');
+    //                             // me.nick = '';
+    //                             // me.password = '';
+    //                             me.arrayDatPer = response.data.personal;
+    //                             // me.GenerarCarnet(me.arrayDatPer.id_personal);
+    //                             me.Atras();
+    //                             this.$v.$reset();
+    //                         } 
+    //                     })
+    //                     .catch(function (error) {
+    //                         // handle error
+    //                         console.log(error);
+    //                     })
+    //                 }else{
+    //                     swal.fire(
+    //                         "Informacion", //TITULO
+    //                         "Solicitud cancelada.", //TEXTO DE MENSAJE
+    //                         "info" // TIPO DE MODAL (success, warnning, error, info)
+    //                     );
+    //                 }
+    //             })
+    //     }else{
+    //         this.$v.validationGroupReg.$touch();
+    //         Swal.fire({
+    //             icon: 'warning',
+    //             title: 'Ingrese todos los datos requeridos',
+    //             showConfirmButton: false,
+    //             timer: 2000
+    //         })
+    //     }
+    //   },
+
   }
 });
 
@@ -115667,13 +115712,13 @@ var render = function() {
                               _vm._v(" "),
                               _c("td", {
                                 domProps: {
-                                  textContent: _vm._s(personal.promo)
+                                  textContent: _vm._s(personal.diplomado)
                                 }
                               }),
                               _vm._v(" "),
                               _c("td", {
                                 domProps: {
-                                  textContent: _vm._s(personal.diplomado)
+                                  textContent: _vm._s(personal.promo)
                                 }
                               }),
                               _vm._v(" "),
@@ -115717,78 +115762,7 @@ var render = function() {
                                 domProps: {
                                   textContent: _vm._s(personal.per_cm)
                                 }
-                              }),
-                              _vm._v(" "),
-                              _c(
-                                "td",
-                                { staticStyle: { "text-align": "center" } },
-                                [
-                                  _c(
-                                    "div",
-                                    {
-                                      staticClass:
-                                        "d-flex justify-content-center align-items-center"
-                                    },
-                                    [
-                                      _vm.$auth.can("view-renew-per")
-                                        ? _c("div", { staticClass: "mr-1" }, [
-                                            _c(
-                                              "button",
-                                              {
-                                                staticClass:
-                                                  "btn btn-success btn-sm",
-                                                attrs: { type: "button" },
-                                                on: {
-                                                  click: function($event) {
-                                                    return _vm.Renovar(
-                                                      personal.id
-                                                    )
-                                                  }
-                                                }
-                                              },
-                                              [
-                                                _c("i", {
-                                                  staticClass: "fa fa-retweet",
-                                                  attrs: {
-                                                    "aria-hidden": "true"
-                                                  }
-                                                })
-                                              ]
-                                            )
-                                          ])
-                                        : _vm._e(),
-                                      _vm._v(" "),
-                                      _vm.$auth.can("view-delet-per")
-                                        ? _c("div", { staticClass: "mr-1" }, [
-                                            _c(
-                                              "button",
-                                              {
-                                                staticClass:
-                                                  "btn btn-danger btn-sm",
-                                                attrs: { type: "button" },
-                                                on: {
-                                                  click: function($event) {
-                                                    return _vm.Eliminar(
-                                                      personal.id
-                                                    )
-                                                  }
-                                                }
-                                              },
-                                              [
-                                                _c("i", {
-                                                  staticClass: "fa fa-trash",
-                                                  attrs: {
-                                                    "aria-hidden": "true"
-                                                  }
-                                                })
-                                              ]
-                                            )
-                                          ])
-                                        : _vm._e()
-                                    ]
-                                  )
-                                ]
-                              )
+                              })
                             ])
                           }),
                           0
@@ -115928,9 +115902,9 @@ var staticRenderFns = [
       _c("tr", [
         _c("th", { staticClass: "text-center" }, [_vm._v("#")]),
         _vm._v(" "),
-        _c("th", { staticClass: "text-center" }, [_vm._v("PROMOCIÓN")]),
-        _vm._v(" "),
         _c("th", { staticClass: "text-center" }, [_vm._v("ESPECIALIDAD")]),
+        _vm._v(" "),
+        _c("th", { staticClass: "text-center" }, [_vm._v("PROMOCIÓN")]),
         _vm._v(" "),
         _c("th", { staticClass: "text-center" }, [_vm._v("FUERZA")]),
         _vm._v(" "),
@@ -115944,9 +115918,7 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", { staticClass: "text-center" }, [_vm._v("C.I.")]),
         _vm._v(" "),
-        _c("th", { staticClass: "text-center" }, [_vm._v("C.M.")]),
-        _vm._v(" "),
-        _c("th", { staticClass: "text-center" }, [_vm._v("OPCIONES")])
+        _c("th", { staticClass: "text-center" }, [_vm._v("C.M.")])
       ])
     ])
   }
@@ -119855,8 +119827,7 @@ var render = function() {
                                   : $$selectedVal[0]
                               },
                               function($event) {
-                                _vm.ListarGrado(_vm.per_fuerza),
-                                  _vm.SelectFuerza(_vm.per_fuerza)
+                                return _vm.ListarGrado(_vm.per_fuerza)
                               }
                             ]
                           }
@@ -119913,24 +119884,19 @@ var render = function() {
                             "is-valid": !_vm.$v.per_grado.$invalid
                           },
                           on: {
-                            change: [
-                              function($event) {
-                                var $$selectedVal = Array.prototype.filter
-                                  .call($event.target.options, function(o) {
-                                    return o.selected
-                                  })
-                                  .map(function(o) {
-                                    var val = "_value" in o ? o._value : o.value
-                                    return val
-                                  })
-                                _vm.per_grado = $event.target.multiple
-                                  ? $$selectedVal
-                                  : $$selectedVal[0]
-                              },
-                              function($event) {
-                                return _vm.SelectGrado(_vm.per_grado)
-                              }
-                            ]
+                            change: function($event) {
+                              var $$selectedVal = Array.prototype.filter
+                                .call($event.target.options, function(o) {
+                                  return o.selected
+                                })
+                                .map(function(o) {
+                                  var val = "_value" in o ? o._value : o.value
+                                  return val
+                                })
+                              _vm.per_grado = $event.target.multiple
+                                ? $$selectedVal
+                                : $$selectedVal[0]
+                            }
                           }
                         },
                         [
@@ -120378,7 +120344,7 @@ var render = function() {
                       attrs: { type: "button" },
                       on: {
                         click: function($event) {
-                          return _vm.agregarPersonal()
+                          return _vm.SelectFuerza(_vm.per_fuerza)
                         }
                       }
                     },
@@ -120413,7 +120379,7 @@ var render = function() {
                                       },
                                       [
                                         _vm._v(
-                                          "\n                                        No hay personas agregadas.\n                                    "
+                                          "\n                                        No hay cursantes agregados.\n                                    "
                                         )
                                       ]
                                     )
@@ -120518,7 +120484,7 @@ var render = function() {
                       },
                       [
                         _c("i", { staticClass: "fas fa-save" }),
-                        _vm._v("REGISTRAR LISTA\n                    ")
+                        _vm._v("  REGISTRAR LISTA\n                    ")
                       ]
                     )
                   ])
