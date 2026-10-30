@@ -43,7 +43,7 @@
                         <div class="form-group row">
                              <div class="col-md-3">
                                 <label class="form-control-label" for="text-input">Antiguedad</label>
-                                <select class="form-control" v-model="reporte">
+                                <select class="form-control" v-model="reporte" @change="limpiarFormulario()">
                                     <option value="" disabled>SELECCIONE</option>
                                     <option value="1">POR MODULO</option>
                                     <option value="2">EN GENERAL</option>
@@ -56,7 +56,7 @@
                             <div class="form-group row">
                                 <div class="col-md-3">
                                     <label class="form-control-label" for="text-input">Especialidad</label>
-                                    <select class="form-control" v-model="diplomado" @change="ListarPromociones(diplomado, gestion)" :class="{ 'is-invalid' : $v.diplomado.$error, 'is-valid':!$v.diplomado.$invalid }">
+                                    <select class="form-control" v-model="diplomado" @change="ListarGestiones(diplomado)" :class="{ 'is-invalid' : $v.diplomado.$error, 'is-valid':!$v.diplomado.$invalid }">
                                         <option value="" disabled>SELECCIONE</option>
                                         <option v-for="diplomado in arrayDiplomado" :key="diplomado.id" :value="diplomado.id"  v-text="diplomado.diplomado"></option>
                                     </select>
@@ -68,7 +68,7 @@
                                     <label class="form-control-label" for="text-input">Gestión</label>
                                     <select class="form-control" v-model="gestion" @change="ListarPromociones(diplomado, gestion)" :class="{ 'is-invalid' : $v.gestion.$error, 'is-valid':!$v.gestion.$invalid }">
                                         <option value="" disabled>SELECCIONE</option>
-                                        <option v-for="a in anios" :key="a" :value="a">{{ a }}</option>
+                                    <option v-for="gestion in arrayGestiones" :key="gestion.gestion" :value="gestion.gestion"  v-text="gestion.gestion"></option>
                                     </select>
                                     <div class="invalid-feedback">
                                         <span v-if="!$v.gestion.required">Este campo es Requerido</span>
@@ -86,7 +86,7 @@
                                 </div>
                                 <div class="col-md-3">
                                     <label class="form-control-label" for="text-input">Módulo</label>
-                                    <select class="form-control" v-model="modulo" :class="{ 'is-invalid' : $v.modulo.$error, 'is-valid':!$v.modulo.$invalid }">
+                                    <select class="form-control" v-model="modulo" @change="BuscarPromediosModulo()" :class="{ 'is-invalid' : $v.modulo.$error, 'is-valid':!$v.modulo.$invalid }">
                                         <option value="" disabled>SELECCIONE</option>
                                         <option v-for="modulo in arrayModulo" :key="modulo.id" :value="modulo.id"  v-text="modulo.modulo"></option>
                                     </select>
@@ -94,85 +94,64 @@
                                         <span v-if="!$v.modulo.required">Este campo es Requerido</span>
                                     </div>
                                 </div> 
-                                <!-- <div class="col-md-4">
-                                    <label class="form-control-label" for="text-input">Materia</label>
-                                    <select class="form-control" v-model="materia" @change="ListarEvaluaciones()" :class="{ 'is-invalid' : $v.materia.$error, 'is-valid':!$v.materia.$invalid }">
-                                        <option value="" disabled>SELECCIONE</option>
-                                        <option v-for="materia in arrayMateria" :key="materia.id" :value="materia.id"  v-text="materia.materia"></option>
-                                    </select>
-                                    <div class="invalid-feedback">
-                                        <span v-if="!$v.materia.required">Este campo es Requerido</span>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-control-label" for="text-input">Evaluación</label>
-                                    <select class="form-control" v-model="evaluacion" :class="{ 'is-invalid' : $v.evaluacion.$error, 'is-valid':!$v.evaluacion.$invalid }">
-                                        <option value="" disabled>SELECCIONE</option>
-                                        <option v-for="evaluacion in arrayEvaluacion" :key="evaluacion.id" :value="evaluacion.id"  v-text="evaluacion.evaluacion"></option>
-                                    </select>
-                                    <div class="invalid-feedback">
-                                        <span v-if="!$v.evaluacion.required">Este campo es Requerido</span>
-                                    </div>
-                                </div> -->
-                                <button type="button" class="btn btn-primary" @click="BuscarPromediosModulo()">
-                                    <i class="fas fa-plus"></i>&nbsp; BUSCAR
-                                </button>
                             </div>
-
+                            <!-- <button type="button" class="btn btn-primary" @click="BuscarPromediosModulo()">
+                                <i class="fas fa-plus"></i>&nbsp; BUSCAR
+                            </button> -->
                             <div class="table-wrapper-scroll-y my-custom-scrollbar" id="myTable" style="font-size: 12pt;" >
-                        <!-- <template v-if="datfis2==1"> -->
-                        <table class="table table-bordered table-sm">
-                            <thead>
-                                <tr>
-                                    <th>Nº</th>
-                                    <th>GRADO</th>
-                                    <th>AP. PATERNO</th>
-                                    <th>AP. MATERNO</th>
-                                    <th>NOMBRES</th>
-                                    <th v-for="materia in arrayMaterias" :key="materia.id">
-                                        {{ materia.materia }}
-                                    </th>
-                                    <th>PROM. FINAL</th>
-                                </tr>
-                            </thead>
+                                <!-- <template v-if="datfis2==1"> -->
+                                <table class="table table-bordered table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Nº</th>
+                                            <th>GRADO</th>
+                                            <th>AP. PATERNO</th>
+                                            <th>AP. MATERNO</th>
+                                            <th>NOMBRES</th>
+                                            <th v-for="materia in arrayMaterias" :key="materia.id">
+                                                {{ materia.materia }}
+                                            </th>
+                                            <th>PROM. FINAL</th>
+                                        </tr>
+                                    </thead>
 
-                            <tbody>
-                                <tr v-for="(personal, index) in arrayCursantesPromocion" :key="personal.diplopromocursante_id">
-                                    <td>{{ index + 1 }}</td>
-                                    <td>{{ personal.abreviatura }}</td>
-                                    <td>{{ personal.per_paterno }}</td>
-                                    <td>{{ personal.per_materno }}</td>
-                                    <td>{{ personal.per_nombre }}</td>
-                                    <td v-for="materia in arrayMaterias" :key="materia.id" :style="{ color: Number(personal.promedios_materias[materia.id] || 0) < 51 ? 'red' : 'inherit'}">
-                                        {{ Number(personal.promedios_materias[materia.id] || 0).toFixed(2) }}
-                                    </td>
-                                    <td>
-                                        <strong :style="{ color: Number(personal.promedio_final || 0) < 51 ? 'red' : 'inherit'}">
-                                            {{ Number(personal.promedio_final || 0).toFixed(2) }}
+                                    <tbody>
+                                        <tr v-for="(personal, index) in arrayCursantesPromocion" :key="personal.diplopromocursante_id">
+                                            <td>{{ index + 1 }}</td>
+                                            <td>{{ personal.abreviatura }}</td>
+                                            <td>{{ personal.per_paterno }}</td>
+                                            <td>{{ personal.per_materno }}</td>
+                                            <td>{{ personal.per_nombre }}</td>
+                                            <td v-for="materia in arrayMaterias" :key="materia.id" :style="{ color: Number(personal.promedios_materias[materia.id] || 0) < 51 ? 'red' : 'inherit'}">
+                                                {{ Number(personal.promedios_materias[materia.id] || 0).toFixed(2) }}
+                                            </td>
+                                            <td>
+                                                <strong :style="{ color: Number(personal.promedio_final || 0) < 51 ? 'red' : 'inherit'}">
+                                                    {{ Number(personal.promedio_final || 0).toFixed(2) }}
+                                                </strong>
+                                            </td>
+                                        </tr>
+                                        <tr v-if="arrayCursantesPromocion.length === 0">
+                                            <td :colspan="6 + arrayMaterias.length" class="text-center">
+                                                No hay cursantes para mostrar.
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div>
+                                    <!-- Aquí va tu tabla completa -->
+                                    <div class="text-right mt-3 mb-4">
+                                        <strong>
+                                            Total de cursantes: {{ arrayCursantesPromocion.length }}
                                         </strong>
-                                    </td>
-                                </tr>
-                                <tr v-if="arrayCursantesPromocion.length === 0">
-                                    <td :colspan="6 + arrayMaterias.length" class="text-center">
-                                        No hay cursantes para mostrar.
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <div>
-                            <!-- Aquí va tu tabla completa -->
-                            <div class="text-right mt-3 mb-4">
-                                <strong>
-                                    Total de cursantes: {{ arrayCursantesPromocion.length }}
-                                </strong>
-                                <button type="button" class="btn btn-success ml-3" @click="GenerarReporte()" :disabled="arrayCursantesPromocion.length === 0 || arrayMaterias.length === 0">
-                                    <i class="fas fa-save"></i>&nbsp;GENERAR REPORTE
-                                </button>
+                                    </div>
+                                    <button type="button" class="btn btn-success ml-3" @click="GenerarReporte(1)" :disabled="arrayCursantesPromocion.length === 0 || arrayMaterias.length === 0">
+                                        <i class="fas fa-save"></i>&nbsp; GENERAR REPORTE
+                                    </button>
+                                </div>
+                                <!-- </template> -->
+                                <br>
                             </div>
-                        </div>
-                        <!-- </template> -->
-                        <br>
-                    </div>
                         </div>
                         <div v-if="reporte == 2">
                             <h3><i class="fas fa-inbox"></i>&nbsp;ELEGIR ESPECIALIDAD, PROMOCIÓN</h3>
@@ -180,7 +159,7 @@
                             <div class="form-group row">
                                 <div class="col-md-3">
                                     <label class="form-control-label" for="text-input">Especialidad</label>
-                                    <select class="form-control" v-model="diplomado" @change="ListarPromociones(diplomado, gestion)" :class="{ 'is-invalid' : $v.diplomado.$error, 'is-valid':!$v.diplomado.$invalid }">
+                                    <select class="form-control" v-model="diplomado" @change="ListarGestiones(diplomado)" :class="{ 'is-invalid' : $v.diplomado.$error, 'is-valid':!$v.diplomado.$invalid }">
                                         <option value="" disabled>SELECCIONE</option>
                                         <option v-for="diplomado in arrayDiplomado" :key="diplomado.id" :value="diplomado.id"  v-text="diplomado.diplomado"></option>
                                     </select>
@@ -192,7 +171,7 @@
                                     <label class="form-control-label" for="text-input">Gestión</label>
                                     <select class="form-control" v-model="gestion" @change="ListarPromociones(diplomado, gestion)" :class="{ 'is-invalid' : $v.gestion.$error, 'is-valid':!$v.gestion.$invalid }">
                                         <option value="" disabled>SELECCIONE</option>
-                                        <option v-for="a in anios" :key="a" :value="a">{{ a }}</option>
+                                        <option v-for="gestion in arrayGestiones" :key="gestion.gestion" :value="gestion.gestion"  v-text="gestion.gestion"></option>
                                     </select>
                                     <div class="invalid-feedback">
                                         <span v-if="!$v.gestion.required">Este campo es Requerido</span>
@@ -200,7 +179,7 @@
                                 </div>
                                 <div class="col-md-3">
                                     <label class="form-control-label" for="text-input">Promoción</label>
-                                    <select class="form-control" v-model="promocion" :class="{ 'is-invalid' : $v.promocion.$error, 'is-valid':!$v.promocion.$invalid }">
+                                    <select class="form-control" v-model="promocion" @change="BuscarPromediosGral()" :class="{ 'is-invalid' : $v.promocion.$error, 'is-valid':!$v.promocion.$invalid }">
                                         <option value="" disabled>SELECCIONE</option>
                                         <option v-for="promocion in arrayPromocion" :key="promocion.id" :value="promocion.id"  v-text="promocion.promo"></option>
                                     </select>
@@ -208,121 +187,60 @@
                                         <span v-if="!$v.promocion.required">Este campo es Requerido</span>
                                     </div>
                                 </div>
-                                <!-- <div class="col-md-3">
-                                    <label class="form-control-label" for="text-input">Módulo</label>
-                                    <select class="form-control" v-model="modulo" :class="{ 'is-invalid' : $v.modulo.$error, 'is-valid':!$v.modulo.$invalid }">
-                                        <option value="" disabled>SELECCIONE</option>
-                                        <option v-for="modulo in arrayModulo" :key="modulo.id" :value="modulo.id"  v-text="modulo.modulo"></option>
-                                    </select>
-                                    <div class="invalid-feedback">
-                                        <span v-if="!$v.modulo.required">Este campo es Requerido</span>
-                                    </div>
-                                </div>  -->
-                                <!-- <div class="col-md-4">
-                                    <label class="form-control-label" for="text-input">Materia</label>
-                                    <select class="form-control" v-model="materia" @change="ListarEvaluaciones()" :class="{ 'is-invalid' : $v.materia.$error, 'is-valid':!$v.materia.$invalid }">
-                                        <option value="" disabled>SELECCIONE</option>
-                                        <option v-for="materia in arrayMateria" :key="materia.id" :value="materia.id"  v-text="materia.materia"></option>
-                                    </select>
-                                    <div class="invalid-feedback">
-                                        <span v-if="!$v.materia.required">Este campo es Requerido</span>
-                                    </div>
+                            </div>
+                            <!-- <button type="button" class="btn btn-primary" @click="BuscarPromediosGral()">
+                                <i class="fas fa-plus"></i>&nbsp; BUSCAR
+                            </button> -->
+
+                            <div class="table-wrapper-scroll-y my-custom-scrollbar" id="myTable" style="font-size: 12pt;">
+                                <table class="table table-bordered table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Nº</th>
+                                            <th>GRADO</th>
+                                            <th>AP. PATERNO</th>
+                                            <th>AP. MATERNO</th>
+                                            <th>NOMBRES</th>
+                                            <th v-for="modulo in arrayModulos" :key="modulo.id">
+                                                MÓDULO {{ modulo.modulo }}
+                                            </th>
+                                            <th>PROM. FINAL</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="(personal, index) in arrayCursantesPromocion" :key="personal.diplopromocursante_id">
+                                            <td>{{ index + 1 }}</td>
+                                            <td>{{ personal.abreviatura }}</td>
+                                            <td>{{ personal.per_paterno }}</td>
+                                            <td>{{ personal.per_materno }}</td>
+                                            <td>{{ personal.per_nombre }}</td>
+                                            <td v-for="modulo in arrayModulos" :key="modulo.id" class="text-center" :style="{color: Number(personal.promedios_modulos[modulo.id] || 0) < 51 ? 'red' : 'inherit'}">
+                                                {{ Number(personal.promedios_modulos[modulo.id] || 0).toFixed(2) }}
+                                            </td>
+                                            <td class="text-center">
+                                                <strong :style="{color: Number(personal.promedio_final || 0) < 51 ? 'red' : 'inherit'}">
+                                                    {{ Number(personal.promedio_final || 0).toFixed(2) }}
+                                                </strong>
+                                            </td>
+                                        </tr>
+                                        <tr v-if="arrayCursantesPromocion.length === 0">
+                                            <td :colspan="6 + arrayModulos.length" class="text-center">
+                                                No hay cursantes para mostrar.
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <div class="text-right mt-3 mb-4">
+                                    <strong>
+                                        Total de cursantes: {{ arrayCursantesPromocion.length }}
+                                    </strong> 
                                 </div>
-                                <div class="col-md-4">
-                                    <label class="form-control-label" for="text-input">Evaluación</label>
-                                    <select class="form-control" v-model="evaluacion" :class="{ 'is-invalid' : $v.evaluacion.$error, 'is-valid':!$v.evaluacion.$invalid }">
-                                        <option value="" disabled>SELECCIONE</option>
-                                        <option v-for="evaluacion in arrayEvaluacion" :key="evaluacion.id" :value="evaluacion.id"  v-text="evaluacion.evaluacion"></option>
-                                    </select>
-                                    <div class="invalid-feedback">
-                                        <span v-if="!$v.evaluacion.required">Este campo es Requerido</span>
-                                    </div>
-                                </div> -->
-                                <button type="button" class="btn btn-primary" @click="BuscarPromediosGral()">
-                                    <i class="fas fa-plus"></i>&nbsp; BUSCAR
+                                <button type="button" class="btn btn-success ml-3" @click="GenerarReporte(2)" :disabled="arrayCursantesPromocion.length === 0 || arrayModulos.length === 0">
+                                    <i class="fas fa-save"></i>&nbsp; GENERAR REPORTE
                                 </button>
                             </div>
-
-                            
-<div class="table-wrapper-scroll-y my-custom-scrollbar"
-     id="myTable"
-     style="font-size: 12pt;">
-
-    <table class="table table-bordered table-sm">
-        <thead>
-            <tr>
-                <th>Nº</th>
-                <th>GRADO</th>
-                <th>AP. PATERNO</th>
-                <th>AP. MATERNO</th>
-                <th>NOMBRES</th>
-
-                <th v-for="modulo in arrayModulos"
-                    :key="modulo.id">
-                    MÓDULO {{ modulo.modulo }}
-                </th>
-
-                <th>PROM. FINAL</th>
-            </tr>
-        </thead>
-
-        <tbody>
-            <tr v-for="(personal, index) in arrayCursantesPromocion"
-                :key="personal.diplopromocursante_id">
-
-                <td>{{ index + 1 }}</td>
-                <td>{{ personal.abreviatura }}</td>
-                <td>{{ personal.per_paterno }}</td>
-                <td>{{ personal.per_materno }}</td>
-                <td>{{ personal.per_nombre }}</td>
-
-                <td v-for="modulo in arrayModulos"
-                    :key="modulo.id"
-                    class="text-center"
-                    :style="{
-                        color: Number(
-                            personal.promedios_modulos[modulo.id] || 0
-                        ) < 51 ? 'red' : 'inherit'
-                    }">
-
-                    {{ Number(
-                        personal.promedios_modulos[modulo.id] || 0
-                    ).toFixed(2) }}
-                </td>
-
-                <td class="text-center">
-                    <strong
-                        :style="{
-                            color: Number(personal.promedio_final || 0) < 51
-                                ? 'red'
-                                : 'inherit'
-                        }">
-                        {{ Number(personal.promedio_final || 0).toFixed(2) }}
-                    </strong>
-                </td>
-            </tr>
-
-            <tr v-if="arrayCursantesPromocion.length === 0">
-                <td :colspan="6 + arrayModulos.length"
-                    class="text-center">
-                    No hay cursantes para mostrar.
-                </td>
-            </tr>
-        </tbody>
-    </table>
-
-    <div class="text-right mt-3 mb-4">
-        <strong>
-            Total de cursantes: {{ arrayCursantesPromocion.length }}
-        </strong>
-        <button type="button" class="btn btn-success ml-3" @click="GenerarReporte()" :disabled="arrayCursantesPromocion.length === 0 || arrayMaterias.length === 0">
-            <i class="fas fa-save"></i>&nbsp;GENERAR REPORTE
-        </button>
-    </div>
-</div>
-
                         </div>
-                        
                     </form>
                     
                 </div>
@@ -358,6 +276,7 @@
         // FIN VARIABLES DGAE
         arrayDiplomado : [],
         arrayPromocion : [],
+        arrayGestiones : [],
         anios: [],
         arrayModulo : [],
         arrayModulos : [],
@@ -392,13 +311,17 @@
         // materia : { required },
         // evaluacion : { required },
 
-        validationGroupReg: [
-        'diplomado',
-        'gestion',
-        'promocion',
-        'modulo',
-        // 'materia',
-        // 'evaluacion'
+        validationGroupRepModulo: [
+            'diplomado',
+            'gestion',
+            'promocion',
+            'modulo',
+        ],
+
+        validationGroupRepGral: [
+            'diplomado',
+            'gestion',
+            'promocion',
         ],
     },
   
@@ -469,9 +392,32 @@
             })
         },
 
+        ListarGestiones(diplomadoid) {
+            this.gestion = '';
+            this.arrayGestiones = [];
+            this.promocion = '';
+            this.arrayPromociones = [];
+            this.modulo = '';
+            this.arrayModulo = [];
+            let me = this;
+            axios
+            .post("/selectGestion", {
+                diplomadoid : diplomadoid
+            })
+            .then(function (response) {
+            me.arrayGestiones = response.data.gestion
+            })
+            .catch(function (error) {
+            // handle error
+            console.log(error);
+            })
+        },
+
         ListarPromociones(especialidad, gestion){
             this.promocion = '';
             this.arrayPromocion = [];
+            this.modulo = '';
+            this.arrayModulo = [];
             let me = this;
             axios
             .post("/listarPromocion", {
@@ -526,25 +472,25 @@
 
         BuscarPromediosGral() {
             axios.post('/listarPromediosPromocion', {
-        promocion: this.promocion
-    })
-    .then(response => {
-        this.arrayModulos = response.data.modulos || [];
-        this.arrayCursantesPromocion = response.data.cursantes || [];
-    })
-    .catch(error => {
-        console.error(error);
+                promocion: this.promocion
+            })
+            .then(response => {
+                this.arrayModulos = response.data.modulos || [];
+                this.arrayCursantesPromocion = response.data.cursantes || [];
+            })
+            .catch(error => {
+                console.error(error);
 
-        this.arrayModulos = [];
-        this.arrayCursantesPromocion = [];
+                this.arrayModulos = [];
+                this.arrayCursantesPromocion = [];
 
-        this.$swal(
-            'Error',
-            error.response?.data?.message ||
-            'No se pudieron obtener los promedios de la promoción.',
-            'error'
-        );
-    });
+                this.$swal(
+                    'Error',
+                    error.response?.data?.message ||
+                    'No se pudieron obtener los promedios de la promoción.',
+                    'error'
+                );
+            });
         },
 
         limpiarFormulario() {
@@ -553,6 +499,9 @@
             this.gestion = '';
             this.promocion = '';
             this.modulo = '';
+            this.arrayCursantesPromocion = [];
+            this.arrayModulos = [];
+            this.arrayMaterias = [];
             // this.per_foto = null;
 
             // Ajusta esta ruta a la imagen predeterminada de tu proyecto.
@@ -603,41 +552,47 @@
             });
         },
 
-        obtenerImagen(e){
-            try {
-                var fileReader = new FileReader();
-    
-                fileReader.onload = (e) => {
-                    this.per_foto = e.target.result;
-                }
-                fileReader.readAsDataURL(e.target.files[0])
-                this.v = 1;
-            } catch (error) {
-                
+        GenerarReporte(tiporeporte){ //DGAE
+            switch (tiporeporte) {
+                case 1:
+                    if (!this.$v.validationGroupRepModulo.$invalid) {
+                        var promocion = this.promocion;
+                        var modulo = this.modulo;
+                        var diplomado = this.diplomado;
+                        var gestion = this.gestion;
+                        window.open('/ant_mod?diplomado='+diplomado+'&gestion='+gestion+'&promocion='+promocion+'&modulo='+modulo);
+                    } else {
+                        this.$v.validationGroupRepModulo.$touch();
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Ingrese todos los datos requeridos',
+                            showConfirmButton: false,
+                            timer: 2000
+                        })
+                    }
+                    break;
+
+                case 2:
+                    if (!this.$v.validationGroupRepGral .$invalid) {
+                        var promocion = this.promocion;
+                        var diplomado = this.diplomado;
+                        var gestion = this.gestion;
+                        window.open('/ant_gral?diplomado='+diplomado+'&gestion='+gestion+'&promocion='+promocion);
+                    } else {
+                        this.$v.validationGroupRepGral.$touch();
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Ingrese todos los datos requeridos',
+                            showConfirmButton: false,
+                            timer: 2000
+                        })
+                    }
+                    break;
+            
+                default:
+                    break;
             }
         },
-
-      GenerarReporte(){ //DGAE
-          // this.$v.$reset();
-          // if(!this.$v.$invalid){
-          var promocion = this.promocion;
-          var modulo = this.modulo;
-          var diplomado = this.diplomado;
-          var gestion = this.gestion;
-
-          window.open('/ant_mod?diplomado='+diplomado+'&gestion='+gestion+'&promocion='+promocion+'&modulo='+modulo);
-          // window.open('http://127.0.0.1:8000/carnet?id_p='+id_personal);
-          // }else{
-          //     this.$v.$touch();
-          //     Swal.fire({
-          //         icon: 'warning',
-          //         title: 'Ingrese todos los datos requeridos',
-          //         showConfirmButton: false,
-          //         timer: 2000
-          //     })
-              
-          // }
-      },
   
     },
   };

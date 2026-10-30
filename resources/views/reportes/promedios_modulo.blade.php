@@ -143,7 +143,8 @@
 
 
             <div style="padding-top: 2px; padding-bottom: 2px; text-align: center; font-size: 12pt; font-weight: bold; /*border: 1px solid #C00;*/">
-                <p style="margin: 1px">PROMEDIOS FINALES DEL {{ $modulo }} MÓDULO </p>
+                <p style="margin: 1px">PROMEDIOS ACADEMICOS FINALES DEL {{ $modulo }} MÓDULO</p>
+                <p style="margin: 1px">ESPECIALIDAD ({{ $especialidad->diplomado }}) - PROMOCIÓN {{ $promocion->promo }}</p>
             </div>
 
             @if (sizeof($cursantes) != 0)

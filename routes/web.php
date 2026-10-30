@@ -93,6 +93,7 @@ Route::post('/listarEspecialidad', 'DiplomadoController@ListarDiplomado');
 Route::post('/listarCursantesPromocionNotas', 'CursanteNotaController@ListarDiplomadoPromocionCursante');
 Route::post('/listarPromediosModulo', 'CursanteNotaController@ListarPromediosModulo');
 Route::get('/ant_mod', 'ReporteController@ReporteAntiguedadModulo');
+Route::get('/ant_gral', 'ReporteController@ReporteAntiguedadGral');
 Route::post('/registrarEspecialidad', 'DiplomadoController@CrearDiplomado');
 Route::post('/mostrarEspecialidad', 'DiplomadoController@MostrarDiplomado');
 Route::post('/editarEspecialidad', 'DiplomadoController@EditarDiplomado');

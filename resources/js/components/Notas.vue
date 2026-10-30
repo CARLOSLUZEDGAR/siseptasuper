@@ -84,7 +84,7 @@
                             </div> 
                             <div class="col-md-4">
                                 <label class="form-control-label" for="text-input">Materia</label>
-                                <select class="form-control" v-model="materia" @change="ListarEvaluaciones()" :class="{ 'is-invalid' : $v.materia.$error, 'is-valid':!$v.materia.$invalid }">
+                                <select class="form-control" v-model="materia" @change="ListarEvaluaciones(), BuscarCursantes(promocion)" :class="{ 'is-invalid' : $v.materia.$error, 'is-valid':!$v.materia.$invalid }">
                                     <option value="" disabled>SELECCIONE</option>
                                     <option v-for="materia in arrayMateria" :key="materia.id" :value="materia.id"  v-text="materia.materia"></option>
                                 </select>
@@ -104,9 +104,9 @@
                             </div> -->
                             
                         </div>
-                        <button type="button" class="btn btn-primary" @click="BuscarCursantes(promocion)">
+                        <!-- <button type="button" class="btn btn-primary" @click="BuscarCursantes(promocion)">
                             <i class="fas fa-plus"></i>&nbsp; BUSCAR
-                        </button>
+                        </button> -->
                     </form>
                     <div class="table-wrapper-scroll-y my-custom-scrollbar" id="myTable" style="font-size: 12pt;" >
                         <!-- <template v-if="datfis2==1"> -->
@@ -233,13 +233,21 @@
         // evaluacion : { required },
 
         validationGroupTemp: [
-        'diplomado',
-        'gestion',
-        'promocion',
-        'modulo',
-        'materia',
-        // 'evaluacion'
+            'diplomado',
+            'gestion',
+            'promocion',
+            'modulo',
+            'materia',
+            // 'evaluacion'
         ],
+
+        validationGroupReg: [
+            'diplomado',
+            'gestion',
+            'promocion',
+            'modulo',
+            'materia',
+        ]
     },
   
    computed: {
@@ -390,20 +398,6 @@
             })
         },
 
-        // ListarPeriodos(){
-        //     let me = this;
-        //     axios
-        //     .post("/listarPeriodo", {
-        //     })
-        //     .then(function (response) {
-        //     me.arrayPeriodo = response.data.periodo
-        //     })
-        //     .catch(function (error) {
-        //     // handle error
-        //     console.log(error);
-        //     })
-        // },
-
         ListarPromociones(especialidad, gestion){
             this.promocion = '';
             this.arrayPromocion = [];
@@ -526,250 +520,111 @@
         },
 
         RegistrarNotas() {
-            if (!this.arrayCursantesPromocion || this.arrayCursantesPromocion.length === 0) {
-                return;
-            }
-
-            const evaluaciones = [
-                { campo: 'pri_parcial', evaluacion_id: 1, registrada: 'pri_parcial_registrada' },
-                { campo: 'seg_parcial', evaluacion_id: 2, registrada: 'seg_parcial_registrada' },
-                { campo: 'ex_final', evaluacion_id: 3, registrada: 'ex_final_registrada' },
-                { campo: 'apr_docente', evaluacion_id: 4, registrada: 'apr_docente_registrada' }
-            ];
-
-            const notas = [];
-
-            this.arrayCursantesPromocion.forEach(cursante => {
-                evaluaciones.forEach(evaluacion => {
-                    const valor = cursante[evaluacion.campo];
-
-                    // Registrar solo notas ingresadas y todavía no registradas.
-                    if (
-                        !cursante[evaluacion.registrada] &&
-                        valor !== null &&
-                        valor !== undefined &&
-                        valor !== ''
-                    ) {
-                        notas.push({
-                            diplopromocursante_id: cursante.diplopromocursante_id,
-                            personals_id: cursante.personals_id,
-                            evaluacion_id: evaluacion.evaluacion_id,
-                            nota: valor
-                        });
-                    }
-                });
-            });
-
-            if (notas.length === 0) {
-                this.$swal(
-                    'Atención',
-                    'No hay notas nuevas para registrar.',
-                    'warning'
-                );
-                return;
-            }
-
-            axios.post('/guardarNotasCursantes', {
-                promocion: this.promocion,
-                materia: this.materia,
-                notas: notas
-            })
-            .then(response => {
-                // Volver a consultar las notas para bloquear las ya registradas.
-                this.BuscarCursantes(this.promocion);
-
-                this.$swal(
-                    'Correcto',
-                    response.data.mensaje || 'Notas registradas correctamente.',
-                    'success'
-                );
-            })
-            .catch(error => {
-                console.error(error);
-
-                const mensaje = error.response &&
-                                error.response.data &&
-                                error.response.data.mensaje
-                    ? error.response.data.mensaje
-                    : 'No se pudieron registrar las notas.';
-
-                this.$swal('Error', mensaje, 'error');
-            });
-        },
-
-        obtenerImagen(e){
-            try {
-                var fileReader = new FileReader();
-    
-                fileReader.onload = (e) => {
-                    this.per_foto = e.target.result;
+            if(!this.$v.validationGroupReg.$invalid) {
+                if (!this.arrayCursantesPromocion || this.arrayCursantesPromocion.length === 0) {
+                    return;
                 }
-                fileReader.readAsDataURL(e.target.files[0])
-                this.v = 1;
-            } catch (error) {
-                
-            }
-        },
 
-    //   NuevoPersonal(){ //DGAE
-    //     this.$v.validationGroupReg.$reset(),
-    //     this.per_foto = '',
-    //     this.per_ci = '',
-    //     this.per_nombre = '',
-    //     this.per_appaterno = '',
-    //     this.per_apmaterno = '',
-    //     this.per_sexo = '',
-    //     this.per_celular = '',
-    //     this.per_email = '',
-    //     this.per_fechnac = '',
-    //     this.per_direccion = '',
-    //     this.v = 0
-    //   },
-
-        guardarPromocion() {
-            swal.fire({
-                title: '¿Desea guardar la promoción?', // TITULO 
-                icon: 'question', //ICONO (success, warnning, error, info, question)
-                showCancelButton: true, //HABILITACION DEL BOTON CANCELAR
-                confirmButtonColor: 'info', // COLOR DEL BOTON PARA CONFIRMAR
-                cancelButtonColor: '#868077', // COLOR DEL BOTON CANCELAR
-                confirmButtonText: 'Confirmar', //TITULO DEL BOTON CONFIRMAR
-                cancelButtonText: 'Cancelar', //TIUTLO DEL BOTON CANCELAR
-                buttonsStyling: true,
-                reverseButtons: true
+                Swal.fire({
+                    title: '¿Desea registrar la lista de cursantes?', // TITULO 
+                    icon: 'question', //ICONO (success, warnning, error, info, question)
+                    showCancelButton: true, //HABILITACION DEL BOTON CANCELAR
+                    confirmButtonColor: 'info', // COLOR DEL BOTON PARA CONFIRMAR
+                    cancelButtonColor: '#868077', // COLOR DEL BOTON CANCELAR
+                    confirmButtonText: 'Confirmar', //TITULO DEL BOTON CONFIRMAR
+                    cancelButtonText: 'Cancelar', //TIUTLO DEL BOTON CANCELAR
+                    buttonsStyling: true,
+                    reverseButtons: true
                 }).then((result) => {
-                if (result.value) {
-                    let me = this;
-                    axios
-                    .post("/guardarPromocion", {
-                        diplomado : me.diplomado,
-                        gestion : me.gestion,
-                        periodo : me.periodo,
-                        promocion : me.promocion,
-                        modulos: me.inputs
-                    })
-                    .then(function (response) {
-                        console.log(response);
-                        swal.fire({
-                            title: 'Se realizo el registro correctamente', //TITULO
-                            // response.data.mensaje, //TEXTO DE MENSAJE
-                            // response.data.tipo, // TIPO DE MODAL (success, warnning, error, info)
-                            // response.personal
-                        });
-                        if (!response.data.code) {
-                            // $('#NuevoUsuario').modal('hide');
-                            // $('#ModalNewPersonal').modal('hide');
-                            // me.nick = '';
-                            // me.password = '';
-                            // me.arrayDatPer = response.data.personal;
-                            // me.GenerarCarnet(me.arrayDatPer.id_personal);
-                            me.Atras();
-                            // this.$v.$reset();
-                        } 
-                    })
-                    .catch(function (error) {
-                        // handle error
-                        console.log(error);
-                    })
-                }else{
-                        swal.fire(
-                        "Informacion", //TITULO
-                        "Solicitud cancelada.", //TEXTO DE MENSAJE
-                        "info" // TIPO DE MODAL (success, warnning, error, info)
-                    );
-                }
-            })
-        },
-  
-      CrearPersonal(){ //DGAE
-        if(!this.$v.validationGroupReg.$invalid){
-          swal.fire({
-              title: '¿Desea registrar?', // TITULO 
-              icon: 'question', //ICONO (success, warnning, error, info, question)
-              showCancelButton: true, //HABILITACION DEL BOTON CANCELAR
-              confirmButtonColor: 'info', // COLOR DEL BOTON PARA CONFIRMAR
-              cancelButtonColor: '#868077', // COLOR DEL BOTON CANCELAR
-              confirmButtonText: 'Confirmar', //TITULO DEL BOTON CONFIRMAR
-              cancelButtonText: 'Cancelar', //TIUTLO DEL BOTON CANCELAR
-              buttonsStyling: true,
-              reverseButtons: true
-              }).then((result) => {
-              if (result.value) {
-                  let me = this;
-                  axios
-                  .post("/crearPersonal", {
-                    foto : me.per_foto,
-                    ci : me.per_ci,
-                    nombre : me.per_nombre,
-                    ap_paterno : me.per_appaterno,
-                    ap_materno : me.per_apmaterno,
-                    sexo : me.per_sexo,
-                    celular : me.per_celular,
-                    email : me.per_email,
-                    fech_nac : me.per_fechnac,
-                    direccion : me.per_direccion,
-                  })
-                  .then(function (response) {
-                      
-                      console.log(response);
-                      swal.fire({
-                          title: 'Se realizo el registro correctamente', //TITULO
-                          // response.data.mensaje, //TEXTO DE MENSAJE
-                          // response.data.tipo, // TIPO DE MODAL (success, warnning, error, info)
-                          // response.personal
-                      });
-                      if (!response.data.code) {
-                          // $('#NuevoUsuario').modal('hide');
-                          // $('#ModalNewPersonal').modal('hide');
-                          // me.nick = '';
-                          // me.password = '';
-                          me.arrayDatPer = response.data.personal;
-                          // me.GenerarCarnet(me.arrayDatPer.id_personal);
-                          me.Atras();
-                          this.$v.$reset();
-                      } 
-                  })
-                  .catch(function (error) {
-                      // handle error
-                      console.log(error);
-                  })
-              }else{
-                    swal.fire(
-                      "Informacion", //TITULO
-                      "Solicitud cancelada.", //TEXTO DE MENSAJE
-                      "info" // TIPO DE MODAL (success, warnning, error, info)
-                  );
-              }
-          })
-        }else{
-            this.$v.validationGroupReg.$touch();
-            Swal.fire({
-                icon: 'warning',
-                title: 'Ingrese todos los datos requeridos',
-                showConfirmButton: false,
-                timer: 2000
-            })
-            
-        }
-      },
+                    if(result.value) {
+                        const evaluaciones = [
+                            { campo: 'pri_parcial', evaluacion_id: 1, registrada: 'pri_parcial_registrada' },
+                            { campo: 'seg_parcial', evaluacion_id: 2, registrada: 'seg_parcial_registrada' },
+                            { campo: 'ex_final', evaluacion_id: 3, registrada: 'ex_final_registrada' },
+                            { campo: 'apr_docente', evaluacion_id: 4, registrada: 'apr_docente_registrada' }
+                        ];
 
-      GenerarCarnet(id_personal){ //DGAE
-          // this.$v.$reset();
-          // if(!this.$v.$invalid){
-          window.open('/carnet?id_p='+id_personal);
-          // window.open('http://127.0.0.1:8000/carnet?id_p='+id_personal);
-          // }else{
-          //     this.$v.$touch();
-          //     Swal.fire({
-          //         icon: 'warning',
-          //         title: 'Ingrese todos los datos requeridos',
-          //         showConfirmButton: false,
-          //         timer: 2000
-          //     })
-              
-          // }
-      },
-  
+                        const notas = [];
+
+                        this.arrayCursantesPromocion.forEach(cursante => {
+                            evaluaciones.forEach(evaluacion => {
+                                const valor = cursante[evaluacion.campo];
+
+                                // Registrar solo notas ingresadas y todavía no registradas.
+                                if (
+                                    !cursante[evaluacion.registrada] &&
+                                    valor !== null &&
+                                    valor !== undefined &&
+                                    valor !== ''
+                                ) {
+                                    notas.push({
+                                        diplopromocursante_id: cursante.diplopromocursante_id,
+                                        personals_id: cursante.personals_id,
+                                        evaluacion_id: evaluacion.evaluacion_id,
+                                        nota: valor
+                                    });
+                                }
+                            });
+                        });
+
+                        if (notas.length === 0) {
+                            this.$swal(
+                                'Atención',
+                                'No hay notas nuevas para registrar.',
+                                'warning'
+                            );
+                            return;
+                        }
+
+                        axios.post('/guardarNotasCursantes', {
+                            promocion: this.promocion,
+                            materia: this.materia,
+                            notas: notas
+                        })
+                        .then(response => {
+                            // Volver a consultar las notas para bloquear las ya registradas.
+                            this.BuscarCursantes(this.promocion);
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Notas registradas correctamente',
+                                // showConfirmButton: false,
+                                timer: 3000
+                            });
+                            // this.$swal(
+                            //     'Correcto',
+                            //     response.data.mensaje || 'Notas registradas correctamente.',
+                            //     'success'
+                            // );
+                        })
+                        .catch(error => {
+                            console.error(error);
+                            const mensaje = error.response &&
+                                            error.response.data &&
+                                            error.response.data.mensaje
+                                ? error.response.data.mensaje
+                                : 'No se pudieron registrar las notas.';
+
+                            this.$swal('Error', mensaje, 'error');
+                        });
+
+                    } else {
+                        swal.fire(
+                            "Informacion", //TITULO
+                            "Solicitud cancelada.", //TEXTO DE MENSAJE
+                            "info" // TIPO DE MODAL (success, warnning, error, info)
+                        );
+                    }
+                })
+            } else {
+                this.$v. validationGroupReg.$touch();
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Ingrese todos los datos requeridos',
+                    showConfirmButton: false,
+                    timer: 2000
+                })
+            }
+        },
     },
   };
   

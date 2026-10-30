@@ -10,29 +10,36 @@
             <!-- Ejemplo de tabla Listado -->
             <div class="card ">
                  <div class="card-header">
-                     <h2>  <b> <center> SISTEMA SUPERVISIÓN - EPTA </center> </b></h2>  
+                     <h2>  <b> <center> SISTEMA CONTROL DE NOTAS DEL DIPLOMADO EN SUPERVISIÓN</center> </b></h2>  
                    
                 </div> 
                 <div class="card-body">
                     <div class="form-group row ">
-                        <div class="col-md-3 text-center">
-                            <img src="img\epta.png" width="300px" alt="Responsive image" class="img-fluid" >
+                        <div class="col-md-3 d-flex align-items-center justify-content-center">
+                            <img src="img/epta.png"
+                                width="300"
+                                alt="Responsive image"
+                                class="img-fluid">
                         </div>
                         <div class="col-md-6">
                             
                           <font size=4><br><br>    
-                          Bienvenido(s) al Sistema de XXXXXXXX, desarrollado por Cursantes del Diplomado en Supervision Aeronautica del Grupo Supervisión de la Escuela De Perfeccionamiento Técnico Aéronautico, 
-                          con la finalidad de contribuir al engrandecimiento de nuestra Institución 
-                          y este a la par del avance tecnológico actual para el servicio de nuestro personal. <br>
-                               <br> <br><br>Atte.<br></font>
+                            <p><strong>¡Bienvenidos al Sistema de Control de Notas del Diplomado en Supervisión!</strong></p>
+                            <p>Esta plataforma ha sido diseñada con el propósito de optimizar el registro, control y seguimiento de las calificaciones académicas correspondientes al Diplomado en Supervisión.</p>
+                            <p>Asimismo, esta iniciativa busca contribuir al fortalecimiento institucional, promoviendo la innovación, la modernización tecnológica y la mejora continua de los procesos académicos, en beneficio de todo nuestro personal.</p> <br>
+                               <br>Atte.<br></font>
                          <h5>    
                           <!--  <center>Dirección General de Aeronaves de Estado - DGAE</center> -->
-                          <strong> <center>GRUPO SUPERVISION - EPTA</center></strong></h5>
+                            <p><center>Sof. Inc. Téc. Jose Luis Gutierrez Copa</center></p>
+                          <p><strong><center>CURSANTE DEL GRUPO SUPERVISIÓN</center></strong></p></h5>
                         </div>
 
-                        <div class="col-md-3 text-center">
-                            <img src="img\supervision.png" width="300px" alt="Responsive image" class="img-fluid" >
-                        </div>                        
+                        <div class="col-md-3 d-flex align-items-center justify-content-center">
+                            <img src="img/supervision.png"
+                                width="300"
+                                alt="Responsive image"
+                                class="img-fluid">
+                        </div>                       
                     </div>
                 </div>
             </div>

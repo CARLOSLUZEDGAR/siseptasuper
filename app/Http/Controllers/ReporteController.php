@@ -16,7 +16,25 @@ class ReporteController extends Controller
         $request->validate([
             'promocion' => 'required|integer',
             'modulo' => 'required|integer',
+            'diplomado' => 'required|integer',
+            'gestion' => 'required'
         ]);
+
+        $especialidad = DB::table('diplomados as d')
+                    ->select('d.id',
+                            'd.diplomado',
+                            'd.abreviatura',
+                            'd.descripcion')
+                    ->where('d.estado', 1)
+                    ->where('d.id', $request->diplomado)
+                    ->orderBy('d.id', 'asc')
+                    ->first(); 
+
+        $promocion = DB::table('diplomado_promociones as dp')
+                    ->select('dp.promo',)
+                    ->where('dp.estado', 1)
+                    ->where('dp.id', $request->promocion)
+                    ->first();
 
         $modulo = DB::table('diplomado_modulos as dm')
                 ->select('dm.*')
@@ -157,190 +175,224 @@ class ReporteController extends Controller
 
         // 6. Generar el PDF usando una vista Blade.
         $pdf = PDF::loadView('reportes.promedios_modulo', [
+            'especialidad' => $especialidad,
             'materias' => $materias,
             'cursantes' => $cursantes,
-            'promocion' => $request->promocion,
+            'promocion' => $promocion,
             'modulo' => $numero,
         ])->setPaper('letter', 'portrait');
 
-        return $pdf->stream('reporte_promedios.pdf');
+        return $pdf->stream('reporte_promedios_modulo.pdf');
     }
 
-    public function GenerarReportePersonal(Request $request)
-    {
-        $personal = DB::table('personals as p')
-                    ->join('personal_licencias as pl','p.id','pl.id_personal')
-                    ->join('nacionalidads as n','p.id_nacionalidad','n.id')
-                    ->join('entidads as e','pl.id_entidad','e.id')
-                    ->join('grados as g','pl.id_grado','g.id')
-                    ->join('licencias as l','pl.id_licencia','l.id')
-                    // ->join('habilitacions as h','pl.id_habilitacion','h.id')
-                    ->join('competencia_linguisticas as cl','pl.id_comp_linguistica','cl.id')
-                    ->select('p.id as id_personal',
-                        'n.nacionalidad',
-                        'n.pais',
-                        'p.per_foto',
-                        'p.per_nombre',
-                        'p.per_paterno',
-                        'p.per_materno',
-                        'p.per_ci',
-                        'p.per_sexo',
-                        'p.per_fecha_nacimiento',
-                        'pl.id as id_licencia',
-                        'pl.id_entidad',
-                        'e.entidad',
-                        'g.abreviatura',
-                        'l.licencia',
-                        'l.traduccion',
-                        'pl.id_habilitacion',
-                        // 'h.habilitacion',
-                        // 'h.traduccion as htraduccion',
-                        'cl.nivel',
-                        'cl.traduccion as cltraduccion',
-                        'pl.observacion',
-                        'pl.fecha_emision',
-                        'pl.fecha_expiracion'
-                        )
-                    ->where('p.id',$request->id_p)
-                    ->where('pl.estado',1)
+    public function ReporteAntiguedadGral(Request $request) {
+        $request->validate([
+            'promocion' => 'required|integer',
+            'diplomado' => 'required|integer',
+        ]);
+
+        $especialidad = DB::table('diplomados as d')
+                    ->select('d.id',
+                            'd.diplomado',
+                            'd.abreviatura',
+                            'd.descripcion')
+                    ->where('d.estado', 1)
+                    ->where('d.id', $request->diplomado)
+                    ->orderBy('d.id', 'asc')
+                    ->first(); 
+
+        $promocion = DB::table('diplomado_promociones as dp')
+                    ->select('dp.promo',)
+                    ->where('dp.estado', 1)
+                    ->where('dp.id', $request->promocion)
                     ->first();
 
-        $arrayIdHabilitacionAct = json_decode($personal->id_habilitacion, true);
-        $cantidad = count($arrayIdHabilitacionAct);
+        // 1. Obtener todos los módulos activos de la promoción.
+        $modulos = DB::table('diplomado_modulos as dm')
+            ->select(
+                'dm.id',
+                'dm.modulo'
+            )
+            ->where('dm.diplopromo_id', $request->promocion)
+            ->where('dm.estado', 1)
+            ->orderBy('dm.modulo', 'asc')
+            ->get();
 
-        $arrayHabilitacionesAct = DB::table('habilitacions')
-                            ->select('id', 'habilitacion', 'traduccion')
-                            ->whereIn('id', $arrayIdHabilitacionAct)
-                            ->get();
-
-        $personal_licencias = DB::table('personal_licencias as pl')
-                            ->join('categorias as c','pl.id_categoria','c.id')
-                            ->join('entidads as e','pl.id_entidad','e.id')
-                            ->join('grados as g','pl.id_grado','g.id')
-                            ->join('licencias as l','pl.id_licencia','l.id')
-                            // ->join('habilitacions as h','pl.id_habilitacion','h.id')
-                            ->join('competencia_linguisticas as cl','pl.id_comp_linguistica','cl.id')
-                            ->select('pl.id',
-                                    'c.categoria',
-                                    'e.entidad',
-                                    'g.abreviatura',
-                                    'l.licencia',
-                                    'pl.id_habilitacion',
-                                    // 'h.habilitacion',
-                                    'cl.nivel',
-                                    'pl.fecha_emision')
-                            ->where('pl.id_personal',$request->id_p)
-                            ->orderBy('pl.fecha_emision','asc')
-                            ->get();
-        
-        // Recorremos los resultados
-        foreach ($personal_licencias as $pl) {
-            // Decodificamos el JSON a array
-            $arrayIdHabilitaciones = json_decode($pl->id_habilitacion, true);
-
-            if (is_array($arrayIdHabilitaciones) && count($arrayIdHabilitaciones) > 0) {
-                // Obtenemos las habilitaciones de esos IDs
-                $arrayHabilitaciones = DB::table('habilitacions')
-                    ->select('id', 'habilitacion', 'traduccion')
-                    ->whereIn('id', $arrayIdHabilitaciones)
-                    ->get();
-
-                // Le agregamos la lista al objeto actual
-                $pl->habilitaciones = $arrayHabilitaciones;
-            } else {
-                $pl->habilitaciones = collect(); // colección vacía
-            }
+        if ($modulos->isEmpty()) {
+            return response()->json([
+                'modulos' => [],
+                'cursantes' => [],
+                'mensaje' => 'La promoción no tiene módulos registrados.'
+            ]);
         }
 
-        $meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
-        $fecha_emision = date('d')."/".date('n')."/".date('Y');
-        // $qr = QrCode::encoding('UTF-8')->size(100)->generate("No. LICENCIA: $personal->per_ci\nGRADO: $personal->abreviatura\nAPELLIDO(S): $personal->per_paterno $personal->per_materno\nNOMBRE(S): $personal->per_nombre\nTITULO: $personal->licencia\nHABILITACION: $personal->habilitacion\nFECHA: $fecha_emision");
-        $qr = QrCode::encoding('UTF-8')->size(100)->generate("No. LICENCIA: $personal->per_ci\nGRADO: $personal->abreviatura\nAPELLIDO(S): $personal->per_paterno $personal->per_materno\nNOMBRE(S): $personal->per_nombre\nTITULO: $personal->licencia\nFECHA: $fecha_emision");
-        $codigo = $qr;
+        // 2. Obtener las materias activas de todos los módulos.
+        $materias = DB::table('modulo_materias as mm')
+            ->select(
+                'mm.id',
+                'mm.diplomod_id',
+                'mm.materia',
+                'mm.orden'
+            )
+            ->whereIn('mm.diplomod_id', $modulos->pluck('id'))
+            ->where('mm.estado', 1)
+            ->orderBy('mm.orden', 'asc')
+            ->get();
 
-        $pdf = PDF::loadView('reportes.dat_personal',['personal'=>$personal,
-                                                    'arrayHabilitaciones' => $arrayHabilitaciones,
-                                                    'qr'=>$codigo,
-                                                    'licencias'=>$personal_licencias
-                                                    ])
-        //8.3cm 5cm
-        ->setPaper('letter', 'portrait');                                               
-        
-        return $pdf->stream($personal->per_ci.'PERSONAL_DAT.pdf');
-        // return $pdf->download($personal->id_licencia.'-'.$personal->per_ci.'.pdf');
-    }
+        // Agrupar las materias por módulo.
+        $materiasPorModulo = $materias->groupBy('diplomod_id');
 
-    public function GenerarReporteLicencias(Request $request)
-    {
-        
-        $fechade = date_create($request->de);
-        $de = date_format($fechade,"d/m/Y");
+        // 3. Obtener los cursantes de la promoción.
+        $cursantes = DB::table('diplopromo_cursantes as dpc')
+            ->join('personals as p', 'p.id', '=', 'dpc.personals_id')
+            ->join('grados as g', 'g.id', '=', 'p.per_grado_id')
+            ->select(
+                'dpc.id as diplopromocursante_id',
+                'dpc.personals_id',
+                'g.abreviatura',
+                'p.per_paterno',
+                'p.per_materno',
+                'p.per_nombre'
+            )
+            ->where('dpc.estado', 1)
+            ->where('dpc.diplopromo_id', $request->promocion)
+            ->where('p.estado', 1)
+            ->orderBy('p.id', 'asc')
+            ->get();
 
-        $fechade = date_create($request->hasta);
-        $hasta = date_format($fechade,"d/m/Y");
-                                    
-        // $de = $request->de;
-        // $hasta = $request->hasta;
-
-        $personal_licencias = DB::table('personal_licencias as pl')
-                            ->join('categorias as c','pl.id_categoria','c.id')
-                            ->join('entidads as e','pl.id_entidad','e.id')
-                            ->join('grados as g','pl.id_grado','g.id')
-                            ->join('licencias as l','pl.id_licencia','l.id')
-                            // ->join('habilitacions as h','pl.id_habilitacion','h.id')
-                            ->join('competencia_linguisticas as cl','pl.id_comp_linguistica','cl.id')
-                            ->join('personals as p','pl.id_personal','p.id')
-                            ->select('pl.id',
-                                    'c.categoria',
-                                    'e.entidad',
-                                    'g.abreviatura',
-                                    'l.licencia',
-                                    'pl.id_habilitacion',
-                                    // 'h.habilitacion',
-                                    'cl.nivel',
-                                    'pl.fecha_emision',
-                                    'p.per_nombre',
-                                    'p.per_paterno',
-                                    'p.per_materno')
-                            // ->where('pl.fecha_emision','2024-04-06')
-                            ->whereBetween('pl.fecha_emision',[$de,$hasta])
-                            ->orderBy('pl.fecha_emision','asc')
-                            ->get();
-
-        // Recorremos los resultados
-        foreach ($personal_licencias as $pl) {
-            // Decodificamos el JSON a array
-            $arrayIdHabilitaciones = json_decode($pl->id_habilitacion, true);
-
-            if (is_array($arrayIdHabilitaciones) && count($arrayIdHabilitaciones) > 0) {
-                // Obtenemos las habilitaciones de esos IDs
-                $arrayHabilitaciones = DB::table('habilitacions')
-                    ->select('id', 'habilitacion', 'traduccion')
-                    ->whereIn('id', $arrayIdHabilitaciones)
-                    ->get();
-
-                // Le agregamos la lista al objeto actual
-                $pl->habilitaciones = $arrayHabilitaciones;
-            } else {
-                $pl->habilitaciones = collect(); // colección vacía
-            }
+        if ($cursantes->isEmpty()) {
+            return response()->json([
+                'modulos' => $modulos,
+                'cursantes' => []
+            ]);
         }
 
-        $meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
-        $fecha_emision = date('d')."/".date('n')."/".date('Y');
-        $qr = QrCode::encoding('UTF-8')->size(100)->generate("FECHA: $fecha_emision\nDE: $de\nHASTA: $hasta");
-        $codigo = $qr;
+        // 4. Consultar las notas de todas las materias de la promoción.
+        $notas = collect();
 
-        $pdf = PDF::loadView('reportes.list_licencias',['qr'=>$codigo,
-                                                'licencias'=>$personal_licencias,
-                                                'de'=>$de,
-                                                'hasta'=>$hasta
-                                                ])
-        //8.3cm 5cm
-        ->setPaper('letter', 'landscape');                                               
-        
-        return $pdf->stream($de.'-'.$hasta.'pdf');
-        // return $pdf->download($personal->id_licencia.'-'.$personal->per_ci.'.pdf');
+        if ($materias->isNotEmpty()) {
+            $notas = DB::table('cursante_notas')
+                ->whereIn(
+                    'diplopromocursante_id',
+                    $cursantes->pluck('diplopromocursante_id')
+                )
+                ->whereIn('materia_id', $materias->pluck('id'))
+                ->where('estado', 1)
+                ->get([
+                    'diplopromocursante_id',
+                    'materia_id',
+                    'evaluacion_id',
+                    'nota'
+                ]);
+        }
+
+        // Agrupar las notas por cursante y materia.
+        $notasAgrupadas = $notas->groupBy(function ($nota) {
+            return $nota->diplopromocursante_id
+                . '-'
+                . $nota->materia_id;
+        });
+
+        // Ponderaciones de las evaluaciones.
+        $ponderaciones = [
+            1 => 0.25,
+            2 => 0.25,
+            3 => 0.40,
+            4 => 0.10,
+        ];
+
+        // 5. Calcular los promedios de módulos para cada cursante.
+        foreach ($cursantes as $cursante) {
+
+            $promediosModulos = [];
+            $sumaPromediosModulos = 0;
+            $cantidadModulos = $modulos->count();
+
+            foreach ($modulos as $modulo) {
+
+                $materiasModulo = $materiasPorModulo->get(
+                    $modulo->id,
+                    collect()
+                );
+
+                $sumaPromediosMaterias = 0;
+                $cantidadMaterias = $materiasModulo->count();
+
+                foreach ($materiasModulo as $materia) {
+
+                    $clave = $cursante->diplopromocursante_id
+                        . '-'
+                        . $materia->id;
+
+                    $notasMateria = $notasAgrupadas->get(
+                        $clave,
+                        collect()
+                    );
+
+                    // Tomar una nota por evaluación.
+                    $notasPorEvaluacion = $notasMateria
+                        ->keyBy('evaluacion_id');
+
+                    $promedioMateria = 0;
+
+                    foreach ($ponderaciones as $evaluacionId => $porcentaje) {
+
+                        if ($notasPorEvaluacion->has($evaluacionId)) {
+
+                            $nota = $notasPorEvaluacion
+                                ->get($evaluacionId)
+                                ->nota;
+
+                            if ($nota !== null) {
+                                $promedioMateria +=
+                                    (float) $nota * $porcentaje;
+                            }
+                        }
+                    }
+
+                    $sumaPromediosMaterias += $promedioMateria;
+                }
+
+                // Promedio del módulo = promedio de sus materias.
+                $promedioModulo = $cantidadMaterias > 0
+                    ? round(
+                        $sumaPromediosMaterias / $cantidadMaterias,
+                        2
+                    )
+                    : 0;
+
+                // Asociar el promedio al ID del módulo.
+                $promediosModulos[$modulo->id] = $promedioModulo;
+
+                $sumaPromediosModulos += $promedioModulo;
+            }
+
+            $cursante->promedios_modulos = (object) $promediosModulos;
+
+            // Promedio final = promedio de todos los módulos.
+            $cursante->promedio_final = $cantidadModulos > 0
+                ? round(
+                    $sumaPromediosModulos / $cantidadModulos,
+                    2
+                )
+                : 0;
+        }
+
+        // 6. Ordenar por promedio final descendente.
+        $cursantes = $cursantes
+            ->sortByDesc('promedio_final')
+            ->values();
+
+        // 7. Generar el PDF usando una vista Blade.
+        $pdf = PDF::loadView('reportes.promedios_gral', [
+            'especialidad' => $especialidad,
+            'modulos' => $modulos,
+            'cursantes' => $cursantes,
+            'promocion' => $promocion,
+            // 'modulo' => $numero,
+        ])->setPaper('letter', 'portrait');
+
+        return $pdf->stream('reporte_promedios_gral.pdf');
     }
 
     public function DownloadPDF(Request $request)

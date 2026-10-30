@@ -418,7 +418,6 @@ class CursanteNotaController extends Controller
         ]);
     }
 
-
     public function SelectCursanteNota (Request $request) {
         $diplomado_modulo = DB::table('diplomado_modulos as dm')
                     ->select('dm.*',)

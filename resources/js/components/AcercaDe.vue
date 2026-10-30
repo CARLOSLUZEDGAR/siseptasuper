@@ -20,25 +20,25 @@
                                 
                                 <div class="col-md-12">
                                     <div class="col-md-12 title-credit my-2">
-                                        GESTIÓN DE MANDO 2024
+                                        GESTIÓN DE MANDO 2026
                                     </div>
                                     <div class="col-md-12 text-center">
-                                            Gral. Div. Aé. Gerardo Zabala Álvarez
+                                            Gral. Div. Aé. Sergio Fernando Lora Araoz
                                         <div class="cargo mb-1">
                                             COMANDANTE GENERAL DE LA FUERZA AÉREA
                                         </div>                       
-                                            Gral. Brig. Aé. Gonzalo Edwin Ruiz Cisneros
+                                            Gral. Brig. Aé. Jaime Antonio Quevedo Guzman
                                         <div class="cargo  mb-1">
                                             JEFE DE ESTADO MAYOR GENERAL DE LA FAB
                                         </div>
-                                         <!--   Gral. Brig. Aé. Guillermo Max Burgos Zegarra
+                                           Cnl. DAEN. Boris Juan Velez Olaguivel
                                         <div class="cargo  mb-1">
-                                            JEFE DEL DEPARTAMENTO VI CIENCIA Y TECNOLOGIA - EMGFAB
-                                        </div> -->
-                                            Cnl. DAEN. Marco Antonio Garnica Bustillos
+                                            COMANDANTE DE LA ESCUELA DE PERFECCIONAMIENTO TECNICO AERONAUTICO
+                                        </div>
+                                            <!-- Cnl. DAEN. Marco Antonio Garnica Bustillos
                                         <div class="cargo  mb-1">
                                             DIRECTOR GENERAL DE AERONAVES DE ESTADO - DGAE
-                                        </div>
+                                        </div> -->
                                     </div>
                                 </div>
                                 <br>
@@ -47,13 +47,13 @@
                                 <div class="row">
                                     <div class="col-md-6 offset-md-3">
                                         <div class="col-md-12 title-credit my-3">
-                                            EQUIPO DE DESARROLLO DEL SISTEMA
+                                            DESARROLLO DEL SISTEMA
                                         </div>
                                         <table class="table table-borderless table-sm">
                                         <tbody>
                                             <tr>
-                                                <td class="cargo2 space mb-1">SCRUM MASTER</td>
-                                                <td class="space content2">Sof. 2do. DESA. Carlos Alejandro Alberto Machicado</td>
+                                                <td class="cargo2 space mb-1">DESARROLLADOR</td>
+                                                <td class="space content2">Sof. Inc. Téc. Jose Luis Gutierrez Copa</td>
                                             </tr>
                                             <!-- <tr>
                                                 <td class="cargo2 space mb-1" rowspan="8">DEVELOPERS</td>
