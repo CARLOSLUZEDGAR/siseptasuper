@@ -1,31 +1,37 @@
+
 # =========================
-# 1. Imagen base (Laravel 7 compatible)
+# 1. Imagen base
 # =========================
 FROM php:7.4-fpm
 
-# Evita prompts interactivos
+# Configuración general
 ENV DEBIAN_FRONTEND=noninteractive
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
 # =========================
 # 2. Dependencias del sistema
 # =========================
-RUN apt-get update && apt-get install -y \
-    git \
-    curl \
-    unzip \
-    zip \
-    libzip-dev \
-    libpng-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
-    libonig-dev \
-    libxml2-dev \
-    libpq-dev \
-    && rm -rf /var/lib/apt/lists/*
+RUN set -eux; \
+    sed -i 's|deb.debian.org/debian|archive.debian.org/debian|g' /etc/apt/sources.list; \
+    sed -i 's|security.debian.org/debian-security|archive.debian.org/debian-security|g' /etc/apt/sources.list; \
+    echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid-until; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends \
+        git \
+        curl \
+        unzip \
+        zip \
+        libzip-dev \
+        libpng-dev \
+        libjpeg-dev \
+        libfreetype6-dev \
+        libonig-dev \
+        libxml2-dev \
+        libpq-dev; \
+    rm -rf /var/lib/apt/lists/*
 
 # =========================
-# 3. Extensiones PHP necesarias
+# 3. Extensiones PHP
 # =========================
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install \
@@ -50,37 +56,37 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www
 
 # =========================
-# 5.1 Configuración PHP
+# 6. Configuración PHP
 # =========================
 COPY php.ini /usr/local/etc/php/conf.d/uploads.ini
 
 # =========================
-# 6. Copiar proyecto
+# 7. Copiar proyecto
 # =========================
 COPY . .
 
 # =========================
-# 7. Instalar dependencias PHP
+# 8. Instalar dependencias Laravel
 # =========================
 RUN composer install --no-dev --optimize-autoloader
 
 # =========================
-# 8. Permisos Laravel
+# 9. Permisos Laravel
 # =========================
 RUN chmod -R 775 storage bootstrap/cache
 
 # =========================
-# 9. Cache optimización (opcional pero recomendado)
+# 10. Limpiar caché
 # =========================
 RUN php artisan config:clear || true
 RUN php artisan cache:clear || true
 
 # =========================
-# 10. Puerto (Render lo usa dinámicamente, pero no afecta)
+# 11. Puerto
 # =========================
 EXPOSE 8000
 
 # =========================
-# 11. Iniciar Laravel
+# 12. Iniciar aplicación
 # =========================
-CMD php artisan optimize:clear && php artisan serve --host=0.0.0.0 --port=8000
+CMD php artisan optimize:clear && php artisan serve --host=0.0.0.0 --port=${PORT:-8000}
