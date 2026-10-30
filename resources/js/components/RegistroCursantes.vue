@@ -473,6 +473,7 @@
             .catch(function (error) {
             // handle error
             console.log(error);
+            me.SelectGrado(me.per_grado);
             })
         },
 
@@ -490,6 +491,7 @@
             .catch(function (error) {
             // handle error
             console.log(error);
+            me.agregarPersonal();
             })
         },
 

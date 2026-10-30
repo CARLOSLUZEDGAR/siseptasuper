@@ -44,7 +44,7 @@
                         <div class="form-group row">
                             <div class="col-md-4">
                                 <label class="form-control-label" for="text-input">Especialidad</label>
-                                <select class="form-control" v-model="diplomado" @change="ListarPromociones(diplomado, gestion)" :class="{ 'is-invalid' : $v.diplomado.$error, 'is-valid':!$v.diplomado.$invalid }">
+                                <select class="form-control" v-model="diplomado" @change="ListarGestiones(diplomado)" :class="{ 'is-invalid' : $v.diplomado.$error, 'is-valid':!$v.diplomado.$invalid }">
                                     <option value="" disabled>SELECCIONE</option>
                                     <option v-for="diplomado in arrayDiplomado" :key="diplomado.id" :value="diplomado.id"  v-text="diplomado.diplomado"></option>
                                 </select>
@@ -56,7 +56,7 @@
                                 <label class="form-control-label" for="text-input">Gestión</label>
                                 <select class="form-control" v-model="gestion" @change="ListarPromociones(diplomado, gestion)" :class="{ 'is-invalid' : $v.gestion.$error, 'is-valid':!$v.gestion.$invalid }">
                                     <option value="" disabled>SELECCIONE</option>
-                                    <option v-for="a in anios" :key="a" :value="a">{{ a }}</option>
+                                    <option v-for="gestion in arrayGestiones" :key="gestion.gestion" :value="gestion.gestion"  v-text="gestion.gestion"></option>
                                 </select>
                                 <div class="invalid-feedback">
                                     <span v-if="!$v.gestion.required">Este campo es Requerido</span>
@@ -102,13 +102,13 @@
                                     <span v-if="!$v.evaluacion.required">Este campo es Requerido</span>
                                 </div>
                             </div> -->
-                            <button type="button" class="btn btn-primary" @click="BuscarCursantes(promocion)">
-                                <i class="fas fa-plus"></i>&nbsp; BUSCAR
-                            </button>
+                            
                         </div>
+                        <button type="button" class="btn btn-primary" @click="BuscarCursantes(promocion)">
+                            <i class="fas fa-plus"></i>&nbsp; BUSCAR
+                        </button>
                     </form>
                     <div class="table-wrapper-scroll-y my-custom-scrollbar" id="myTable" style="font-size: 12pt;" >
-
                         <!-- <template v-if="datfis2==1"> -->
                         <table class="table table-bordered table-striped table-sm">
                             <thead>
@@ -155,15 +155,16 @@
                                 </tr>
                             </tbody>
                         </table>
-                        <div class="text-right mt-3 mb-4">
+                        <div class="text-right">
                             <strong>
                                 Total de cursantes: {{ arrayCursantesPromocion.length }}
                             </strong>
-
-                            <button type="button" class="btn btn-success ml-3" @click="RegistrarNotas()" :disabled="arrayCursantesPromocion.length === 0">
-                                <i class="fas fa-save"></i>&nbsp;REGISTRAR
-                            </button>
                         </div>
+
+                        <button type="button" class="btn btn-success ml-3" @click="RegistrarNotas()" :disabled="arrayCursantesPromocion.length === 0">
+                            <i class="fas fa-save"></i>&nbsp; REGISTRAR
+                        </button>
+                        
                         <!-- </template> -->
                         <br>
                     </div>
@@ -199,6 +200,7 @@
         // FIN VARIABLES DGAE
         arrayDiplomado : [],
         arrayPromocion : [],
+        arrayGestiones : [],
         anios: [],
         arrayModulo : [],
         arrayMateria : [],
@@ -230,7 +232,7 @@
         materia : { required },
         // evaluacion : { required },
 
-        validationGroupReg: [
+        validationGroupTemp: [
         'diplomado',
         'gestion',
         'promocion',
@@ -276,13 +278,13 @@
           }
       },
     mounted() {
-        let actual = new Date().getFullYear();
-        for (let i = actual - 5; i <= actual + 5; i++) {
-            this.anios.push(i);
-        }
+        // let actual = new Date().getFullYear();
+        // for (let i = actual - 5; i <= actual + 5; i++) {
+        //     this.anios.push(i);
+        // }
 
         this.ListarDiplomados();
-        this.ListarPeriodos();
+        // this.ListarPeriodos();
     },
 
     methods: {
@@ -365,13 +367,22 @@
             })
         },
 
-        ListarPeriodos(){
+        ListarGestiones(diplomadoid) {
+            this.gestion = '';
+            this.arrayGestiones = [];
+            this.promocion = '';
+            this.arrayPromociones = [];
+            this.modulo = '';
+            this.arrayModulo = [];
+            this.materia = '';
+            this.arrayMateria = [];
             let me = this;
             axios
-            .post("/listarPeriodo", {
+            .post("/selectGestion", {
+                diplomadoid : diplomadoid
             })
             .then(function (response) {
-            me.arrayPeriodo = response.data.periodo
+            me.arrayGestiones = response.data.gestion
             })
             .catch(function (error) {
             // handle error
@@ -379,9 +390,27 @@
             })
         },
 
+        // ListarPeriodos(){
+        //     let me = this;
+        //     axios
+        //     .post("/listarPeriodo", {
+        //     })
+        //     .then(function (response) {
+        //     me.arrayPeriodo = response.data.periodo
+        //     })
+        //     .catch(function (error) {
+        //     // handle error
+        //     console.log(error);
+        //     })
+        // },
+
         ListarPromociones(especialidad, gestion){
             this.promocion = '';
             this.arrayPromocion = [];
+            this.modulo = '';
+            this.arrayModulo = [];
+            this.materia = '';
+            this.arrayMateria = [];
             let me = this;
             axios
             .post("/listarPromocion", {
@@ -400,6 +429,8 @@
         ListarModulos(promocion){
             this.modulo = '';
             this.arrayModulo = [];
+            this.materia = '';
+            this.arrayMateria = [];
             let me = this;
             axios
             .post("/selectModulo", {
@@ -448,22 +479,32 @@
         },
 
         BuscarCursantes(promocion) {
-            axios.post("/listarCursantesPromocion", {
-                promocion: promocion,
-                materia: this.materia
-            })
-            .then(response => {
-                this.arrayCursantesPromocion = response.data.cursante;
-            })
-            .catch(error => {
-                console.error(error);
+            if(!this.$v.validationGroupTemp.$invalid) {
+                axios.post("/listarCursantesPromocion", {
+                    promocion: promocion,
+                    materia: this.materia
+                })
+                .then(response => {
+                    this.arrayCursantesPromocion = response.data.cursante;
+                })
+                .catch(error => {
+                    console.error(error);
 
-                this.$swal(
-                    'Error',
-                    'No se pudieron cargar los cursantes y sus notas.',
-                    'error'
-                );
-            });
+                    this.$swal(
+                        'Error',
+                        'No se pudieron cargar los cursantes y sus notas.',
+                        'error'
+                    );
+                });
+            } else{
+                this.$v.validationGroupTemp.$touch();
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Ingrese todos los datos requeridos',
+                    showConfirmButton: false,
+                    timer: 2000
+                })
+            }   
         },
 
         limpiarFormulario() {
