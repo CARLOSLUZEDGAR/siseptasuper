@@ -116,7 +116,7 @@ class PersonalController extends Controller
                 $diplopromo_cursante = DiplomadoPromocionCursante::create([
                     'diplopromo_id' => $request->diplopromo_id,
                     'personals_id' => $cursante->id,
-                    'observacion' => 'registro sin novedad',
+                    'observacion' => 'REGISTRO SIN NOVEDAD',
                     'estado' => 1,
                     'sysuser' => Auth::user()->id
                 ]);

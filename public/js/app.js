@@ -6378,16 +6378,35 @@ __webpack_require__.r(__webpack_exports__);
                 title: 'Notas registradas correctamente',
                 // showConfirmButton: false,
                 timer: 3000
-              }); // this.$swal(
+              }); // this.diplomado = '';
+
+              _this3.gestion = '';
+              _this3.promocion = '';
+              _this3.modulo = '';
+              _this3.materia = ''; // this.arrayDiplomado = [];
+
+              _this3.arrayGestiones = [];
+              _this3.arrayPromocion = [];
+              _this3.arrayModulo = [];
+              _this3.arrayMateria = [];
+              _this3.arrayCursantesPromocion = []; // this.$swal(
               //     'Correcto',
               //     response.data.mensaje || 'Notas registradas correctamente.',
               //     'success'
               // );
             })["catch"](function (error) {
               console.error(error);
-              var mensaje = error.response && error.response.data && error.response.data.mensaje ? error.response.data.mensaje : 'No se pudieron registrar las notas.';
-
-              _this3.$swal('Error', mensaje, 'error');
+              Swal.fire({
+                icon: 'warning',
+                title: 'Ocurrio un error al registrar las notas',
+                // showConfirmButton: false,
+                timer: 3000
+              }); // const mensaje = error.response &&
+              //                 error.response.data &&
+              //                 error.response.data.mensaje
+              //     ? error.response.data.mensaje
+              //     : 'No se pudieron registrar las notas.';
+              // this.$swal('Error', mensaje, 'error');
             });
           } else {
             swal.fire("Informacion", //TITULO
@@ -157599,11 +157618,33 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_router__WEBPACK_IMPORTED_MODU
   }, {
     path: '/acercade',
     name: 'Acercade',
-    component: __webpack_require__(/*! ./components/AcercaDe.vue */ "./resources/js/components/AcercaDe.vue")["default"]
+    component: __webpack_require__(/*! ./components/AcercaDe.vue */ "./resources/js/components/AcercaDe.vue")["default"],
+    beforeEnter: function beforeEnter(to, from, next) {
+      var per = window.user.permissions.map(function (permission) {
+        return permission.name;
+      });
+
+      if (per.includes('view-acerca')) {
+        next();
+      } else {
+        next(from.path);
+      }
+    }
   }, {
     path: '/ayuda',
     name: 'Ayuda',
-    component: __webpack_require__(/*! ./components/Ayuda.vue */ "./resources/js/components/Ayuda.vue")["default"]
+    component: __webpack_require__(/*! ./components/Ayuda.vue */ "./resources/js/components/Ayuda.vue")["default"],
+    beforeEnter: function beforeEnter(to, from, next) {
+      var per = window.user.permissions.map(function (permission) {
+        return permission.name;
+      });
+
+      if (per.includes('view-ayuda')) {
+        next();
+      } else {
+        next(from.path);
+      }
+    }
   }]
 }));
 

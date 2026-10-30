@@ -590,21 +590,39 @@
                                 // showConfirmButton: false,
                                 timer: 3000
                             });
+                            // this.diplomado = '';
+                            this.gestion = '';
+                            this.promocion = '';
+                            this.modulo = '';
+                            this.materia = '';
+                            // this.arrayDiplomado = [];
+                            this.arrayGestiones = [];
+                            this.arrayPromocion = [];
+                            this.arrayModulo = [];
+                            this.arrayMateria = [];
+                            this.arrayCursantesPromocion = [];
                             // this.$swal(
                             //     'Correcto',
                             //     response.data.mensaje || 'Notas registradas correctamente.',
                             //     'success'
                             // );
+
                         })
                         .catch(error => {
                             console.error(error);
-                            const mensaje = error.response &&
-                                            error.response.data &&
-                                            error.response.data.mensaje
-                                ? error.response.data.mensaje
-                                : 'No se pudieron registrar las notas.';
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Ocurrio un error al registrar las notas',
+                                // showConfirmButton: false,
+                                timer: 3000
+                            });
+                            // const mensaje = error.response &&
+                            //                 error.response.data &&
+                            //                 error.response.data.mensaje
+                            //     ? error.response.data.mensaje
+                            //     : 'No se pudieron registrar las notas.';
 
-                            this.$swal('Error', mensaje, 'error');
+                            // this.$swal('Error', mensaje, 'error');
                         });
 
                     } else {
