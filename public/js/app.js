@@ -113802,7 +113802,7 @@ var staticRenderFns = [
                           _c("tbody", [
                             _c("tr", [
                               _c("td", { staticClass: "cargo2 space mb-1" }, [
-                                _vm._v("DESARROLLADOR")
+                                _vm._v("CURSANTE")
                               ]),
                               _vm._v(" "),
                               _c("td", { staticClass: "space content2" }, [

@@ -52,7 +52,7 @@
                                         <table class="table table-borderless table-sm">
                                         <tbody>
                                             <tr>
-                                                <td class="cargo2 space mb-1">DESARROLLADOR</td>
+                                                <td class="cargo2 space mb-1">CURSANTE</td>
                                                 <td class="space content2">Sof. Inc. Téc. Jose Luis Gutierrez Copa</td>
                                             </tr>
                                             <!-- <tr>
